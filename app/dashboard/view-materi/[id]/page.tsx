@@ -12,6 +12,7 @@ import FormFooter from "@/app/dashboard/form-materi/components/FormFooter";
 export default function ViewMateri() {
   const { id } = useParams();
   const selectedMateri = useMateriStore((state) => state.selectedMateri);
+   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dokumenMateri = (selectedMateri as any)?.dokumenMateri || [];
 
   if (!id) return <p className="text-center p-6">Memuat data materi...</p>;

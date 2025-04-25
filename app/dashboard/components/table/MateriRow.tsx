@@ -13,6 +13,7 @@ import { useMateriStore } from "../../../../store/useMateriStore";
 import { Key } from "react";
 
 interface MateriRowProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any  
   materi: any;
 }
 
@@ -78,7 +79,9 @@ const MateriRow: React.FC<MateriRowProps> = ({ materi }) => {
       <TableCell>
         {Array.isArray(materi.dokumenMateri)
           ? materi.dokumenMateri
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
               .flatMap((dokumen: { keywords: any; }) => dokumen.keywords || [])
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
               .filter((keyword: any) => keyword) 
               .join(", ")
           : "-"}

@@ -8,7 +8,7 @@ import ListTable from "./ListTable";
 import { Progress } from "@/components/ui/progress";
 
 export default function MateriTable() {
-  const { loading, currentPage, itemsPerPage, fetchData, setCurrentPage } = useMateriStore();
+  const { loading, currentPage, itemsPerPage, fetchData } = useMateriStore();
   const filteredData = useFilteredMateri();
 
   useEffect(() => {
