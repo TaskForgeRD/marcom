@@ -12,6 +12,7 @@ export const getImageUrl = (path?: string) => {
   return `http://localhost:5000/${path}`;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function convertToFormData(data: any): FormData {
   const formData = new FormData();
 
@@ -21,6 +22,7 @@ export function convertToFormData(data: any): FormData {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data.dokumenMateri.forEach((doc: any, index: number) => {
     formData.append(`dokumenMateri[${index}].linkDokumen`, doc.linkDokumen);
     formData.append(`dokumenMateri[${index}].tipeMateri`, doc.tipeMateri);
@@ -55,9 +57,11 @@ export const getFilteredStats = <T>(
   const isInRangeInternal = (date: string) => isInRange(date, dateRange);
 
   const currentList = data.filter(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (item: any) => isInRangeInternal(item.startDate) && filterFn(item)
   );
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const prevList = data.filter((item: any) => {
     if (!dateRange?.from || !dateRange?.to) return false;
     const rangeDiff = dayjs(dateRange.to).diff(dateRange.from, "day") + 1;

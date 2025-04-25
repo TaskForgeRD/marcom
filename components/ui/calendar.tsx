@@ -80,7 +80,7 @@ function Calendar({
     }, [yearRange])
   )
 
-  const { onNextClick, onPrevClick, startMonth, endMonth } = props
+  const { onPrevClick, startMonth, endMonth } = props
 
   const columnsDisplayed = navView === "years" ? 1 : numberOfMonths
 
@@ -222,7 +222,6 @@ function Calendar({
         ),
         MonthGrid: ({ className, children, ...props }) => (
           <MonthGrid
-            children={children}
             className={className}
             displayYears={displayYears}
             startMonth={startMonth}
@@ -230,7 +229,8 @@ function Calendar({
             navView={navView}
             setNavView={setNavView}
             {...props}
-          />
+          > {children}
+          </MonthGrid>
         ),
       }}
       numberOfMonths={columnsDisplayed}
@@ -300,24 +300,28 @@ function Nav({
   })()
 
   const handlePreviousClick = React.useCallback(() => {
-    if (!previousMonth) return
+    if (!previousMonth) return;
     if (navView === "years") {
       setDisplayYears((prev) => ({
         from: prev.from - (prev.to - prev.from + 1),
         to: prev.to - (prev.to - prev.from + 1),
-      }))
+      }));
       onPrevClick?.(
-        new Date(
-          displayYears.from - (displayYears.to - displayYears.from),
-          0,
-          1
-        )
-      )
-      return
+        new Date(displayYears.from - (displayYears.to - displayYears.from), 0, 1)
+      );
+      return;
     }
-    goToMonth(previousMonth)
-    onPrevClick?.(previousMonth)
-  }, [previousMonth, goToMonth])
+    goToMonth(previousMonth);
+    onPrevClick?.(previousMonth);
+  }, [
+    previousMonth, 
+    goToMonth, 
+    navView, 
+    displayYears.from, 
+    displayYears.to, 
+    onPrevClick, 
+    setDisplayYears
+  ]);
 
   const handleNextClick = React.useCallback(() => {
     if (!nextMonth) return
