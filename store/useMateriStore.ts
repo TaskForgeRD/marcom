@@ -15,6 +15,8 @@ export const useMateriStore = create<MateriStore>()(
         const response = await fetch("http://localhost:5000/api/materi");
         if (!response.ok) throw new Error("Gagal mengambil data");
         const result = await response.json();
+    
+        // Tidak perlu manipulasi lagi karena sudah sesuai struktur
         set({ data: result.reverse(), loading: false });
       } catch (error) {
         console.error(error);

@@ -1,21 +1,24 @@
 module.exports = {
-    parser: "@typescript-eslint/parser",
-    parserOptions: {
-      ecmaVersion: 2020,
-      sourceType: "module",
-    },
+    plugins: ["react", "react-hooks", "@typescript-eslint"],
     extends: [
       "eslint:recommended",
       "plugin:react/recommended",
+      "plugin:react-hooks/recommended",
       "plugin:@typescript-eslint/recommended",
+      "next/core-web-vitals"
     ],
-    rules: {
-      "@typescript-eslint/no-explicit-any": "off", // Menghapus warning tentang 'any'
-      "react/prop-types": "off", // Jika menggunakan TypeScript, bisa non-aktifkan prop-types
+    parser: "@typescript-eslint/parser",
+    parserOptions: {
+      ecmaVersion: "latest",
+      sourceType: "module",
+      ecmaFeatures: {
+        jsx: true,
+      },
     },
     settings: {
       react: {
-        version: "detect", // Secara otomatis mendeteksi versi React
+        version: "detect",
       },
     },
   };
+  

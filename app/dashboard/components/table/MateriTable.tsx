@@ -11,6 +11,8 @@ export default function MateriTable() {
   const { loading, currentPage, itemsPerPage, fetchData } = useMateriStore();
   const filteredData = useFilteredMateri();
 
+  console.log(filteredData);
+
   useEffect(() => {
     fetchData();
   }, [fetchData]);

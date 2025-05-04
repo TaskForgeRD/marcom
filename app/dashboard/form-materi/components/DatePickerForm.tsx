@@ -7,9 +7,7 @@ import { CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { DayPicker } from "react-day-picker";
-
-import "react-day-picker/dist/style.css";
+import { Calendar } from "@/components/ui/calendar"; 
 
 interface DatePickerProps {
   name: string;
@@ -21,13 +19,13 @@ export default function DatePickerForm({ name, label, readOnly = false }: DatePi
   const { setValue, watch, formState: { errors } } = useFormContext();
   const selectedDate = watch(name);
 
-  const [date, setDate] = useState<Date | null>(() => {
+  const [date, setDate] = useState<Date | undefined>(() => {
     if (selectedDate instanceof Date) return selectedDate;
     if (typeof selectedDate === "string") {
       const parsed = new Date(selectedDate);
-      return isNaN(parsed.getTime()) ? null : parsed;
+      return isNaN(parsed.getTime()) ? undefined : parsed;
     }
-    return null;
+    return undefined;
   });
 
   const handleSelect = (date: Date | undefined) => {
@@ -52,8 +50,13 @@ export default function DatePickerForm({ name, label, readOnly = false }: DatePi
           </Button>
         </PopoverTrigger>
         {!readOnly && (  
-          <PopoverContent align="start">
-            <DayPicker mode="single" selected={date ?? undefined} onSelect={handleSelect} />
+          <PopoverContent align="start" className="w-auto p-0">
+            <Calendar
+              mode="single"
+              selected={date}
+              onSelect={handleSelect}
+              initialFocus
+            />
           </PopoverContent>
         )}
       </Popover>

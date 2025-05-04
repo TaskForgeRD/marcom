@@ -9,7 +9,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export const getImageUrl = (path?: string) => {
   if (!path) return ""; // atau bisa kembalikan placeholder default
-  return `http://localhost:5000/${path}`;
+  return `http://localhost:5000/uploads/${path}`;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -22,16 +22,13 @@ export function convertToFormData(data: any): FormData {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  formData.append('dokumenMateriCount', data.dokumenMateri.length.toString());
+
   data.dokumenMateri.forEach((doc: any, index: number) => {
-    formData.append(`dokumenMateri[${index}].linkDokumen`, doc.linkDokumen);
-    formData.append(`dokumenMateri[${index}].tipeMateri`, doc.tipeMateri);
-
-    doc.keywords.forEach((keyword: string, kIndex: number) => {
-      formData.append(`dokumenMateri[${index}].keywords[${kIndex}]`, keyword);
-    });
-
-    formData.append(`dokumenMateri[${index}].thumbnail`, doc.thumbnail); // file
+    formData.append(`dokumenMateri[${index}][linkDokumen]`, doc.linkDokumen);
+    formData.append(`dokumenMateri[${index}][tipeMateri]`, doc.tipeMateri);
+    formData.append(`dokumenMateri[${index}][keywords]`, JSON.stringify(doc.keywords));
+    formData.append(`dokumenMateri[${index}][thumbnail]`, doc.thumbnail);
   });
 
   return formData;
