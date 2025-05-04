@@ -341,7 +341,15 @@ function Nav({
     }
     goToMonth(nextMonth)
     onNextClick?.(nextMonth)
-  }, [goToMonth, nextMonth])
+  }, [
+    goToMonth,
+    nextMonth,
+    navView,
+    displayYears.from,
+    displayYears.to,
+    setDisplayYears,
+    onNextClick
+  ])
   return (
     <nav className={cn("flex items-center", className)}>
       <Button
@@ -498,13 +506,13 @@ function YearGrid({
           const isBefore =
             differenceInCalendarDays(
               new Date(displayYears.from + i, 11, 31),
-              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+               
               startMonth!,
             ) < 0;
           const isAfter =
             differenceInCalendarDays(
               new Date(displayYears.from + i, 0, 0),
-              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+               
               endMonth!,
             ) > 0;
           const isDisabled = isBefore || isAfter;
