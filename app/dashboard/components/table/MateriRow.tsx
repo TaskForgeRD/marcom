@@ -43,7 +43,7 @@ const MateriRow: React.FC<MateriRowProps> = ({ materi }) => {
       <TableCell>
         <div className="flex flex-col gap-2">
           {materi.dokumenMateri && materi.dokumenMateri.map((dokumen: { _id: Key | null | undefined; thumbnail: string | undefined; linkDokumen: string | undefined; }, index: number) => (
-            <div key={dokumen._id} className="flex items-center gap-2">
+            <div key={index} className="flex items-center gap-2">
               {dokumen.thumbnail && (
                 <Image
                   src={getImageUrl(dokumen.thumbnail)}

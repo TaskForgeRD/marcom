@@ -449,9 +449,7 @@ function MonthGrid({
     )
   }
   return (
-    <table className={className} {...props}>
-      {children}
-    </table>
+    <table className={className} {...props}>{children}</table>
   )
 }
 

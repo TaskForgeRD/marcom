@@ -9,7 +9,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export const getImageUrl = (path?: string) => {
   if (!path) return ""; // atau bisa kembalikan placeholder default
-  return `http://localhost:5000/${path}`;
+  return `http://localhost:5000/uploads/${path}`;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
