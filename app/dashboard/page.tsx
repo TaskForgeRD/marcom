@@ -1,13 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
 
 import FilterOption from "./components/filters/filterOption/filterOption";
 import FilterDate from "./components/filters/filterDate/filterDate";
 import MateriTabel from "./components/table/MateriTable";
-import { Switch } from "@/components/ui/switch";
-import StatsSection from "./components/stats/statsSection";
+import StatsSection from "./components/StatsSection/";
+import ToggleControls from "@/app/dashboard/uiRama/toggle-controls";
 
 export default function Page() {
   const [onlyVisualDocs, setOnlyVisualDocs] = useState(false);
@@ -19,32 +18,17 @@ export default function Page() {
 
       {showStatsSection && <StatsSection />}
 
-      <div className="flex flex-col sm:flex-row justify-between items-center px-4 py-4">
-        <div className="flex items-center space-x-2">
-          <Switch
-            id="toggle-visual-docs"
-            checked={onlyVisualDocs}
-            onCheckedChange={setOnlyVisualDocs}
-          />
-          <label
-            htmlFor="toggle-visual-docs"
-            className="text-sm font-medium text-gray-900"
-          >
-            Lihat data yang ada dokumen visual saja
-          </label>
-        </div>
-        <button
-          onClick={() => setShowStatsSection((prev) => !prev)}
-          className="flex items-center text-sm font-medium text-gray-700 hover:text-gray-900"
-        >
-          {showStatsSection ? "Sembunyikan Detail Summary" : "Lihat Detail Summary"}
-          {showStatsSection ? (
-            <ChevronUp className="ml-1 h-4 w-4" />
-          ) : (
-            <ChevronDown className="ml-1 h-4 w-4" />
-          )}
-        </button>
-      </div>
+      <ToggleControls
+        label="Lihat data yang ada dokumen visual saja"
+        switchState={onlyVisualDocs}
+        onToggleSwitch={setOnlyVisualDocs}
+        togglePanelState={showStatsSection}
+        onTogglePanel={() => setShowStatsSection((prev) => !prev)}
+        togglePanelLabel={{
+          show: "Lihat Detail Summary",
+          hide: "Sembunyikan Detail Summary",
+        }}
+      />
 
       <section>
         <FilterOption />
