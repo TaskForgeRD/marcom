@@ -389,6 +389,8 @@ function Nav({
   )
 }
 
+import { ChevronDown, ChevronUp } from "lucide-react"
+
 function CaptionLabel({
   children,
   showYearSwitcher,
@@ -403,16 +405,22 @@ function CaptionLabel({
   displayYears: { from: number; to: number }
 } & React.HTMLAttributes<HTMLSpanElement>) {
   if (!showYearSwitcher) return <span {...props}>{children}</span>
+
+  const isDays = navView === "days"
+
   return (
     <Button
-      className="h-7 w-full truncate text-sm font-medium"
+      className="h-7 truncate text-sm font-medium inline-flex items-center gap-1"
       variant="ghost"
       size="sm"
       onClick={() => setNavView((prev) => (prev === "days" ? "years" : "days"))}
     >
-      {navView === "days"
-        ? children
-        : displayYears.from + " - " + displayYears.to}
+      {isDays ? children : `${displayYears.from} - ${displayYears.to}`}
+      {isDays ? (
+        <ChevronDown className="h-4 w-4 opacity-70" />
+      ) : (
+        <ChevronUp className="h-4 w-4 opacity-70" />
+      )}
     </Button>
   )
 }
@@ -449,7 +457,9 @@ function MonthGrid({
     )
   }
   return (
-    <table className={className} {...props}>{children}</table>
+<table className={className} {...props}>
+  {React.Children.toArray(children).filter(child => typeof child !== "string")}
+</table>
   )
 }
 

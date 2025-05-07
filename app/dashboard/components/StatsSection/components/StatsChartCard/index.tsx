@@ -9,24 +9,34 @@ export default function StatsChartCard() {
   const { stats } = useStatsData();
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {statsConfig.map((item) => {
-          const data = stats[item.key];
-          if (!data) return null;
+  <div className="flex flex-wrap gap-4 px-4 py-4">
+    {statsConfig.map((item, index) => {
+      const data = stats[item.key];
+      if (!data) return null;
 
-          return (
-            <ChartCard
-              key={item.key}
-              title={item.title}
-              value={data.now}
-              data={data.chartData}
-              color={item.color}
-              subtitle={item.subtitle}
-            />
-          );
-        })}
-      </div>
-    </div>
+      let cardClass = "w-full";
+      if (index < 3) {
+        cardClass += " lg:w-[calc(33.333%-1rem)]";
+      } else if (statsConfig.length === 4 && index === 3) {
+        cardClass += " lg:w-full";
+      } else if (statsConfig.length === 5 && index >= 3) {
+        cardClass += " lg:w-[calc(50%-0.5rem)]";
+      } else if (statsConfig.length >= 6 && index >= 3) {
+        cardClass += " lg:w-[calc(33.333%-1rem)]";
+      }
+
+      return (
+        <div key={item.key} className={cardClass}>
+          <ChartCard
+            title={item.title}
+            value={data.now}
+            data={data.chartData}
+            color={item.color}
+            subtitle={item.subtitle}
+          />
+        </div>
+      );
+    })}
+  </div>
   );
 }

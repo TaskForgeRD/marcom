@@ -49,9 +49,9 @@ const ToggleControls: React.FC<ToggleControlsProps> = ({
       >
         {togglePanelState ? togglePanelLabel.hide : togglePanelLabel.show}
         {togglePanelState ? (
-          <ChevronUp className="ml-1 h-4 w-4" />
-        ) : (
           <ChevronDown className="ml-1 h-4 w-4" />
+        ) : (
+          <ChevronUp className="ml-1 h-4 w-4" />
         )}
       </button>
     </div>

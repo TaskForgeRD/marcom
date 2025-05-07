@@ -22,7 +22,7 @@ interface ChartCardProps {
 
 export function ChartCard({ title, value, data, color, subtitle = null }: ChartCardProps) {
   return (
-    <Card className="w-full shadow-sm">
+    <Card className="w-full h-full shadow-sm">
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
           <div>
@@ -72,8 +72,14 @@ export function ChartCard({ title, value, data, color, subtitle = null }: ChartC
                 stroke="none"
                 strokeWidth={2}
                 fill={`url(#gradient-${color})`}
-                dot={(dotProps) => <SquareDot {...dotProps} data={data} fill={color} />}
-                activeDot={(dotProps) => <ActiveSquareDot {...dotProps} data={data} fill={color} />}
+                dot={(dotProps) => {
+                  const { key, ...rest } = dotProps;
+                  return <SquareDot key={key} {...rest} data={data} fill={color} />;
+                }}
+                activeDot={(dotProps) => {
+                  const { key, ...rest } = dotProps;
+                  return <ActiveSquareDot key={key} {...rest} data={data} fill={color} />;
+                }}                
               />
             </AreaChart>
           </ResponsiveContainer>
