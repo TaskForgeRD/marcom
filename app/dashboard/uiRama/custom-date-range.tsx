@@ -7,6 +7,7 @@ import { Calendar } from "@/components/ui/calendar";
 
 interface CustomDateRangeProps {
   dateRange?: { from: Date; to: Date };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any  
   handleDateChange: (range: any) => void;
 }
 

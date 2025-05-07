@@ -1,6 +1,7 @@
 interface TableColumnConfig {
   key: string;
   header: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any  
   render?: (item: any) => React.ReactNode;
 }
   
