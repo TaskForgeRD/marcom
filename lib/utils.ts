@@ -1,7 +1,11 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import dayjs from "dayjs";
+import isBetween from "dayjs/plugin/isBetween";
 import { format } from "date-fns";
+
+dayjs.extend(isBetween);
+export { dayjs, format }; 
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -9,7 +13,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export const getImageUrl = (path?: string) => {
   if (!path) return ""; // atau bisa kembalikan placeholder default
-  return `http://localhost:5000/uploads/${path}`;
+  return `https://api-marcom.arisjirat.com/uploads/${path}`;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -24,6 +28,7 @@ export function convertToFormData(data: any): FormData {
 
   formData.append('dokumenMateriCount', data.dokumenMateri.length.toString());
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data.dokumenMateri.forEach((doc: any, index: number) => {
     formData.append(`dokumenMateri[${index}][linkDokumen]`, doc.linkDokumen);
     formData.append(`dokumenMateri[${index}][tipeMateri]`, doc.tipeMateri);

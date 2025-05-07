@@ -16,13 +16,50 @@ export const useStatsData = () => {
 
   const waktuLabel = formatPresetLabel(selectedPreset, dateRange);
 
+  const getMonthlyChartData = (filterFn: (m: any) => boolean) => {
+    const months = Array.from({ length: 12 }).map((_, idx) => {
+      const month = dayjs().month(idx);
+      const itemsInMonth = filteredMateri.filter(
+        (m) =>
+          dayjs(m.startDate).month() === idx &&
+          filterFn(m)
+      );
+
+      return {
+        name: month.format("MMM"),
+        value: itemsInMonth.length,
+      };
+    });
+
+    return months;
+  };
+
   const stats = useMemo(() => {
+    console.log(filteredMateri)
     return {
       total: getFilteredStats(filteredMateri, () => true, dateRange),
-      fitur: getFilteredStats(filteredMateri, (m) => m.fitur, dateRange, (m) => m.fitur?.trim().toLowerCase()),
-      aktif: getFilteredStats(filteredMateri, (m) => dayjs().isBefore(m.endDate), dateRange),
-      expired: getFilteredStats(filteredMateri, (m) => dayjs().isAfter(m.endDate), dateRange),
-      dokumen: getFilteredStats(filteredMateri, (m) => m.dokumenMateri?.length > 0, dateRange),
+      fitur: {
+        ...getFilteredStats(filteredMateri, (m) => m.fitur, dateRange, (m) =>
+          m.fitur?.trim().toLowerCase()
+        ),
+        chartData: getMonthlyChartData((m) => m.fitur),
+      },
+      komunikasi: {
+        ...getFilteredStats(filteredMateri, (m) => m.namaMateri, dateRange),
+        chartData: getMonthlyChartData((m) => m.namaMateri),
+      },
+      aktif: {
+        ...getFilteredStats(filteredMateri, (m) => dayjs().isBefore(m.endDate), dateRange),
+        chartData: getMonthlyChartData((m) => dayjs().isBefore(m.endDate)),
+      },
+      expired: {
+        ...getFilteredStats(filteredMateri, (m) => dayjs().isAfter(m.endDate), dateRange),
+        chartData: getMonthlyChartData((m) => dayjs().isAfter(m.endDate)),
+      },
+      dokumen: {
+        ...getFilteredStats(filteredMateri, (m) => m.dokumenMateri?.length > 0, dateRange),
+        chartData: getMonthlyChartData((m) => m.dokumenMateri?.length > 0),
+      },
     };
   }, [filteredMateri, dateRange]);
 
@@ -32,8 +69,14 @@ export const useStatsData = () => {
     stats: Object.fromEntries(
       Object.entries(stats).map(([key, val]) => [
         key,
-        { ...val, changeLabel: formatChange(val.change) },
+        {
+          ...val,
+          changeLabel: formatChange(val.change),
+        },
       ])
-    ) as Record<string, typeof stats.total & { changeLabel: string }>,
+    ) as Record<
+      string,
+      typeof stats.total & { changeLabel: string; chartData: { name: string; value: number }[] }
+    >,
   };
 };

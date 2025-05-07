@@ -1,18 +1,20 @@
+"use client";
+
 import React from "react";
 import { format } from "date-fns";
 import { ChevronDownIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { PresetDate } from "../../../../../constants/preset-date";
+import { PresetDate } from "../../../constants/preset-date";
 import { useFilterStore } from "@/store/useFilterStore";
 
-interface DateDropdownProps {
+interface CustomDateDropdownProps {
   dateRange?: { from: Date; to: Date };
   isCustomRange: boolean;
   handlePresetSelection: (preset: PresetDate) => void; 
 }
 
-const DateDropdown: React.FC<DateDropdownProps> = ({ dateRange, isCustomRange, handlePresetSelection }) => {
+const CustomDateDropdown: React.FC<CustomDateDropdownProps> = ({ dateRange, isCustomRange, handlePresetSelection }) => {
   const { setSelectedPreset } = useFilterStore();
 
   const handlePresetClick = (preset: PresetDate) => {
@@ -20,21 +22,18 @@ const DateDropdown: React.FC<DateDropdownProps> = ({ dateRange, isCustomRange, h
     handlePresetSelection(preset); 
   };
 
+  const displayLabel = () => {
+    if (isCustomRange) return "Pilih tanggal tertentu";
+    if (!dateRange?.from) return "All time";
+    if (dateRange.to) return `${format(dateRange.from, "d MMM y")} - ${format(dateRange.to, "d MMM y")}`;
+    return format(dateRange.from, "d MMM y");
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" className="w-[260px] justify-between">
-          {isCustomRange ? (
-            <span>Pilih tanggal tertentu</span>
-          ) : dateRange?.from ? (
-            dateRange.to ? (
-              `${format(dateRange.from, "d MMM y")} - ${format(dateRange.to, "d MMM y")}`
-            ) : (
-              format(dateRange.from, "d MMM y")
-            )
-          ) : (
-            <span>All time</span>
-          )}
+          {displayLabel()}
           <ChevronDownIcon className="ml-2 h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
@@ -49,4 +48,4 @@ const DateDropdown: React.FC<DateDropdownProps> = ({ dateRange, isCustomRange, h
   );
 };
 
-export default DateDropdown;
+export default CustomDateDropdown;

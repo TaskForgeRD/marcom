@@ -1,4 +1,9 @@
 import dayjs from "dayjs";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
+
+dayjs.extend(isSameOrBefore);
+dayjs.extend(isSameOrAfter);
 
 export const formatChange = (change: number): string =>
   change === 0 ? "0" : change > 0 ? `+${change}` : `${change}`;
@@ -15,7 +20,8 @@ export const getFilteredStats = (
   const isInRange = (date: string) => {
     if (!dateRange) return true;
     const d = dayjs(date);
-    return d.isAfter(dayjs(dateRange.from), "day") && d.isBefore(dayjs(dateRange.to), "day");
+    return d.isSameOrAfter(dayjs(dateRange.from), "day") &&
+           d.isSameOrBefore(dayjs(dateRange.to), "day");
   };
 
   const current = data.filter((d) => isInRange(d.startDate) && filterFn(d));
