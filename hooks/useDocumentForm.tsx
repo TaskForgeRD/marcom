@@ -38,7 +38,7 @@ export function useDocumentForm(defaultValues?: Partial<FormDataType>) {
         {
           linkDokumen: "",
           tipeMateri: "",
-          thumbnail: undefined,
+          thumbnail: "",
           keywords: [""],
         },
       ],
@@ -53,18 +53,24 @@ export function useDocumentForm(defaultValues?: Partial<FormDataType>) {
 
     try {
       const periode =
-        new Date(data.endDate).getFullYear() - new Date(data.startDate).getFullYear();
-      const dataWithPeriode = { ...data, periode };
-
-
-      console.log(dataWithPeriode);
+      new Date(data.endDate).getFullYear() - new Date(data.startDate).getFullYear();
+    
+      const dataWithPeriode = {
+        ...data,
+        startDate: new Date(data.startDate).toISOString().split("T")[0],
+        endDate: new Date(data.endDate).toISOString().split("T")[0],
+        periode,
+      };
+      
       const formData = convertToFormData(dataWithPeriode);
 
       const isEditMode = !!selectedMateri;
       const url = isEditMode
-      ? `https://api-marcom.arisjirat.com/api/materi${selectedMateri?._id}` 
+      ? `https://api-marcom.arisjirat.com/api/materi/${selectedMateri?._id}` 
       : "https://api-marcom.arisjirat.com/api/materi";
       const method = isEditMode ? "PUT" : "POST";
+
+
 
       const response = await fetch(url, {
         method,
