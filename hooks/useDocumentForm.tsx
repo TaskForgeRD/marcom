@@ -62,8 +62,8 @@ export function useDocumentForm(defaultValues?: Partial<FormDataType>) {
 
       const isEditMode = !!selectedMateri;
       const url = isEditMode
-        ? `/api/materi/${selectedMateri?._id}`
-        : "http://localhost:5000/api/materi";
+      ? `https://api-marcom.arisjirat.com/api/materi${selectedMateri?._id}` 
+      : "https://api-marcom.arisjirat.com/api/materi";
       const method = isEditMode ? "PUT" : "POST";
 
       const response = await fetch(url, {

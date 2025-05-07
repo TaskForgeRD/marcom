@@ -1,7 +1,7 @@
 import { PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import SearchInput from "../../../uiRama/searchInput";
-import ButtonWithIcon from "../../../uiRama/buttonWithIcon";
+import SearchInput from "@/app/dashboard/uiRama/searchInput";
+import ButtonWithIcon from "@/app/dashboard/uiRama/buttonWithIcon";
 
 const SearchAndActions = ({
     handleTambahMateri,

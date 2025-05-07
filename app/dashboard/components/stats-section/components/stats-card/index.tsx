@@ -3,7 +3,7 @@ import { useStatsData } from "@/hooks/useStatsData";
 import { statsConfig } from "../../StatsConfig";
 import Card from "@/app/dashboard/uiRama/card";
 
-const StatsCard = () => {
+export default function Page() {
   const {
     selectedPreset,
     waktuLabel,
@@ -34,5 +34,3 @@ const StatsCard = () => {
       </div>
   );
 };
-
-export default StatsCard;

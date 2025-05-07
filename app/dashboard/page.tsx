@@ -1,18 +1,15 @@
-import FilterOption from "./components/filters/filterOption/filterOption";
-import FilterDate from "./components/filters/filterDate/filterDate";
-import MateriTabel from "./components/table/MateriTable";
-import StatsSection from "./components/StatsSection/";
+import FilterMateriSection from "./components/filter-materi-section";
+import FilterDateSection from "@/app/dashboard/components/filter-date-section";
+import MateriTabelSection from "./components/table-materi-section";
+import StatsSection from "./components/stats-section";
 
 export default function Page() {
   return (
     <main className="min-h-screen w-full max-w-full">
-      <FilterDate />
+      <FilterDateSection />
       <StatsSection />
-
-      <section>
-        <FilterOption />
-        <MateriTabel />
-      </section>
+      <FilterMateriSection />
+      <MateriTabelSection />
     </main>
   );
 }

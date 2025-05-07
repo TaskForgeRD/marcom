@@ -3,9 +3,9 @@
 import React from "react";
 import { useStatsData } from "@/hooks/useStatsData";
 import { ChartCard } from "@/app/dashboard/uiRama/chart/ChartCard";
-import { statsConfig } from "@/app/dashboard/components/StatsSection/StatsConfig"; 
+import { statsConfig } from "@/app/dashboard/components/stats-section/StatsConfig"; 
 
-export default function StatsChartCard() {
+export default function Page() {
   const { stats } = useStatsData();
 
   return (

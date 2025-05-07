@@ -2,11 +2,11 @@
 
 import React from "react";
 import { useState } from "react";
-import StatsCard from "./components/StatsCard";
-import StatsChartCard from "./components/StatsChartCard";
+import StatsCard from "./components/stats-card";
+import StatsChartCard from "./components/stats-chart-card";
 import ToggleControls from "@/app/dashboard/uiRama/toggle-controls";
 
-const StatsSection = () => {
+export default function Page() {
   const [onlyVisualDocs, setOnlyVisualDocs] = useState(false);
   const [showStatsSection, setShowStatsSection] = useState(true);
   return (
@@ -27,5 +27,3 @@ const StatsSection = () => {
     </section>
   );
 };
-
-export default StatsSection;
