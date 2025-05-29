@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -11,15 +10,15 @@ import { useMateriStore } from "@/store/useMateriStore";
 
 import { useToast } from "@/hooks/use-toast";
 import { formSchema, FormDataType } from "@/lib/validation";
-import { convertToFormData } from "@/lib/utils"; // Impor fungsi convertFormData
+import { convertToFormData } from "@/lib/utils";
 import { CheckCircle } from "lucide-react";
 
 export function useDocumentForm(defaultValues?: Partial<FormDataType>) {
   const router = useRouter();
   const { toast } = useToast();
 
-  const selectedMateri = useMateriStore((state) => state.selectedMateri); // ambil dari store
-  const fetchData = useMateriStore((state) => state.fetchData); // buat refresh data setelah update
+  const selectedMateri = useMateriStore((state) => state.selectedMateri);
+  const fetchData = useMateriStore((state) => state.fetchData);
 
   const [isLoading, setIsLoading] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -53,28 +52,32 @@ export function useDocumentForm(defaultValues?: Partial<FormDataType>) {
 
     try {
       const periode =
-      new Date(data.endDate).getFullYear() - new Date(data.startDate).getFullYear();
-    
+        new Date(data.endDate).getFullYear() -
+        new Date(data.startDate).getFullYear();
+
       const dataWithPeriode = {
         ...data,
         startDate: new Date(data.startDate).toISOString().split("T")[0],
         endDate: new Date(data.endDate).toISOString().split("T")[0],
         periode,
       };
-      
+
       const formData = convertToFormData(dataWithPeriode);
 
       const isEditMode = !!selectedMateri;
       const url = isEditMode
-      ? `https://api-marcom.arisjirat.com/api/materi/${selectedMateri?._id}` 
-      : "https://api-marcom.arisjirat.com/api/materi";
+        ? `http://localhost:5000/api/materi/${selectedMateri?._id}`
+        : "http://localhost:5000/api/materi";
       const method = isEditMode ? "PUT" : "POST";
 
-
+      const token = localStorage.getItem("auth_token");
 
       const response = await fetch(url, {
         method,
         body: formData,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (!response.ok) throw new Error("Gagal menyimpan data");
@@ -107,7 +110,7 @@ export function useDocumentForm(defaultValues?: Partial<FormDataType>) {
       reset();
       router.push("/dashboard");
     } catch (error) {
-      console.log(error);
+      console.error(error);
       toast({
         title: "Gagal menyimpan",
         description: "Terjadi kesalahan, coba lagi nanti.",

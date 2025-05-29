@@ -18,6 +18,7 @@ interface MateriRowProps {
 }
 
 const MateriRow: React.FC<MateriRowProps> = ({ materi }) => {
+  console.log(materi)
   const router = useRouter();
   const highlightedId = useMateriStore((state) => state.highlightedId);
   const setSelectedMateri = useMateriStore((state) => state.setSelectedMateri);
@@ -35,19 +36,20 @@ const MateriRow: React.FC<MateriRowProps> = ({ materi }) => {
         materi._id === highlightedId ? "bg-green-100 transition-colors duration-500" : ""
       }`}
     >
-      <TableCell>{materi.brand}</TableCell>
-      <TableCell>{materi.cluster}</TableCell>
+      <TableCell>{materi.brand_name}</TableCell>
+      <TableCell>{materi.cluster_name}</TableCell>
       <TableCell>{materi.fitur}</TableCell>
-      <TableCell>{materi.namaMateri}</TableCell>
+      <TableCell>{materi.nama_materi}</TableCell>
 
       <TableCell>
         <div className="flex flex-col gap-2">
           {materi.dokumenMateri && materi.dokumenMateri.map((dokumen: { _id: Key | null | undefined; thumbnail: string | undefined; linkDokumen: string | undefined; }, index: number) => (
             <div key={index} className="flex items-center gap-2">
               {dokumen.thumbnail && (
+                console.log(dokumen.thumbnail),
                 <Image
+                  alt={materi.nama_materi}
                   src={getImageUrl(dokumen.thumbnail)}
-                  alt={materi.namaMateri}
                   width={50}
                   height={50}
                   unoptimized
@@ -67,13 +69,13 @@ const MateriRow: React.FC<MateriRowProps> = ({ materi }) => {
       <TableCell>{materi.dokumenMateri[0]?.tipeMateri}</TableCell>
 
       <TableCell>
-        <StatusBadge startDate={materi.startDate} endDate={materi.endDate} />
+        <StatusBadge startDate={materi.start_date} endDate={materi.end_date} />
       </TableCell>
 
       <TableCell>{materi.jenis}</TableCell>
 
       <TableCell>
-        {format(new Date(materi.startDate), "yyyy-MM-dd")} - {format(new Date(materi.endDate), "yyyy-MM-dd")}
+        {format(new Date(materi.start_date), "yyyy-MM-dd")} - {format(new Date(materi.end_date), "yyyy-MM-dd")}
       </TableCell>
 
       <TableCell>

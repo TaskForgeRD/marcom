@@ -1,13 +1,18 @@
 export interface Materi {
-  _id: string;
-  brand: string;
-  cluster: string;
+  id: number;
+  brand_id: number;
+  brand_name: string;
+  cluster_id: number;
+  cluster_name: string;
   fitur: string;
-  namaMateri: string;
+  nama_materi: string;
   jenis: string;
-  startDate: string;
-  endDate: string;
+  start_date: string; // ISO string
+  end_date: string;   // ISO string
   periode: string;
+  created_at: string;
+  updated_at: string;
+  user_id: number;
   dokumenMateri: {
     linkDokumen: string;
     thumbnail: string;
