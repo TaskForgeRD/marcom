@@ -66,7 +66,7 @@ export function useDocumentForm(defaultValues?: Partial<FormDataType>) {
 
       const isEditMode = !!selectedMateri;
       const url = isEditMode
-        ? `http://localhost:5000/api/materi/${selectedMateri?._id}`
+        ? `http://localhost:5000/api/materi/${selectedMateri?.id}`
         : "http://localhost:5000/api/materi";
       const method = isEditMode ? "PUT" : "POST";
 
@@ -84,7 +84,7 @@ export function useDocumentForm(defaultValues?: Partial<FormDataType>) {
 
       const result = await response.json();
 
-      useMateriStore.getState().viewMateri(result._id);
+      useMateriStore.getState().viewMateri(result.id);
 
       setTimeout(() => {
         useMateriStore.getState().viewMateri("");

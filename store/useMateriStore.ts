@@ -23,7 +23,6 @@ export const useMateriStore = create<MateriStore>()(
         if (!response.ok) throw new Error("Gagal mengambil data");
     
         const result = await response.json();
-        console.log(result)
         set({ data: result.reverse(), loading: false });
       } catch (error) {
         console.error(error);

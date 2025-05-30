@@ -18,37 +18,38 @@ interface MateriRowProps {
 }
 
 const MateriRow: React.FC<MateriRowProps> = ({ materi }) => {
-  console.log(materi)
   const router = useRouter();
   const highlightedId = useMateriStore((state) => state.highlightedId);
   const setSelectedMateri = useMateriStore((state) => state.setSelectedMateri);
 
   const handleRowClick = () => {
     setSelectedMateri(materi); 
-    router.push(`/dashboard/form-materi/${materi._id}?mode=view`);
+    router.push(`/dashboard/form-materi/${materi.id}?mode=view`);
   };
+
+
 
   return (
     <TableRow
-      key={materi._id}
+      key={materi.id}
       onClick={() => handleRowClick()}
       className={`cursor-pointer ${
-        materi._id === highlightedId ? "bg-green-100 transition-colors duration-500" : ""
+        
+        materi.id === highlightedId ? "bg-green-100 transition-colors duration-500" : ""
       }`}
     >
-      <TableCell>{materi.brand_name}</TableCell>
-      <TableCell>{materi.cluster_name}</TableCell>
+      <TableCell>{materi.brand}</TableCell>
+      <TableCell>{materi.cluster}</TableCell>
       <TableCell>{materi.fitur}</TableCell>
-      <TableCell>{materi.nama_materi}</TableCell>
+      <TableCell>{materi.namaMateri}</TableCell>
 
       <TableCell>
         <div className="flex flex-col gap-2">
-          {materi.dokumenMateri && materi.dokumenMateri.map((dokumen: { _id: Key | null | undefined; thumbnail: string | undefined; linkDokumen: string | undefined; }, index: number) => (
+          {materi.dokumenMateri && materi.dokumenMateri.map((dokumen: { id: Key | null | undefined; thumbnail: string | undefined; linkDokumen: string | undefined; }, index: number) => (
             <div key={index} className="flex items-center gap-2">
               {dokumen.thumbnail && (
-                console.log(dokumen.thumbnail),
                 <Image
-                  alt={materi.nama_materi}
+                  alt={materi.namaMateri}
                   src={getImageUrl(dokumen.thumbnail)}
                   width={50}
                   height={50}
@@ -69,13 +70,13 @@ const MateriRow: React.FC<MateriRowProps> = ({ materi }) => {
       <TableCell>{materi.dokumenMateri[0]?.tipeMateri}</TableCell>
 
       <TableCell>
-        <StatusBadge startDate={materi.start_date} endDate={materi.end_date} />
+        <StatusBadge startDate={materi.startDate} endDate={materi.endDate} />
       </TableCell>
 
       <TableCell>{materi.jenis}</TableCell>
 
       <TableCell>
-        {format(new Date(materi.start_date), "yyyy-MM-dd")} - {format(new Date(materi.end_date), "yyyy-MM-dd")}
+        {format(new Date(materi.startDate), "yyyy-MM-dd")} - {format(new Date(materi.endDate), "yyyy-MM-dd")}
       </TableCell>
 
       <TableCell>

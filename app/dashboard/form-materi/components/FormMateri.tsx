@@ -28,6 +28,10 @@ export default function FormMateri({ mode }: FormMateriProps) {
     onSubmit
   } = useDocumentForm(selectedMateri ?? undefined);
 
+  const handleCancel = () => {
+    router.push("/dashboard");
+  };
+
   return (
     <FormProvider {...methods}>
       <div className="py-6 space-y-1 text-center">
@@ -61,9 +65,10 @@ export default function FormMateri({ mode }: FormMateriProps) {
           primaryLabel={isViewMode ? "Edit Materi Komunikasi" : "Simpan"}
           onPrimaryClick={() => {
             if (isViewMode) {
-              router.push(`/dashboard/form-materi/${selectedMateri?._id}?mode=edit`);
+              router.push(`/dashboard/form-materi/${selectedMateri?.id}?mode=edit`);
             }
           }}
+          onCancel={handleCancel} 
           isViewMode={isViewMode}
         />
 

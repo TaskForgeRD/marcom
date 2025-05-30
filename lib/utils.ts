@@ -16,24 +16,33 @@ export const getImageUrl = (path?: string) => {
   return `http://localhost:5000/uploads/${path}`;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function convertToFormData(data: any): FormData {
   const formData = new FormData();
 
-  for (const key of ['brand', 'cluster', 'fitur', 'namaMateri', 'jenis', 'startDate', 'endDate', 'periode']) {
-    if (data[key] !== undefined) {
+  // Add basic fields
+  Object.keys(data).forEach(key => {
+    if (key !== 'dokumenMateri') {
       formData.append(key, data[key]);
     }
-  }
+  });
 
-  formData.append('dokumenMateriCount', data.dokumenMateri.length.toString());
+  // Add dokumen count
+  formData.append('dokumenMateriCount', data.dokumenMateri?.length.toString() || '0');
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  data.dokumenMateri.forEach((doc: any, index: number) => {
-    formData.append(`dokumenMateri[${index}][linkDokumen]`, doc.linkDokumen);
-    formData.append(`dokumenMateri[${index}][tipeMateri]`, doc.tipeMateri);
-    formData.append(`dokumenMateri[${index}][keywords]`, JSON.stringify(doc.keywords));
-    formData.append(`dokumenMateri[${index}][thumbnail]`, doc.thumbnail);
+  // Add dokumen data
+  data.dokumenMateri?.forEach((dokumen: any, index: number) => {
+    formData.append(`dokumenMateri[${index}][linkDokumen]`, dokumen.linkDokumen || '');
+    formData.append(`dokumenMateri[${index}][tipeMateri]`, dokumen.tipeMateri || '');
+    
+    // Handle thumbnail - could be File object or existing path string
+    if (dokumen.thumbnail instanceof File) {
+      formData.append(`dokumenMateri[${index}][thumbnail]`, dokumen.thumbnail);
+    } else if (typeof dokumen.thumbnail === 'string' && dokumen.thumbnail) {
+      // Send existing thumbnail path
+      formData.append(`dokumenMateri[${index}][existingThumbnail]`, dokumen.thumbnail);
+    }
+    
+    formData.append(`dokumenMateri[${index}][keywords]`, JSON.stringify(dokumen.keywords || []));
   });
 
   return formData;

@@ -38,7 +38,7 @@ export default function TableMateriSection() {
         </TableHeader>
         <TableBody>
           {paginatedData.length > 0 ? (
-            paginatedData.map((materi) => <MateriRow key={materi.nama_materi} materi={materi} />)
+            paginatedData.map((materi) => <MateriRow key={materi.namaMateri} materi={materi} />)
           ) : (
             <TableRow>
               <TableCell colSpan={10} className="text-center text-gray-500 py-4">

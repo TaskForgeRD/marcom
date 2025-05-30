@@ -35,7 +35,6 @@ export const useStatsData = () => {
   };
 
   const stats = useMemo(() => {
-    console.log(filteredMateri)
     return {
       total: getFilteredStats(filteredMateri, () => true, dateRange),
       fitur: {
