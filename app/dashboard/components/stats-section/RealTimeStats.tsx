@@ -38,6 +38,8 @@ export default function RealTimeStats() {
     });
   };
 
+  console.log(statsMap)
+
   return (
     <div className="space-y-4">
       {/* Real-time Status Header */}

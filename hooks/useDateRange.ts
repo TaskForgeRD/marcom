@@ -1,6 +1,6 @@
 import React from "react";
 import { PresetDate } from "../constants/preset-date";
-import { useFilterStore } from "@/store/useFilterStore";
+import { useFilterStore } from "@/stores/useFilterStore";
 import { DateRange } from "react-day-picker";
 
 const useDateRange = () => {
@@ -9,8 +9,8 @@ const useDateRange = () => {
   const today = React.useMemo(() => new Date(), []);
 
   const [dateRange, setDateRange] = React.useState<{ from: Date; to: Date } | undefined>(
-    tempFilters.startDate && tempFilters.endDate
-      ? { from: new Date(tempFilters.startDate), to: new Date(tempFilters.endDate) }
+    tempFilters.start_date && tempFilters.end_date
+      ? { from: new Date(tempFilters.start_date), to: new Date(tempFilters.end_date) }
       : undefined
   );
 
@@ -30,12 +30,12 @@ const useDateRange = () => {
   const handleDateChange = React.useCallback((range: DateRange | undefined) => {
     if (!range?.from) {
       setDateRange(undefined);
-      setTempFilter("startDate", "");
-      setTempFilter("endDate", "");
+      setTempFilter("start_date", "");
+      setTempFilter("end_date", "");
     } else {
       setDateRange({ from: range.from, to: range.to ?? range.from }); 
-      setTempFilter("startDate", range.from.toISOString());
-      setTempFilter("endDate", (range.to ?? range.from).toISOString());
+      setTempFilter("start_date", range.from.toISOString());
+      setTempFilter("end_date", (range.to ?? range.from).toISOString());
     }
     applyFilters();
   }, [setTempFilter, applyFilters]);
@@ -50,14 +50,14 @@ const useDateRange = () => {
   
     if (preset === PresetDate.ALL_TIME) {
       setDateRange(undefined);
-      setTempFilter("startDate", "");
-      setTempFilter("endDate", "");
+      setTempFilter("start_date", "");
+      setTempFilter("end_date", "");
     } else {
       const range = presetRanges[preset];
       if (range) {
         setDateRange(range);
-        setTempFilter("startDate", range.from.toISOString());
-        setTempFilter("endDate", range.to.toISOString());
+        setTempFilter("start_date", range.from.toISOString());
+        setTempFilter("end_date", range.to.toISOString());
       }
     }
   

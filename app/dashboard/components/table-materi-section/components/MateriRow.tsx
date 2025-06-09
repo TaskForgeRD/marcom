@@ -9,7 +9,7 @@ import { getImageUrl } from "@/lib/utils";
 
 import { useRouter } from "next/navigation";
 
-import { useMateriStore } from "../../../../../store/useMateriStore";
+import { useMateri } from "@/stores/useMateri";
 import { Key } from "react";
 
 interface MateriRowProps {
@@ -19,15 +19,15 @@ interface MateriRowProps {
 
 const MateriRow: React.FC<MateriRowProps> = ({ materi }) => {
   const router = useRouter();
-  const highlightedId = useMateriStore((state) => state.highlightedId);
-  const setSelectedMateri = useMateriStore((state) => state.setSelectedMateri);
+  const highlightedId = useMateri((state) => state.highlightedId);
+  const setSelectedMateri = useMateri((state) => state.setSelectedMateri);
 
   const handleRowClick = () => {
     setSelectedMateri(materi); 
     router.push(`/dashboard/form-materi/${materi.id}?mode=view`);
   };
 
-
+  console.log(materi)
 
   return (
     <TableRow
@@ -35,13 +35,13 @@ const MateriRow: React.FC<MateriRowProps> = ({ materi }) => {
       onClick={() => handleRowClick()}
       className={`cursor-pointer ${
         
-        materi.id === highlightedId ? "bg-green-100 transition-colors duration-500" : ""
+        materi.id === highlightedId ? "bg-green-100 transition-colors duration-5000" : ""
       }`}
     >
       <TableCell>{materi.brand}</TableCell>
       <TableCell>{materi.cluster}</TableCell>
       <TableCell>{materi.fitur}</TableCell>
-      <TableCell>{materi.namaMateri}</TableCell>
+      <TableCell>{materi.nama_materi}</TableCell>
 
       <TableCell>
         <div className="flex flex-col gap-2">
@@ -49,7 +49,7 @@ const MateriRow: React.FC<MateriRowProps> = ({ materi }) => {
             <div key={index} className="flex items-center gap-2">
               {dokumen.thumbnail && (
                 <Image
-                  alt={materi.namaMateri}
+                  alt={materi.nama_materi}
                   src={getImageUrl(dokumen.thumbnail)}
                   width={50}
                   height={50}
@@ -70,13 +70,13 @@ const MateriRow: React.FC<MateriRowProps> = ({ materi }) => {
       <TableCell>{materi.dokumenMateri[0]?.tipeMateri}</TableCell>
 
       <TableCell>
-        <StatusBadge startDate={materi.startDate} endDate={materi.endDate} />
+        <StatusBadge start_date={materi.start_date} end_date={materi.end_date} />
       </TableCell>
 
       <TableCell>{materi.jenis}</TableCell>
 
       <TableCell>
-        {format(new Date(materi.startDate), "yyyy-MM-dd")} - {format(new Date(materi.endDate), "yyyy-MM-dd")}
+        {format(new Date(materi.start_date), "yyyy-MM-dd")} - {format(new Date(materi.end_date), "yyyy-MM-dd")}
       </TableCell>
 
       <TableCell>

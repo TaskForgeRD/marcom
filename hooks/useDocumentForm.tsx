@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { useMateriStore } from "@/store/useMateriStore";
+import { useMateri } from "@/stores/useMateri";
 
 import { useToast } from "@/hooks/use-toast";
 import { formSchema, FormDataType } from "@/lib/validation";
@@ -17,8 +17,8 @@ export function useDocumentForm(defaultValues?: Partial<FormDataType>) {
   const router = useRouter();
   const { toast } = useToast();
 
-  const selectedMateri = useMateriStore((state) => state.selectedMateri);
-  const fetchData = useMateriStore((state) => state.fetchData);
+  const selectedMateri = useMateri((state) => state.selectedMateri);
+  const fetchData = useMateri((state) => state.fetchData);
 
   const [isLoading, setIsLoading] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -29,14 +29,14 @@ export function useDocumentForm(defaultValues?: Partial<FormDataType>) {
       brand: "",
       cluster: "",
       fitur: "",
-      namaMateri: "",
+      nama_materi: "", 
       jenis: "",
-      startDate: "",
-      endDate: "",
-      dokumenMateri: [
+      start_date: "",  
+      end_date: "",    
+      dokumenMateri: [ 
         {
-          linkDokumen: "",
-          tipeMateri: "",
+          linkDokumen: "",  
+          tipeMateri: "",   
           thumbnail: "",
           keywords: [""],
         },
@@ -52,13 +52,13 @@ export function useDocumentForm(defaultValues?: Partial<FormDataType>) {
 
     try {
       const periode =
-        new Date(data.endDate).getFullYear() -
-        new Date(data.startDate).getFullYear();
+        new Date(data.end_date).getFullYear() -
+        new Date(data.start_date).getFullYear();
 
       const dataWithPeriode = {
         ...data,
-        startDate: new Date(data.startDate).toISOString().split("T")[0],
-        endDate: new Date(data.endDate).toISOString().split("T")[0],
+        start_date: new Date(data.start_date).toISOString().split("T")[0],
+        end_date: new Date(data.end_date).toISOString().split("T")[0],
         periode,
       };
 
@@ -70,7 +70,10 @@ export function useDocumentForm(defaultValues?: Partial<FormDataType>) {
         : "http://localhost:5000/api/materi";
       const method = isEditMode ? "PUT" : "POST";
 
-      const token = localStorage.getItem("auth_token");
+      const raw = localStorage.getItem("marcom-auth-store");
+      const token = raw ? JSON.parse(raw)?.state?.token : null;
+
+      console.log(data)
 
       const response = await fetch(url, {
         method,
@@ -84,10 +87,10 @@ export function useDocumentForm(defaultValues?: Partial<FormDataType>) {
 
       const result = await response.json();
 
-      useMateriStore.getState().viewMateri(result.id);
+      useMateri.getState().viewMateri(result.id);
 
       setTimeout(() => {
-        useMateriStore.getState().viewMateri("");
+        useMateri.getState().viewMateri("");
       }, 5000);
 
       await fetchData();

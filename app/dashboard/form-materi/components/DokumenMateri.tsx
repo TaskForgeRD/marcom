@@ -27,6 +27,7 @@ export default function DokumenMateri({ readOnly = true }: DokumenMateriProps) {
     });
   };
 
+  console.log("Fields", fields);
 
   return (
     <div className="space-y-6">

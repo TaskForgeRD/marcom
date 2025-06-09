@@ -29,7 +29,8 @@ export const useSocket = (): UseSocketReturn => {
   const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
-    const token = localStorage.getItem('auth_token');
+    const raw = localStorage.getItem("marcom-auth-store");
+    const token = raw ? JSON.parse(raw)?.state?.token : null;
     
     if (!token) {
       setError('No authentication token found');

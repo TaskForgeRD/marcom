@@ -69,7 +69,7 @@ export const getFilteredStats = <T>(
 
   const currentList = data.filter(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (item: any) => isInRangeInternal(item.startDate) && filterFn(item)
+    (item: any) => isInRangeInternal(item.start_date) && filterFn(item)
   );
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -78,7 +78,7 @@ export const getFilteredStats = <T>(
     const rangeDiff = dayjs(dateRange.to).diff(dateRange.from, "day") + 1;
     const prevStart = dayjs(dateRange.from).subtract(rangeDiff, "day");
     const prevEnd = dayjs(dateRange.from).subtract(1, "day");
-    const itemDate = dayjs(item.startDate);
+    const itemDate = dayjs(item.start_date);
     return itemDate.isAfter(prevStart, "day") && itemDate.isBefore(prevEnd, "day") && filterFn(item);
   });
 

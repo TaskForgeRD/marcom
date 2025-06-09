@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { logger } from "../middleware/logger";
 import { MateriStore } from "../types/materi"; 
 
-export const useMateriStore = create<MateriStore>()(
+export const useMateri = create<MateriStore>()(
   logger((set) => ({
     data: [],
     loading: true,
@@ -12,17 +12,24 @@ export const useMateriStore = create<MateriStore>()(
     fetchData: async () => {
       set({ loading: true });
       try {
-        const token = localStorage.getItem("auth_token"); // Ambil token dari localStorage
+        const raw = localStorage.getItem("marcom-auth-store");
+        const token = raw ? JSON.parse(raw)?.state?.token : null;
+    
+        if (!token) throw new Error("Token tidak ditemukan");
+    
         const response = await fetch("http://localhost:5000/api/materi", {
           headers: {
             'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json', // opsional tapi umum
+            'Content-Type': 'application/json',
           },
         });
     
         if (!response.ok) throw new Error("Gagal mengambil data");
     
         const result = await response.json();
+    
+        console.log("🔍 RAW API Response:", result[0]);
+    
         set({ data: result.reverse(), loading: false });
       } catch (error) {
         console.error(error);
@@ -32,6 +39,9 @@ export const useMateriStore = create<MateriStore>()(
     setCurrentPage: (page) => set({ currentPage: page }),
     viewMateri: (id) => set({ highlightedId: id }),
     selectedMateri: null,
-    setSelectedMateri: (materi) => set({ selectedMateri: materi }),
+    setSelectedMateri: (materi) => {
+      console.log("🔄 Setting selectedMateri:", materi);
+      set({ selectedMateri: materi });
+    },
   }))
 );

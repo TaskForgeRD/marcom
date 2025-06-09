@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
-import { useAuth } from './AuthContext';
+import { useAuthStore } from '@/stores/auth.store'; // sesuaikan path
 
 interface SocketContextType {
   socket: Socket | null;
@@ -32,15 +32,18 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [onlineUsers, setOnlineUsers] = useState(0);
-  const { user } = useAuth();
+  const { user } = useAuthStore();
 
   useEffect(() => {
     if (!user) return;
 
+    const raw = localStorage.getItem("marcom-auth-store");
+    const token = raw ? JSON.parse(raw)?.state?.token : null;
+
     // Initialize socket connection
     const newSocket = io(process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000', {
       auth: {
-        token: localStorage.getItem('auth_token'),
+        token: token,
         userId: user.id,
         userName: user.name,
       },

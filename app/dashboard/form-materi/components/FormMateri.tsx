@@ -6,18 +6,29 @@ import { useDocumentForm } from "../../../../hooks/useDocumentForm";
 import InformasiUmum from "./InformasiUmum";
 import DokumenMateri from "./DokumenMateri";
 import FormFooter from "./FormFooter";
-import { useMateriStore } from "@/store/useMateriStore";
+import { useMateri } from "@/stores/useMateri";
 
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
+// Tambahkan prop materiId
 interface FormMateriProps {
   mode?: string;
+  materiId?: string; // ← ini penting untuk tahu mana materi yang dipilih
 }
 
 export default function FormMateri({ mode }: FormMateriProps) {
   const router = useRouter();
-  const selectedMateri = useMateriStore((state) => state.selectedMateri);
+  const selectedMateri = useMateri((state) => state.selectedMateri);
   const isViewMode = mode === "view";
+
+  const { data } = useMateri();
+
+  console.log(data)
+
+  useEffect(() => {
+    console.log("selectedMateri in FormMateri:", selectedMateri);
+  }, [selectedMateri]);
 
   const {
     methods,
@@ -31,6 +42,9 @@ export default function FormMateri({ mode }: FormMateriProps) {
   const handleCancel = () => {
     router.push("/dashboard");
   };
+
+  const brandValue = methods.watch("cluster");
+  console.log("Current brand value:", brandValue);
 
   return (
     <FormProvider {...methods}>
@@ -49,7 +63,7 @@ export default function FormMateri({ mode }: FormMateriProps) {
 
         <h1 className="text-2xl font-semibold text-foreground">
           {(isViewMode || mode === "edit")
-            ? selectedMateri?.namaMateri ?? "-"
+            ? selectedMateri?.nama_materi ?? "-"
             : "Tambah Materi Komunikasi"}
         </h1>
       </div>
