@@ -3,8 +3,8 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { useFilterStore } from "@/stores/useFilterStore";
-import { useMultiApiStore } from "@/stores/APIStore";
+import { useFilterStore } from "@/stores/filter-materi.store";
+import { useMultiApiStore } from "@/stores/api.store";
 import useSelectedFilters from "@/hooks/useSelectedFilters";
 import HorizontalLine from "@/app/dashboard/uiRama/horizontalLine";
 import FilterGroup from "@/app/dashboard/components/filter-materi-section/components/FilterGroup";

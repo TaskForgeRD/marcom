@@ -6,7 +6,7 @@ import { useDocumentForm } from "../../../../hooks/useDocumentForm";
 import InformasiUmum from "./InformasiUmum";
 import DokumenMateri from "./DokumenMateri";
 import FormFooter from "./FormFooter";
-import { useMateri } from "@/stores/useMateri";
+import { useMateri } from "@/stores/materi.store";
 
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";

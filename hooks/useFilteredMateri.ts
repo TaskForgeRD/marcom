@@ -1,12 +1,10 @@
 import { useMemo } from "react";
-import { useMateri } from "@/stores/useMateri";
-import { useFilterStore } from "../stores/useFilterStore";
+import { useMateri } from "@/stores/materi.store";
+import { useFilterStore } from "../stores/filter-materi.store";
 
 export default function useFilteredMateri() {
   const { data } = useMateri();
   const { filters, searchQuery } = useFilterStore();
-
-  console.log(data)
 
   const filteredData = useMemo(() => {
     const today = new Date();

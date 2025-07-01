@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { useMateri } from "@/stores/useMateri";
+import { useMateri } from "@/stores/materi.store";
 
 import { useToast } from "@/hooks/use-toast";
 import { formSchema, FormDataType } from "@/lib/validation";

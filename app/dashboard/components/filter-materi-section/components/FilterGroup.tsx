@@ -1,7 +1,7 @@
 // FilterGroup.tsx
 import { useMemo } from "react";
 import SelectField from "../../../uiRama/selectField";
-import { useMultiApiStore } from "@/stores/APIStore";
+import { useMultiApiStore } from "@/stores/api.store";
 import { FilterKey } from "../../../../../constants/filter-options";
 
 type FilterGroupProps = {
@@ -18,8 +18,8 @@ const FilterGroup = ({ selectedFilters, handleFilterChange }: FilterGroupProps) 
       brand: brands.map(brand => brand.name),
       cluster: clusters.map(cluster => cluster.name),
       fitur: fitur.map(f => f.name),
-      status: ["Aktif", "Expired"], // Static data
-      jenis: jenis.map(j => j.name), // Mengganti 'tipe' dengan 'jenis'
+      status: ["Aktif", "Expired"],
+      jenis: jenis.map(j => j.name), 
     };
   }, [brands, clusters, fitur, jenis]);
 

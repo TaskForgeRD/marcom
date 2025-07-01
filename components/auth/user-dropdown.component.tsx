@@ -49,7 +49,7 @@ export const UserDropdown = ({ showWelcome = false, className }: UserDropdownPro
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="p-2 rounded-full hover:bg-accent transition-colors">
             <Avatar className="h-8 w-8">
-              <AvatarImage src={user.avatar_url} alt={user.name} />
+              <AvatarImage src={user.avatar_url ?? undefined} alt={user.name} />
               <AvatarFallback className="text-xs font-medium">
                 {getUserInitials(user.name)}
               </AvatarFallback>

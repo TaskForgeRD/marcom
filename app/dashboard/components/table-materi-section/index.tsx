@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useMateri } from "@/stores/useMateri";
+import { useMateri } from "@/stores/materi.store";
 import useFilteredMateri from "@/hooks/useFilteredMateri";
 import { paginate } from "@/lib/paginate";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";

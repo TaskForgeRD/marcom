@@ -9,7 +9,7 @@ import { getImageUrl } from "@/lib/utils";
 
 import { useRouter } from "next/navigation";
 
-import { useMateri } from "@/stores/useMateri";
+import { useMateri } from "@/stores/materi.store";
 import { Key } from "react";
 
 interface MateriRowProps {

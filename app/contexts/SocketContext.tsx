@@ -50,7 +50,6 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
       transports: ['websocket', 'polling'],
     });
 
-    // Connection events
     newSocket.on('connect', () => {
       console.log('Connected to server');
       setIsConnected(true);

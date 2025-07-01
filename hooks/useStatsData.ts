@@ -1,6 +1,6 @@
 // hooks/useStatsData.ts - Fixed filter functionality
 import { useMemo } from "react";
-import { useFilterStore } from "@/stores/useFilterStore";
+import { useFilterStore } from "@/stores/filter-materi.store";
 import useFilteredMateri from "@/hooks/useFilteredMateri";
 import { useSocket } from "@/hooks/useSocket";
 import dayjs from "dayjs";
@@ -34,8 +34,6 @@ export const useStatsData = () => {
   };
 
   const stats = useMemo(() => {
-    // SOLUTION 1: Always use filtered data for accurate filtering
-    // Remove socket stats dependency for filtered results
     const baseStats = {
       total: getFilteredStats(filteredMateri, () => true, dateRange),
       fitur: getFilteredStats(filteredMateri, (m) => m.fitur, dateRange, (m) => m.fitur?.trim().toLowerCase()),
@@ -69,14 +67,14 @@ export const useStatsData = () => {
         chartData: getMonthlyChartData((m) => m.dokumenMateri?.length > 0) 
       },
     };
-  }, [filteredMateri, dateRange]); // Remove socketStats dependency
+  }, [filteredMateri, dateRange]); 
 
   return {
     selectedPreset,
     waktuLabel,
     loading: socketLoading,
     error: socketError,
-    lastUpdated: socketStats?.lastUpdated, // Keep socket info for real-time indicators
+    lastUpdated: socketStats?.lastUpdated,
     refreshStats,
     stats: Object.fromEntries(
       Object.entries(stats).map(([key, val]) => [

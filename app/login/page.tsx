@@ -120,7 +120,7 @@ export default function LoginPage() {
             Selamat Datang di Marcom
           </CardTitle>
           <CardDescription className="text-sm text-muted-foreground">
-            Masuk ke akun Anda untuk mengakses materi dan dashboard
+            Masuk ke akun Anda untuk mengakses dashboard
           </CardDescription>
         </CardHeader>
         
@@ -159,21 +159,6 @@ export default function LoginPage() {
             </p>
           </div>
 
-          {/* Debug info in development */}
-          {process.env.NODE_ENV === 'development' && (
-            <details className="mt-4">
-              <summary className="text-xs text-muted-foreground cursor-pointer">
-                Debug Info (Development Only)
-              </summary>
-              <div className="mt-2 p-2 bg-gray-100 dark:bg-gray-800 rounded text-xs">
-                <div>Auth Loading: {authLoading.toString()}</div>
-                <div>Is Authenticated: {isAuthenticated.toString()}</div>
-                <div>Processing Callback: {isProcessingCallback.toString()}</div>
-                <div>Callback Processed: {callbackProcessed.toString()}</div>
-                <div>Search Params: {searchParams.toString()}</div>
-              </div>
-            </details>
-          )}
         </CardContent>
       </Card>
     </div>

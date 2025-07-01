@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useMultiApiStore } from "@/stores/APIStore";
+import { useMultiApiStore } from "@/stores/api.store";
 
 export function useInformasiUmumOptions() {
   const {

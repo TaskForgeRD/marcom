@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useFilterStore } from "@/stores/useFilterStore";
+import { useFilterStore } from "@/stores/filter-materi.store";
 import { FilterKey } from "@/constants/filter-options";
 
 export default function useSelectedFilters() {
