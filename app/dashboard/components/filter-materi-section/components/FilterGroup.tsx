@@ -23,6 +23,8 @@ const FilterGroup = ({ selectedFilters, handleFilterChange }: FilterGroupProps) 
     };
   }, [brands, clusters, fitur, jenis]);
 
+  console.log(filterOptions)
+
   // Filter keys untuk ditampilkan
   const filterKeys: FilterKey[] = ["brand", "cluster", "fitur", "status", "jenis"];
 

@@ -153,24 +153,48 @@ export const useAuthStore = create<AuthStore>()(
           } else {
             const errorMessage = response.message || 'Login callback failed - no token or user data received';
             console.error('Google callback failed:', errorMessage, response);
+            
+            // Check if it's a "user not registered" error
+            if (response.error_code === 'USER_NOT_REGISTERED' || 
+                errorMessage.includes('belum terdaftar') || 
+                errorMessage.includes('not registered')) {
+              // Create a specific error for account not found
+              const accountNotFoundError = new Error(errorMessage);
+              (accountNotFoundError as any).code = 'USER_NOT_REGISTERED';
+              throw accountNotFoundError;
+            }
+            
             throw new Error(errorMessage);
           }
-        } catch (error) {
+        } catch (error: any) {
           console.error('Google callback failed:', error);
           
           set((state) => {
             state.isLoading = false;
           });
 
-          if (error instanceof AuthApiError) {
+          // Handle specific error types
+          if (error.code === 'USER_NOT_REGISTERED') {
+            // Don't show toast for this error - let the UI handle it
+            console.log('User not registered, UI will show specific error screen');
+            throw error; // Re-throw to let UI handle it
+          } else if (error instanceof AuthApiError) {
             if (error.code === 'INVALID_CALLBACK_DATA') {
               toast.error('Format respons callback tidak valid');
               console.error('Invalid callback data details:', error.details);
+            } else if (error.status === 403) {
+              // This is likely a "user not registered" error from backend
+              const accountNotFoundError = new Error(error.message);
+              (accountNotFoundError as any).code = 'USER_NOT_REGISTERED';
+              throw accountNotFoundError;
             } else {
               toast.error(`Callback Google gagal: ${error.message}`);
             }
           } else {
-            toast.error('Gagal memproses callback login Google');
+            // Only show generic error toast if it's not a "user not registered" error
+            if (!error.message?.includes('belum terdaftar') && !error.message?.includes('not registered')) {
+              toast.error('Gagal memproses callback login Google');
+            }
           }
           
           return false;
