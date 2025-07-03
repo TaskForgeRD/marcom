@@ -1,12 +1,12 @@
 interface StatusBadgeProps {
-    startDate: string;
-    endDate: string;
+    start_date: string;
+    end_date: string;
   }
   
-const StatusBadge: React.FC<StatusBadgeProps> = ({ startDate, endDate }) => {
+const StatusBadge: React.FC<StatusBadgeProps> = ({ start_date, end_date }) => {
   const today = new Date();
-  const start = new Date(startDate);
-  const end = new Date(endDate);
+  const start = new Date(start_date);
+  const end = new Date(end_date);
 
   const isActive = today >= start && today <= end;
 

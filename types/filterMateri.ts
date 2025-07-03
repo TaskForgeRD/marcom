@@ -3,9 +3,9 @@ export type Filters = {
     cluster?: string;
     fitur?: string;
     status?: string;
-    tipe?: string;
-    startDate?: string;
-    endDate?: string;
+    jenis?: string;
+    start_date?: string;
+    end_date?: string;
   };
   
   export interface FilterStore {

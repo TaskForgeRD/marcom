@@ -1,25 +1,24 @@
 "use client";
 
 import React from "react";
-
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { useMateriStore } from "@/store/useMateriStore";
+import { useMateri } from "@/stores/materi.store";
 
 import { useToast } from "@/hooks/use-toast";
 import { formSchema, FormDataType } from "@/lib/validation";
-import { convertToFormData } from "@/lib/utils"; // Impor fungsi convertFormData
+import { convertToFormData } from "@/lib/utils";
 import { CheckCircle } from "lucide-react";
 
 export function useDocumentForm(defaultValues?: Partial<FormDataType>) {
   const router = useRouter();
   const { toast } = useToast();
 
-  const selectedMateri = useMateriStore((state) => state.selectedMateri); // ambil dari store
-  const fetchData = useMateriStore((state) => state.fetchData); // buat refresh data setelah update
+  const selectedMateri = useMateri((state) => state.selectedMateri);
+  const fetchData = useMateri((state) => state.fetchData);
 
   const [isLoading, setIsLoading] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -30,14 +29,14 @@ export function useDocumentForm(defaultValues?: Partial<FormDataType>) {
       brand: "",
       cluster: "",
       fitur: "",
-      namaMateri: "",
+      nama_materi: "", 
       jenis: "",
-      startDate: "",
-      endDate: "",
-      dokumenMateri: [
+      start_date: "",  
+      end_date: "",    
+      dokumenMateri: [ 
         {
-          linkDokumen: "",
-          tipeMateri: "",
+          linkDokumen: "",  
+          tipeMateri: "",   
           thumbnail: "",
           keywords: [""],
         },
@@ -53,38 +52,45 @@ export function useDocumentForm(defaultValues?: Partial<FormDataType>) {
 
     try {
       const periode =
-      new Date(data.endDate).getFullYear() - new Date(data.startDate).getFullYear();
-    
+        new Date(data.end_date).getFullYear() -
+        new Date(data.start_date).getFullYear();
+
       const dataWithPeriode = {
         ...data,
-        startDate: new Date(data.startDate).toISOString().split("T")[0],
-        endDate: new Date(data.endDate).toISOString().split("T")[0],
+        start_date: new Date(data.start_date).toISOString().split("T")[0],
+        end_date: new Date(data.end_date).toISOString().split("T")[0],
         periode,
       };
-      
+
       const formData = convertToFormData(dataWithPeriode);
 
       const isEditMode = !!selectedMateri;
       const url = isEditMode
-      ? `https://api-marcom.arisjirat.com/api/materi/${selectedMateri?._id}` 
-      : "https://api-marcom.arisjirat.com/api/materi";
+        ? `http://localhost:5000/api/materi/${selectedMateri?.id}`
+        : "http://localhost:5000/api/materi";
       const method = isEditMode ? "PUT" : "POST";
 
+      const raw = localStorage.getItem("marcom-auth-store");
+      const token = raw ? JSON.parse(raw)?.state?.token : null;
 
+      console.log(data)
 
       const response = await fetch(url, {
         method,
         body: formData,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (!response.ok) throw new Error("Gagal menyimpan data");
 
       const result = await response.json();
 
-      useMateriStore.getState().viewMateri(result._id);
+      useMateri.getState().viewMateri(result.id);
 
       setTimeout(() => {
-        useMateriStore.getState().viewMateri("");
+        useMateri.getState().viewMateri("");
       }, 5000);
 
       await fetchData();
@@ -107,7 +113,7 @@ export function useDocumentForm(defaultValues?: Partial<FormDataType>) {
       reset();
       router.push("/dashboard");
     } catch (error) {
-      console.log(error);
+      console.error(error);
       toast({
         title: "Gagal menyimpan",
         description: "Terjadi kesalahan, coba lagi nanti.",

@@ -1,5 +1,8 @@
+// FilterGroup.tsx
+import { useMemo } from "react";
 import SelectField from "../../../uiRama/selectField";
-import { filterOptions, FilterKey } from "../../../../../constants/filter-options";
+import { useMultiApiStore } from "@/stores/api.store";
+import { FilterKey } from "../../../../../constants/filter-options";
 
 type FilterGroupProps = {
   selectedFilters: Partial<Record<FilterKey, string>>;
@@ -7,17 +10,35 @@ type FilterGroupProps = {
 };
 
 const FilterGroup = ({ selectedFilters, handleFilterChange }: FilterGroupProps) => {
+  const { brands, clusters, fitur, jenis } = useMultiApiStore();
+
+  // Memoized filter options berdasarkan data dari API
+  const filterOptions = useMemo(() => {
+    return {
+      brand: brands.map(brand => brand.name),
+      cluster: clusters.map(cluster => cluster.name),
+      fitur: fitur.map(f => f.name),
+      status: ["Aktif", "Expired"],
+      jenis: jenis.map(j => j.name), 
+    };
+  }, [brands, clusters, fitur, jenis]);
+
+  console.log(filterOptions)
+
+  // Filter keys untuk ditampilkan
+  const filterKeys: FilterKey[] = ["brand", "cluster", "fitur", "status", "jenis"];
+
   return (
     <div className="flex items-center space-x-3">
       <span className="text-sm font-medium">Filter</span>
       <div className="grid grid-cols-5 gap-2 w-full">
-        {Object.entries(filterOptions).map(([key, options]) => (
+        {filterKeys.map((key) => (
           <SelectField
             key={key}
             label={key}
-            value={selectedFilters[key as FilterKey] || ""}
-            onChange={(value) => handleFilterChange(key as FilterKey, value)}
-            options={options.map((opt) => ({ value: opt, label: opt }))}
+            value={selectedFilters[key] || ""}
+            onChange={(value) => handleFilterChange(key, value)}
+            options={filterOptions[key].map((opt) => ({ value: opt, label: opt }))}
             showLabel={false}
           />
         ))}

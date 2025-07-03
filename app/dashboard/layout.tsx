@@ -1,52 +1,50 @@
-"use client"
+'use client';
 
-import { ReactNode } from "react";
-import { UserCircle } from "lucide-react";
+import { type ReactNode } from 'react';
+import { ProtectedRoute } from '@/components/auth/protected-route.component';
+import { UserDropdown } from '@/components/auth/user-dropdown.component';
+import { AppSidebar } from '@/app/dashboard/uiRama/sidebar/app-sidebar';
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
+import { CustomTrigger } from '@/app/dashboard/uiRama/sidebar/CustomTrigger';
+import { useIsMobile } from '@/hooks/use-mobile';
 
-
-import { AppSidebar } from "@/app/dashboard/uiRama/sidebar/app-sidebar";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { Toaster } from "@/components/ui/toaster"
-
-import { CustomTrigger } from "@/app/dashboard/uiRama/sidebar/CustomTrigger";
-import { useIsMobile } from "@/hooks/use-mobile";
-
-interface LayoutProps {
+interface DashboardLayoutProps {
   readonly children: ReactNode;
 }
 
 /**
- * Layout utama untuk dashboard dengan sidebar dan header.
+ * Layout utama untuk dashboard dengan sidebar dan header yang responsif.
+ * Menggunakan ProtectedRoute untuk memastikan user sudah terautentikasi.
  */
-export default function Layout({ children }: LayoutProps) {
+export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const isMobile = useIsMobile();
 
   return (
-    <SidebarProvider>
-      {/* Sidebar */}
-      <AppSidebar />
-
-      {/* Kontainer utama */}
-      <SidebarInset>
-        {/* Header */}
-        <header
-          className="
-            sticky top-0 z-50 flex h-16 shrink-0 items-center 
-            justify-between bg-gray-50 px-4 border-b transition-[width,height] ease-linear"
-        >
-          <div className="flex items-center space-x-2">
-            {isMobile && <CustomTrigger />}
-            <span className="text-base font-semibold text-gray-800"></span>
-          </div>
-          <div className="p-2 rounded-full hover:bg-gray-100 transition-all">
-            <UserCircle className="size-6" />
-          </div>
-        </header>
-
-        {/* Konten utama */}
-        <main>{children}</main>
-        <Toaster />
-      </SidebarInset>
-    </SidebarProvider>
+    <ProtectedRoute>
+      <SidebarProvider>
+        {/* Sidebar */}
+        <AppSidebar />
+        
+        {/* Kontainer utama */}
+        <SidebarInset>
+          {/* Header */}
+          <header className="sticky top-0 z-50 flex h-16 shrink-0 items-center justify-between bg-background/80 backdrop-blur-sm px-4 border-b transition-all duration-200">
+            <div className="flex items-center space-x-3">
+              {isMobile && <CustomTrigger />}
+              <h1 className="text-lg font-semibold text-foreground">
+                Dashboard
+              </h1>
+            </div>
+            
+            <UserDropdown showWelcome={!isMobile} />
+          </header>
+          
+          {/* Konten utama */}
+          <main className="flex-1">
+            {children}
+          </main>
+        </SidebarInset>
+      </SidebarProvider>
+    </ProtectedRoute>
   );
 }

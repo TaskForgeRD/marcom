@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useMateriStore } from "@/store/useMateriStore";
+import { useMateri } from "@/stores/materi.store";
 import useFilteredMateri from "@/hooks/useFilteredMateri";
 import { paginate } from "@/lib/paginate";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -10,14 +10,22 @@ import LoadingSpinner from "@/app/dashboard/components/table-materi-section/comp
 import MateriRow from "@/app/dashboard/components/table-materi-section/components/MateriRow";
 
 export default function TableMateriSection() {
-  const { loading, currentPage, itemsPerPage, fetchData } = useMateriStore();
+  const { loading, currentPage, itemsPerPage, fetchData } = useMateri();
   const filteredData = useFilteredMateri();
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
-  const { paginatedData, startIndex, endIndex, total } = paginate(filteredData, currentPage, itemsPerPage);
+  // Sort data berdasarkan created_at atau updated_at (terbaru di atas)
+  const sortedData = [...filteredData].sort((a, b) => {
+    // Gunakan updated_at jika ada, jika tidak gunakan created_at
+    const dateA = new Date(a.updated_at || a.created_at);
+    const dateB = new Date(b.updated_at || b.created_at);
+    return dateB.getTime() - dateA.getTime(); // Descending order (terbaru di atas)
+  });
+
+  const { paginatedData, startIndex, endIndex, total } = paginate(sortedData, currentPage, itemsPerPage);
 
   if (loading) {
     return (
@@ -38,7 +46,7 @@ export default function TableMateriSection() {
         </TableHeader>
         <TableBody>
           {paginatedData.length > 0 ? (
-            paginatedData.map((materi) => <MateriRow key={materi._id} materi={materi} />)
+            paginatedData.map((materi) => <MateriRow key={materi.id} materi={materi} />)
           ) : (
             <TableRow>
               <TableCell colSpan={10} className="text-center text-gray-500 py-4">

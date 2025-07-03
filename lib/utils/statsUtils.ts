@@ -24,13 +24,13 @@ export const getFilteredStats = (
            d.isSameOrBefore(dayjs(dateRange.to), "day");
   };
 
-  const current = data.filter((d) => isInRange(d.startDate) && filterFn(d));
+  const current = data.filter((d) => isInRange(d.start_date) && filterFn(d));
   const prev = data.filter((d) => {
     if (!dateRange) return false;
     const rangeDays = dayjs(dateRange.to).diff(dayjs(dateRange.from), "day") + 1;
     const prevStart = dayjs(dateRange.from).subtract(rangeDays, "day");
     const prevEnd = dayjs(dateRange.from).subtract(1, "day");
-    const dDate = dayjs(d.startDate);
+    const dDate = dayjs(d.start_date);
     return dDate.isAfter(prevStart, "day") && dDate.isBefore(prevEnd, "day") && filterFn(d);
   });
 
