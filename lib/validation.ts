@@ -14,12 +14,14 @@ export const formSchema = z.object({
       linkDokumen: z.string().min(1, "Link dokumen harus diisi"),
       tipeMateri: z.string().min(1, "Tipe materi harus diisi"),
       // Ubah validasi thumbnail untuk menangani File object dan string
-      thumbnail: z.union([
-        z.string(), // untuk URL string
-        z.instanceof(File), // untuk File object dari upload
-        z.null(), // untuk nilai kosong
-        z.undefined() // untuk nilai undefined
-      ]).optional(),
+      thumbnail: z
+        .union([
+          z.string(), // untuk URL string
+          z.instanceof(File), // untuk File object dari upload
+          z.null(), // untuk nilai kosong
+          z.undefined(), // untuk nilai undefined
+        ])
+        .optional(),
       keywords: z.array(z.string()),
     })
   ),

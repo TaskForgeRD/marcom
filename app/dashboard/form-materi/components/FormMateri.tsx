@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { FormProvider } from "react-hook-form";
 import ConfirmDialog from "../../uiRama/confirmDialog";
@@ -24,7 +24,7 @@ export default function FormMateri({ mode }: FormMateriProps) {
 
   const { data } = useMateri();
 
-  console.log(data)
+  console.log(data);
 
   useEffect(() => {
     console.log("selectedMateri in FormMateri:", selectedMateri);
@@ -36,7 +36,7 @@ export default function FormMateri({ mode }: FormMateriProps) {
     isLoading,
     isDialogOpen,
     setIsDialogOpen,
-    onSubmit
+    onSubmit,
   } = useDocumentForm(selectedMateri ?? undefined);
 
   const handleCancel = () => {
@@ -62,8 +62,8 @@ export default function FormMateri({ mode }: FormMateriProps) {
         )}
 
         <h1 className="text-2xl font-semibold text-foreground">
-          {(isViewMode || mode === "edit")
-            ? selectedMateri?.nama_materi ?? "-"
+          {isViewMode || mode === "edit"
+            ? (selectedMateri?.nama_materi ?? "-")
             : "Tambah Materi Komunikasi"}
         </h1>
       </div>
@@ -79,10 +79,12 @@ export default function FormMateri({ mode }: FormMateriProps) {
           primaryLabel={isViewMode ? "Edit Materi Komunikasi" : "Simpan"}
           onPrimaryClick={() => {
             if (isViewMode) {
-              router.push(`/dashboard/form-materi/${selectedMateri?.id}?mode=edit`);
+              router.push(
+                `/dashboard/form-materi/${selectedMateri?.id}?mode=edit`
+              );
             }
           }}
-          onCancel={handleCancel} 
+          onCancel={handleCancel}
           isViewMode={isViewMode}
         />
 

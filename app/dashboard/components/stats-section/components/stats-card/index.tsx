@@ -13,24 +13,25 @@ export default function Page() {
   const statsMap = { total, komunikasi, fitur, aktif, expired, dokumen };
 
   const hideChangeAndSubtext =
-    selectedPreset === "All time" || selectedPreset === "Pilih tanggal tertentu";
+    selectedPreset === "All time" ||
+    selectedPreset === "Pilih tanggal tertentu";
 
   return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 px-4">
-        {statsConfig.map(({ key, title, icon }) => {
-          const { now, changeLabel } = statsMap[key];
-          return (
-            <Card
-              key={key}
-              title={title}
-              value={now.toString()}
-              change={changeLabel}
-              subtext={waktuLabel}
-              icon={icon}
-              showChange={!hideChangeAndSubtext}
-            />
-          );
-        })}
-      </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 px-4">
+      {statsConfig.map(({ key, title, icon }) => {
+        const { now, changeLabel } = statsMap[key];
+        return (
+          <Card
+            key={key}
+            title={title}
+            value={now.toString()}
+            change={changeLabel}
+            subtext={waktuLabel}
+            icon={icon}
+            showChange={!hideChangeAndSubtext}
+          />
+        );
+      })}
+    </div>
   );
-};
+}

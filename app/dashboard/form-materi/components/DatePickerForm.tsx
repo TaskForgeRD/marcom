@@ -6,17 +6,29 @@ import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar"; 
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 
 interface DatePickerProps {
   name: string;
   label: string;
-  readOnly?: boolean; 
+  readOnly?: boolean;
 }
 
-export default function DatePickerForm({ name, label, readOnly = false }: DatePickerProps) {
-  const { setValue, watch, formState: { errors } } = useFormContext();
+export default function DatePickerForm({
+  name,
+  label,
+  readOnly = false,
+}: DatePickerProps) {
+  const {
+    setValue,
+    watch,
+    formState: { errors },
+  } = useFormContext();
   const selectedDate = watch(name);
 
   const [date, setDate] = useState<Date | undefined>(() => {
@@ -43,13 +55,13 @@ export default function DatePickerForm({ name, label, readOnly = false }: DatePi
           <Button
             variant="outline"
             className="w-full flex justify-between"
-            disabled={readOnly}  
+            disabled={readOnly}
           >
             {date ? format(date, "dd/MM/yyyy") : "Pilih tanggal"}
             <CalendarIcon className="ml-2 h-4 w-4" />
           </Button>
         </PopoverTrigger>
-        {!readOnly && (  
+        {!readOnly && (
           <PopoverContent align="start" className="w-auto p-0">
             <Calendar
               mode="single"
@@ -60,7 +72,9 @@ export default function DatePickerForm({ name, label, readOnly = false }: DatePi
           </PopoverContent>
         )}
       </Popover>
-      {errors[name] && <p className="text-red-500">{errors[name]?.message as string}</p>}
+      {errors[name] && (
+        <p className="text-red-500">{errors[name]?.message as string}</p>
+      )}
     </div>
   );
 }

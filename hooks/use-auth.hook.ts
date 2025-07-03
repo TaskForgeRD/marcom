@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
-import { useAuthStore } from '@/stores/auth.store';
+import { useEffect, useRef } from "react";
+import { useAuthStore } from "@/stores/auth.store";
 
 export const useAuth = () => {
   const store = useAuthStore();
@@ -10,17 +10,13 @@ export const useAuth = () => {
 
     const initializeAuth = async () => {
       if (store.token && !store.user && !store.isAuthenticated) {
-        console.log('Token found but no user, verifying token...');
+        console.log("Token found but no user, verifying token...");
         await store.verifyToken();
-      } 
-
-      else if (!store.token) {
-        console.log('No token found, setting as unauthenticated');
+      } else if (!store.token) {
+        console.log("No token found, setting as unauthenticated");
         store.setLoading(false);
-      }
-
-      else if (store.token && store.user && store.isAuthenticated) {
-        console.log('Already authenticated, setting loading to false');
+      } else if (store.token && store.user && store.isAuthenticated) {
+        console.log("Already authenticated, setting loading to false");
         store.setLoading(false);
       }
     };
@@ -35,7 +31,13 @@ export const useAuth = () => {
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [store.token, store.user, store.isAuthenticated, store.verifyToken, store.setLoading]);
+  }, [
+    store.token,
+    store.user,
+    store.isAuthenticated,
+    store.verifyToken,
+    store.setLoading,
+  ]);
 
   return {
     user: store.user,

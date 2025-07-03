@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { type ReactNode } from 'react';
-import { ProtectedRoute } from '@/components/auth/protected-route.component';
-import { UserDropdown } from '@/components/auth/user-dropdown.component';
-import { AppSidebar } from '@/app/dashboard/uiRama/sidebar/app-sidebar';
-import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
-import { CustomTrigger } from '@/app/dashboard/uiRama/sidebar/CustomTrigger';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { type ReactNode } from "react";
+import { ProtectedRoute } from "@/components/auth/protected-route.component";
+import { UserDropdown } from "@/components/auth/user-dropdown.component";
+import { AppSidebar } from "@/app/dashboard/uiRama/sidebar/app-sidebar";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { CustomTrigger } from "@/app/dashboard/uiRama/sidebar/CustomTrigger";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface DashboardLayoutProps {
   readonly children: ReactNode;
@@ -24,7 +24,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       <SidebarProvider>
         {/* Sidebar */}
         <AppSidebar />
-        
+
         {/* Kontainer utama */}
         <SidebarInset>
           {/* Header */}
@@ -35,14 +35,12 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 Dashboard
               </h1>
             </div>
-            
+
             <UserDropdown showWelcome={!isMobile} />
           </header>
-          
+
           {/* Konten utama */}
-          <main className="flex-1">
-            {children}
-          </main>
+          <main className="flex-1">{children}</main>
         </SidebarInset>
       </SidebarProvider>
     </ProtectedRoute>

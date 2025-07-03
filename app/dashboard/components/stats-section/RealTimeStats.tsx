@@ -8,37 +8,39 @@ import { statsConfig } from "./StatsConfig";
 import Card from "@/app/dashboard/uiRama/card";
 
 export default function RealTimeStats() {
-  const { 
-    selectedPreset, 
-    waktuLabel, 
+  const {
+    selectedPreset,
+    waktuLabel,
     stats,
     loading,
     error,
     lastUpdated,
-    refreshStats
+    refreshStats,
   } = useStatsData();
 
-  const statsMap = { 
+  const statsMap = {
     total: stats.total,
     komunikasi: stats.komunikasi,
     fitur: stats.fitur,
     aktif: stats.aktif,
     expired: stats.expired,
-    dokumen: stats.dokumen
+    dokumen: stats.dokumen,
   };
 
-  const hideChangeAndSubtext = selectedPreset === "All time" || selectedPreset === "Pilih tanggal tertentu";
+  const hideChangeAndSubtext =
+    selectedPreset === "All time" ||
+    selectedPreset === "Pilih tanggal tertentu";
 
   const formatLastUpdated = (timestamp: string) => {
     const date = new Date(timestamp);
-    return date.toLocaleTimeString('id-ID', {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
+    return date.toLocaleTimeString("id-ID", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
     });
   };
 
-  console.log(statsMap)
+  console.log(statsMap);
 
   return (
     <div className="space-y-4">
@@ -51,14 +53,14 @@ export default function RealTimeStats() {
             ) : (
               <Wifi className="h-4 w-4 text-green-500" />
             )}
-            <Badge 
-            variant={error ? "destructive" : "secondary"} 
-            className={`text-xs ${!error ? "bg-green-100 text-green-700 border border-green-300" : ""}`}
+            <Badge
+              variant={error ? "destructive" : "secondary"}
+              className={`text-xs ${!error ? "bg-green-100 text-green-700 border border-green-300" : ""}`}
             >
-            {error ? "Offline" : "Live"}
+              {error ? "Offline" : "Live"}
             </Badge>
           </div>
-          
+
           {lastUpdated && (
             <div className="flex items-center space-x-1 text-xs text-muted-foreground">
               <Clock className="h-3 w-3" />
@@ -74,7 +76,9 @@ export default function RealTimeStats() {
           disabled={loading}
           className="h-8"
         >
-          <RefreshCw className={`h-3 w-3 mr-1 ${loading ? 'animate-spin' : ''}`} />
+          <RefreshCw
+            className={`h-3 w-3 mr-1 ${loading ? "animate-spin" : ""}`}
+          />
           Refresh
         </Button>
       </div>
@@ -105,8 +109,10 @@ export default function RealTimeStats() {
               {/* Live indicator */}
               {!error && (
                 <div className="absolute top-2 right-2">
-                  <div className="h-2 w-2 bg-green-500 rounded-full animate-pulse" 
-                       title="Real-time data" />
+                  <div
+                    className="h-2 w-2 bg-green-500 rounded-full animate-pulse"
+                    title="Real-time data"
+                  />
                 </div>
               )}
             </div>

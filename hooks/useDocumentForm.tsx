@@ -29,14 +29,14 @@ export function useDocumentForm(defaultValues?: Partial<FormDataType>) {
       brand: "",
       cluster: "",
       fitur: "",
-      nama_materi: "", 
+      nama_materi: "",
       jenis: "",
-      start_date: "",  
-      end_date: "",    
-      dokumenMateri: [ 
+      start_date: "",
+      end_date: "",
+      dokumenMateri: [
         {
-          linkDokumen: "",  
-          tipeMateri: "",   
+          linkDokumen: "",
+          tipeMateri: "",
           thumbnail: "",
           keywords: [""],
         },
@@ -73,7 +73,7 @@ export function useDocumentForm(defaultValues?: Partial<FormDataType>) {
       const raw = localStorage.getItem("marcom-auth-store");
       const token = raw ? JSON.parse(raw)?.state?.token : null;
 
-      console.log(data)
+      console.log(data);
 
       const response = await fetch(url, {
         method,
@@ -100,10 +100,13 @@ export function useDocumentForm(defaultValues?: Partial<FormDataType>) {
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2 text-green-800 font-semibold">
               <CheckCircle className="h-4 w-4 text-green-600" />
-              <span>Data berhasil {isEditMode ? "diperbarui" : "disimpan"}</span>
+              <span>
+                Data berhasil {isEditMode ? "diperbarui" : "disimpan"}
+              </span>
             </div>
             <span className="text-green-800">
-              Materi komunikasi berhasil {isEditMode ? "diupdate" : "ditambahkan"}
+              Materi komunikasi berhasil{" "}
+              {isEditMode ? "diupdate" : "ditambahkan"}
             </span>
           </div>
         ),

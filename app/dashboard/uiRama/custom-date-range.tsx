@@ -2,16 +2,23 @@
 
 import { CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 
 interface CustomDateRangeProps {
   dateRange?: { from: Date; to: Date };
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any  
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handleDateChange: (range: any) => void;
 }
 
-const CustomDateRange: React.FC<CustomDateRangeProps> = ({ dateRange, handleDateChange }) => (
+const CustomDateRange: React.FC<CustomDateRangeProps> = ({
+  dateRange,
+  handleDateChange,
+}) => (
   <Popover>
     <PopoverTrigger asChild>
       <Button variant="outline" className="ml-2">

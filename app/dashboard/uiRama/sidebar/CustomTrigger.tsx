@@ -1,11 +1,11 @@
 // CustomTrigger.tsx
-"use client"
+"use client";
 
-import { GalleryVerticalEnd } from "lucide-react"
-import { useSidebar } from "@/components/ui/sidebar"
+import { GalleryVerticalEnd } from "lucide-react";
+import { useSidebar } from "@/components/ui/sidebar";
 
 export function CustomTrigger() {
-  const { toggleSidebar } = useSidebar()
+  const { toggleSidebar } = useSidebar();
 
   return (
     <button
@@ -14,5 +14,5 @@ export function CustomTrigger() {
     >
       <GalleryVerticalEnd className="size-6" />
     </button>
-  )
+  );
 }

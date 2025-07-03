@@ -25,8 +25,8 @@ export default function UploadThumbnail({
     value instanceof File
       ? URL.createObjectURL(value)
       : typeof value === "string" && value !== ""
-      ? getImageUrl(value)
-      : null;
+        ? getImageUrl(value)
+        : null;
 
   const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (readOnly) return;

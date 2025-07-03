@@ -7,12 +7,8 @@ interface InformasiUmumProps {
 }
 
 export default function InformasiUmum({ readOnly = true }: InformasiUmumProps) {
-  const {
-    jenisOptions,
-    fiturOptions,
-    brandOptions,
-    clusterOptions,
-  } = useInformasiUmumOptions();
+  const { jenisOptions, fiturOptions, brandOptions, clusterOptions } =
+    useInformasiUmumOptions();
 
   return (
     <Card className="mb-2">

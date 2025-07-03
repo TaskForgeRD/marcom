@@ -5,7 +5,9 @@ import { FilterKey } from "@/constants/filter-options";
 export default function useSelectedFilters() {
   const { setTempFilter, resetFilters } = useFilterStore();
 
-  const [selectedFilters, setSelectedFilters] = useState<Partial<Record<FilterKey, string>>>({});
+  const [selectedFilters, setSelectedFilters] = useState<
+    Partial<Record<FilterKey, string>>
+  >({});
 
   const handleFilterChange = (key: FilterKey, value: string) => {
     setTempFilter(key, value);

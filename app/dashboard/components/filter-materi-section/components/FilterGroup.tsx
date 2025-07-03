@@ -9,24 +9,33 @@ type FilterGroupProps = {
   handleFilterChange: (key: FilterKey, value: string) => void;
 };
 
-const FilterGroup = ({ selectedFilters, handleFilterChange }: FilterGroupProps) => {
+const FilterGroup = ({
+  selectedFilters,
+  handleFilterChange,
+}: FilterGroupProps) => {
   const { brands, clusters, fitur, jenis } = useMultiApiStore();
 
   // Memoized filter options berdasarkan data dari API
   const filterOptions = useMemo(() => {
     return {
-      brand: brands.map(brand => brand.name),
-      cluster: clusters.map(cluster => cluster.name),
-      fitur: fitur.map(f => f.name),
+      brand: brands.map((brand) => brand.name),
+      cluster: clusters.map((cluster) => cluster.name),
+      fitur: fitur.map((f) => f.name),
       status: ["Aktif", "Expired"],
-      jenis: jenis.map(j => j.name), 
+      jenis: jenis.map((j) => j.name),
     };
   }, [brands, clusters, fitur, jenis]);
 
-  console.log(filterOptions)
+  console.log(filterOptions);
 
   // Filter keys untuk ditampilkan
-  const filterKeys: FilterKey[] = ["brand", "cluster", "fitur", "status", "jenis"];
+  const filterKeys: FilterKey[] = [
+    "brand",
+    "cluster",
+    "fitur",
+    "status",
+    "jenis",
+  ];
 
   return (
     <div className="flex items-center space-x-3">
@@ -38,7 +47,10 @@ const FilterGroup = ({ selectedFilters, handleFilterChange }: FilterGroupProps) 
             label={key}
             value={selectedFilters[key] || ""}
             onChange={(value) => handleFilterChange(key, value)}
-            options={filterOptions[key].map((opt) => ({ value: opt, label: opt }))}
+            options={filterOptions[key].map((opt) => ({
+              value: opt,
+              label: opt,
+            }))}
             showLabel={false}
           />
         ))}

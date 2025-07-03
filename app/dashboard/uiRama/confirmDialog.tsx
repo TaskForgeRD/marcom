@@ -1,5 +1,10 @@
 // components/ConfirmDialog.tsx
-import { Dialog, DialogContent, DialogFooter, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
 type ConfirmDialogProps = {
@@ -25,7 +30,9 @@ export default function ConfirmDialog({
         <DialogTitle>{title}</DialogTitle>
         <p>{description}</p>
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>Batal</Button>
+          <Button variant="outline" onClick={onClose}>
+            Batal
+          </Button>
           <Button onClick={onConfirm} disabled={isLoading}>
             {isLoading ? "Menyimpan..." : "Ya, Simpan"}
           </Button>
