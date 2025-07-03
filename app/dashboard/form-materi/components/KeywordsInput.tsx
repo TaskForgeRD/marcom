@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useFormContext } from "react-hook-form";
 import InputField from "../../uiRama/inputField";
@@ -10,7 +10,10 @@ interface KeywordsInputProps {
   readOnly?: boolean;
 }
 
-export function KeywordsInput({ baseName, readOnly = false }: KeywordsInputProps) {
+export function KeywordsInput({
+  baseName,
+  readOnly = false,
+}: KeywordsInputProps) {
   const { getValues, setValue, watch } = useFormContext();
   const keywords: string[] = watch(baseName, []);
 
@@ -26,7 +29,7 @@ export function KeywordsInput({ baseName, readOnly = false }: KeywordsInputProps
           key={index}
           name={`${baseName}.${index}`}
           label={`Keyword ${index + 1}`}
-          readOnly={readOnly} 
+          readOnly={readOnly}
         />
       ))}
 

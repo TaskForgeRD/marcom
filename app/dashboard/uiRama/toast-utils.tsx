@@ -13,7 +13,7 @@ export const showSuccessToast = (title: string, subtitle?: string) => {
       </div>
     ),
     className: "bg-green-100 border border-green-300 shadow-md rounded-lg",
-    duration: 10000,
+    duration: 3000,
   });
 };
 
@@ -26,6 +26,6 @@ export const showErrorToast = (message: string) => {
       </div>
     ),
     className: "bg-red-100 border border-red-300 shadow-md rounded-lg",
-    duration: 10000,
+    duration: 3000,
   });
 };

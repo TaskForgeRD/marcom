@@ -2,20 +2,14 @@ import { useEffect } from "react";
 import { useMultiApiStore } from "@/stores/api.store";
 
 export function useInformasiUmumOptions() {
-  const {
-    jenis,
-    fitur,
-    brands,
-    clusters,
-    fetchAllData,
-  } = useMultiApiStore();
+  const { jenis, fitur, brands, clusters, fetchAllData } = useMultiApiStore();
 
   useEffect(() => {
     fetchAllData();
   }, [fetchAllData]);
 
   const toOptions = (data: any[]) =>
-    data.map(item => ({
+    data.map((item) => ({
       value: item.name,
       label: item.name,
     }));

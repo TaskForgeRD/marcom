@@ -20,9 +20,9 @@ export const statsConfig: StatItemConfig[] = [
     key: "komunikasi",
     title: "Materi Komunikasi",
     icon: <Package size={16} />,
-    color: "#3b82f6", 
+    color: "#3b82f6",
     subtitle: "Visual",
-  },  
+  },
   {
     key: "aktif",
     title: "Materi Aktif",

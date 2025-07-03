@@ -5,4 +5,3 @@ export enum PresetDate {
   THIS_YEAR = "Tahun ini",
   CUSTOM = "Pilih tanggal tertentu",
 }
-  

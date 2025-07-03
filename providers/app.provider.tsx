@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { ReactNode, useEffect, useState } from 'react';
-import { ThemeProvider } from '@/components/ui/theme-provider';
-import { Toaster } from '@/components/ui/toaster';
+import { ReactNode, useEffect, useState } from "react";
+import { ThemeProvider } from "@/components/ui/theme-provider";
+import { Toaster } from "@/components/ui/toaster";
 
 interface AppProvidersProps {
   readonly children: ReactNode;

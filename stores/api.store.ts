@@ -32,13 +32,13 @@ interface MultiApiStore {
   fitur: Fitur[];
   brands: Brand[];
   clusters: Cluster[];
-  
+
   // Loading states
   jenisLoading: boolean;
   fiturLoading: boolean;
   brandsLoading: boolean;
   clustersLoading: boolean;
-  
+
   // Actions
   fetchJenis: () => Promise<void>;
   fetchFitur: () => Promise<void>;
@@ -54,12 +54,12 @@ export const useMultiApiStore = create<MultiApiStore>()(
     fitur: [],
     brands: [],
     clusters: [],
-    
+
     jenisLoading: false,
     fiturLoading: false,
     brandsLoading: false,
     clustersLoading: false,
-    
+
     // Fetch Jenis
     fetchJenis: async () => {
       set({ jenisLoading: true });
@@ -68,13 +68,13 @@ export const useMultiApiStore = create<MultiApiStore>()(
         const token = raw ? JSON.parse(raw)?.state?.token : null;
         const response = await fetch("http://localhost:5000/api/jenis", {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
         });
-        
+
         if (!response.ok) throw new Error("Gagal mengambil data jenis");
-        
+
         const result = await response.json();
         set({ jenis: result, jenisLoading: false });
       } catch (error) {
@@ -82,7 +82,7 @@ export const useMultiApiStore = create<MultiApiStore>()(
         set({ jenisLoading: false });
       }
     },
-    
+
     // Fetch Fitur
     fetchFitur: async () => {
       set({ fiturLoading: true });
@@ -91,13 +91,13 @@ export const useMultiApiStore = create<MultiApiStore>()(
         const token = raw ? JSON.parse(raw)?.state?.token : null;
         const response = await fetch("http://localhost:5000/api/fitur", {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
         });
-        
+
         if (!response.ok) throw new Error("Gagal mengambil data fitur");
-        
+
         const result = await response.json();
         set({ fitur: result, fiturLoading: false });
       } catch (error) {
@@ -105,7 +105,7 @@ export const useMultiApiStore = create<MultiApiStore>()(
         set({ fiturLoading: false });
       }
     },
-    
+
     // Fetch Brands
     fetchBrands: async () => {
       set({ brandsLoading: true });
@@ -114,13 +114,13 @@ export const useMultiApiStore = create<MultiApiStore>()(
         const token = raw ? JSON.parse(raw)?.state?.token : null;
         const response = await fetch("http://localhost:5000/api/brands", {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
         });
-        
+
         if (!response.ok) throw new Error("Gagal mengambil data brands");
-        
+
         const result = await response.json();
         set({ brands: result, brandsLoading: false });
       } catch (error) {
@@ -128,7 +128,7 @@ export const useMultiApiStore = create<MultiApiStore>()(
         set({ brandsLoading: false });
       }
     },
-    
+
     // Fetch Clusters
     fetchClusters: async () => {
       set({ clustersLoading: true });
@@ -137,13 +137,13 @@ export const useMultiApiStore = create<MultiApiStore>()(
         const token = raw ? JSON.parse(raw)?.state?.token : null;
         const response = await fetch("http://localhost:5000/api/clusters", {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
         });
-        
+
         if (!response.ok) throw new Error("Gagal mengambil data clusters");
-        
+
         const result = await response.json();
         set({ clusters: result, clustersLoading: false });
       } catch (error) {
@@ -151,16 +151,16 @@ export const useMultiApiStore = create<MultiApiStore>()(
         set({ clustersLoading: false });
       }
     },
-    
+
     // Fetch semua data sekaligus
     fetchAllData: async () => {
       const { fetchJenis, fetchFitur, fetchBrands, fetchClusters } = get();
-      
+
       await Promise.all([
         fetchJenis(),
         fetchFitur(),
         fetchBrands(),
-        fetchClusters()
+        fetchClusters(),
       ]);
     },
   }))

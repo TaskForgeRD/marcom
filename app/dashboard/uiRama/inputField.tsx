@@ -21,7 +21,10 @@ export default function InputField({
   readOnly, // Properti readOnly
   className,
 }: InputFieldProps) {
-  const { register, formState: { errors } } = useFormContext();
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext();
 
   return (
     <div className={`space-y-2 ${className}`}>
@@ -34,7 +37,11 @@ export default function InputField({
         disabled={disabled}
         readOnly={readOnly} // Mengatur properti readOnly pada input
       />
-      {errors[name] && <p className="text-red-500 text-sm">{errors[name]?.message as string}</p>}
+      {errors[name] && (
+        <p className="text-red-500 text-sm">
+          {errors[name]?.message as string}
+        </p>
+      )}
     </div>
   );
 }

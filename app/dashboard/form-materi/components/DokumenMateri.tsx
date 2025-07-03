@@ -8,7 +8,7 @@ import ButtonWithIcon from "../../uiRama/buttonWithIcon";
 import { Plus, Trash2 } from "lucide-react";
 
 interface DokumenMateriProps {
-  readOnly?: boolean;  
+  readOnly?: boolean;
 }
 
 export default function DokumenMateri({ readOnly = true }: DokumenMateriProps) {
@@ -34,14 +34,16 @@ export default function DokumenMateri({ readOnly = true }: DokumenMateriProps) {
       {fields.map((field, index) => (
         <Card key={field.id}>
           <CardContent className="p-6 space-y-4 relative">
-            <h3 className="text-lg font-semibold">Dokumen Materi {index + 1}</h3>
+            <h3 className="text-lg font-semibold">
+              Dokumen Materi {index + 1}
+            </h3>
 
             <InputField
               name={`dokumenMateri.${index}.linkDokumen`}
               label="Input Link Dokumen Materi"
               placeholder="Masukkan link dokumen"
               type="url"
-              readOnly={readOnly}  
+              readOnly={readOnly}
             />
 
             <SelectField
@@ -52,17 +54,17 @@ export default function DokumenMateri({ readOnly = true }: DokumenMateriProps) {
                 { value: "TVC", label: "TVC" },
                 { value: "Video", label: "Video" },
               ]}
-              readOnly={readOnly} 
+              readOnly={readOnly}
             />
 
-            <UploadThumbnail 
-              name={`dokumenMateri.${index}.thumbnail`} 
-              readOnly={readOnly} 
+            <UploadThumbnail
+              name={`dokumenMateri.${index}.thumbnail`}
+              readOnly={readOnly}
             />
 
-            <KeywordsInput 
-              baseName={`dokumenMateri.${index}.keywords`} 
-              readOnly={readOnly} 
+            <KeywordsInput
+              baseName={`dokumenMateri.${index}.keywords`}
+              readOnly={readOnly}
             />
 
             {!readOnly && (

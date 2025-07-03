@@ -6,7 +6,8 @@ import CustomDateDropdown from "@/app/dashboard/uiRama/custom-date-dropdown";
 import CustomDatePopover from "@/app/dashboard/uiRama/custom-date-range";
 
 const FilterDateSection: React.FC = () => {
-  const { dateRange, isCustomRange, handleDateChange, handlePresetSelection } = useDateRange();
+  const { dateRange, isCustomRange, handleDateChange, handlePresetSelection } =
+    useDateRange();
 
   return (
     <section className="flex items-center space-x-2 py-4 pl-4">

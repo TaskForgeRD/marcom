@@ -1,14 +1,14 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import { format } from "date-fns";
 
 dayjs.extend(isBetween);
-export { dayjs, format }; 
+export { dayjs, format };
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
 export const getImageUrl = (path?: string) => {
@@ -20,29 +20,44 @@ export function convertToFormData(data: any): FormData {
   const formData = new FormData();
 
   // Add basic fields
-  Object.keys(data).forEach(key => {
-    if (key !== 'dokumenMateri') {
+  Object.keys(data).forEach((key) => {
+    if (key !== "dokumenMateri") {
       formData.append(key, data[key]);
     }
   });
 
   // Add dokumen count
-  formData.append('dokumenMateriCount', data.dokumenMateri?.length.toString() || '0');
+  formData.append(
+    "dokumenMateriCount",
+    data.dokumenMateri?.length.toString() || "0"
+  );
 
   // Add dokumen data
   data.dokumenMateri?.forEach((dokumen: any, index: number) => {
-    formData.append(`dokumenMateri[${index}][linkDokumen]`, dokumen.linkDokumen || '');
-    formData.append(`dokumenMateri[${index}][tipeMateri]`, dokumen.tipeMateri || '');
-    
+    formData.append(
+      `dokumenMateri[${index}][linkDokumen]`,
+      dokumen.linkDokumen || ""
+    );
+    formData.append(
+      `dokumenMateri[${index}][tipeMateri]`,
+      dokumen.tipeMateri || ""
+    );
+
     // Handle thumbnail - could be File object or existing path string
     if (dokumen.thumbnail instanceof File) {
       formData.append(`dokumenMateri[${index}][thumbnail]`, dokumen.thumbnail);
-    } else if (typeof dokumen.thumbnail === 'string' && dokumen.thumbnail) {
+    } else if (typeof dokumen.thumbnail === "string" && dokumen.thumbnail) {
       // Send existing thumbnail path
-      formData.append(`dokumenMateri[${index}][existingThumbnail]`, dokumen.thumbnail);
+      formData.append(
+        `dokumenMateri[${index}][existingThumbnail]`,
+        dokumen.thumbnail
+      );
     }
-    
-    formData.append(`dokumenMateri[${index}][keywords]`, JSON.stringify(dokumen.keywords || []));
+
+    formData.append(
+      `dokumenMateri[${index}][keywords]`,
+      JSON.stringify(dokumen.keywords || [])
+    );
   });
 
   return formData;
@@ -79,7 +94,11 @@ export const getFilteredStats = <T>(
     const prevStart = dayjs(dateRange.from).subtract(rangeDiff, "day");
     const prevEnd = dayjs(dateRange.from).subtract(1, "day");
     const itemDate = dayjs(item.start_date);
-    return itemDate.isAfter(prevStart, "day") && itemDate.isBefore(prevEnd, "day") && filterFn(item);
+    return (
+      itemDate.isAfter(prevStart, "day") &&
+      itemDate.isBefore(prevEnd, "day") &&
+      filterFn(item)
+    );
   });
 
   const current = uniqueBy
@@ -98,7 +117,7 @@ export const getFilteredStats = <T>(
 
 export const formatChange = (change: number) => {
   return change === 0 ? "0" : change > 0 ? `+${change}` : `${change}`;
-}
+};
 
 export const formatPresetLabel = (
   preset?: string,

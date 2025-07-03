@@ -1,6 +1,12 @@
 "use client";
 
-import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select";
 import { useFormContext } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 
@@ -39,11 +45,11 @@ export default function SelectField({
       <Select
         onValueChange={handleChange}
         value={isForm ? form.watch(name!) : value}
-        disabled={readOnly} 
+        disabled={readOnly}
       >
         <SelectTrigger className="text-gray-600">
-          <SelectValue 
-            placeholder={`Pilih ${label ? label.charAt(0).toUpperCase() + label.slice(1) : "Opsi"}`} 
+          <SelectValue
+            placeholder={`Pilih ${label ? label.charAt(0).toUpperCase() + label.slice(1) : "Opsi"}`}
           />
         </SelectTrigger>
         <SelectContent>
@@ -55,7 +61,9 @@ export default function SelectField({
         </SelectContent>
       </Select>
       {isForm && form.formState.errors[name!] && (
-        <p className="text-red-500">{form.formState.errors[name!]?.message as string}</p>
+        <p className="text-red-500">
+          {form.formState.errors[name!]?.message as string}
+        </p>
       )}
     </div>
   );

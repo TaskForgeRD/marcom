@@ -1,10 +1,10 @@
 interface TableColumnConfig {
   key: string;
   header: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any  
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   render?: (item: any) => React.ReactNode;
 }
-  
+
 export const materiTableColumns: TableColumnConfig[] = [
   { key: "brand", header: "Brand" },
   { key: "cluster", header: "Cluster" },
@@ -17,4 +17,3 @@ export const materiTableColumns: TableColumnConfig[] = [
   { key: "periode", header: "Periode" },
   { key: "keywords", header: "Keywords" },
 ];
-  

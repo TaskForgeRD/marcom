@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { logger } from "../middleware/logger";
-import { MateriStore } from "../types/materi"; 
+import { MateriStore } from "../types/materi";
 
 export const useMateri = create<MateriStore>()(
   logger((set) => ({
@@ -14,22 +14,22 @@ export const useMateri = create<MateriStore>()(
       try {
         const raw = localStorage.getItem("marcom-auth-store");
         const token = raw ? JSON.parse(raw)?.state?.token : null;
-    
+
         if (!token) throw new Error("Token tidak ditemukan");
-    
+
         const response = await fetch("http://localhost:5000/api/materi", {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
         });
-    
+
         if (!response.ok) throw new Error("Gagal mengambil data");
-    
+
         const result = await response.json();
-    
+
         console.log("🔍 RAW API Response:", result[0]);
-    
+
         set({ data: result.reverse(), loading: false });
       } catch (error) {
         console.error(error);

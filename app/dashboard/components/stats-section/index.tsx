@@ -1,6 +1,6 @@
 // components/stats-section/index.tsx - Updated to use RealTimeStats
 
-"use client"
+"use client";
 import React from "react";
 import { useState } from "react";
 import RealTimeStats from "./RealTimeStats";

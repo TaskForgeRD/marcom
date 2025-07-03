@@ -33,7 +33,7 @@ export default function FormFooter({
 
         {showPrimary && (
           <Button
-            type={isViewMode ? "button" : "submit"} 
+            type={isViewMode ? "button" : "submit"}
             className="bg-[#0b132b] text-white hover:bg-[#1c2541] min-w-[120px]"
             disabled={isLoading}
             onClick={onPrimaryClick}

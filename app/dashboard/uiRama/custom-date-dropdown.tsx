@@ -4,28 +4,38 @@ import React from "react";
 import { format } from "date-fns";
 import { ChevronDownIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { PresetDate } from "../../../constants/preset-date";
 import { useFilterStore } from "@/stores/filter-materi.store";
 
 interface CustomDateDropdownProps {
   dateRange?: { from: Date; to: Date };
   isCustomRange: boolean;
-  handlePresetSelection: (preset: PresetDate) => void; 
+  handlePresetSelection: (preset: PresetDate) => void;
 }
 
-const CustomDateDropdown: React.FC<CustomDateDropdownProps> = ({ dateRange, isCustomRange, handlePresetSelection }) => {
+const CustomDateDropdown: React.FC<CustomDateDropdownProps> = ({
+  dateRange,
+  isCustomRange,
+  handlePresetSelection,
+}) => {
   const { setSelectedPreset } = useFilterStore();
 
   const handlePresetClick = (preset: PresetDate) => {
     setSelectedPreset(preset);
-    handlePresetSelection(preset); 
+    handlePresetSelection(preset);
   };
 
   const displayLabel = () => {
     if (isCustomRange) return "Pilih tanggal tertentu";
     if (!dateRange?.from) return "All time";
-    if (dateRange.to) return `${format(dateRange.from, "d MMM y")} - ${format(dateRange.to, "d MMM y")}`;
+    if (dateRange.to)
+      return `${format(dateRange.from, "d MMM y")} - ${format(dateRange.to, "d MMM y")}`;
     return format(dateRange.from, "d MMM y");
   };
 
@@ -39,7 +49,10 @@ const CustomDateDropdown: React.FC<CustomDateDropdownProps> = ({ dateRange, isCu
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-[260px]">
         {Object.values(PresetDate).map((preset) => (
-          <DropdownMenuItem key={preset} onClick={() => handlePresetClick(preset)}>
+          <DropdownMenuItem
+            key={preset}
+            onClick={() => handlePresetClick(preset)}
+          >
             {preset}
           </DropdownMenuItem>
         ))}

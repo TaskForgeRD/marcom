@@ -1,44 +1,41 @@
-"use client"
+"use client";
 
-import { type LucideIcon } from "lucide-react"
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { type LucideIcon } from "lucide-react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
-import {
-  Collapsible,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible"
+import { Collapsible, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
   SidebarGroup,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
 export default function SidebarNavigation({
   items,
   onNavigate,
 }: {
   items: {
-    title: string
-    url: string
-    icon?: LucideIcon
-    isActive?: boolean
+    title: string;
+    url: string;
+    icon?: LucideIcon;
+    isActive?: boolean;
     items?: {
-      title: string
-      url: string
-    }[]
-  }[],
-  onNavigate?: () => void
+      title: string;
+      url: string;
+    }[];
+  }[];
+  onNavigate?: () => void;
 }) {
-  const [activeItem, setActiveItem] = useState<string | null>(null)
-  const router = useRouter()
+  const [activeItem, setActiveItem] = useState<string | null>(null);
+  const router = useRouter();
 
   const handleItemClick = (title: string, url: string) => {
-    setActiveItem(title)
-    router.push(url)
-    onNavigate?.()
-  }
+    setActiveItem(title);
+    router.push(url);
+    onNavigate?.();
+  };
 
   return (
     <SidebarGroup>
@@ -54,7 +51,7 @@ export default function SidebarNavigation({
               <CollapsibleTrigger asChild>
                 <SidebarMenuButton
                   tooltip={item.title}
-                  className={activeItem === item.title ? 'bg-gray-100' : ''}
+                  className={activeItem === item.title ? "bg-gray-100" : ""}
                   onClick={() => handleItemClick(item.title, item.url)}
                 >
                   {item.icon && <item.icon />}
@@ -66,5 +63,5 @@ export default function SidebarNavigation({
         ))}
       </SidebarMenu>
     </SidebarGroup>
-  )
+  );
 }

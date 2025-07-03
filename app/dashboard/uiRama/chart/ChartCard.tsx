@@ -6,7 +6,7 @@ import {
   CartesianGrid,
   XAxis,
   YAxis,
-  Tooltip
+  Tooltip,
 } from "recharts";
 import { SquareDot } from "./SquareDot";
 import { ActiveSquareDot } from "./ActiveSquareDot";
@@ -20,7 +20,13 @@ interface ChartCardProps {
   subtitle?: string | null;
 }
 
-export function ChartCard({ title, value, data, color, subtitle = null }: ChartCardProps) {
+export function ChartCard({
+  title,
+  value,
+  data,
+  color,
+  subtitle = null,
+}: ChartCardProps) {
   return (
     <Card className="w-full h-full shadow-sm">
       <CardHeader className="pb-2">
@@ -28,7 +34,12 @@ export function ChartCard({ title, value, data, color, subtitle = null }: ChartC
           <div>
             <CardTitle className="text-lg font-medium">
               {title}
-              {subtitle && <span className="text-gray-500 text-sm font-normal"> ({subtitle})</span>}
+              {subtitle && (
+                <span className="text-gray-500 text-sm font-normal">
+                  {" "}
+                  ({subtitle})
+                </span>
+              )}
             </CardTitle>
           </div>
           <div className="text-3xl font-bold">{value}</div>
@@ -42,7 +53,13 @@ export function ChartCard({ title, value, data, color, subtitle = null }: ChartC
               margin={{ top: 16, right: 16, left: 16, bottom: 16 }}
             >
               <defs>
-                <linearGradient id={`gradient-${color}`} x1="0" y1="0" x2="0" y2="1">
+                <linearGradient
+                  id={`gradient-${color}`}
+                  x1="0"
+                  y1="0"
+                  x2="0"
+                  y2="1"
+                >
                   <stop offset="85%" stopColor={color} stopOpacity={0.2} />
                 </linearGradient>
               </defs>
@@ -60,7 +77,7 @@ export function ChartCard({ title, value, data, color, subtitle = null }: ChartC
                   border: "none",
                   borderRadius: "4px",
                   boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
-                  padding: "8px"
+                  padding: "8px",
                 }}
                 itemStyle={{ color: color, fontWeight: 500 }}
                 formatter={(value) => [`${value}`, ""]}
@@ -74,12 +91,21 @@ export function ChartCard({ title, value, data, color, subtitle = null }: ChartC
                 fill={`url(#gradient-${color})`}
                 dot={(dotProps) => {
                   const { key, ...rest } = dotProps;
-                  return <SquareDot key={key} {...rest} data={data} fill={color} />;
+                  return (
+                    <SquareDot key={key} {...rest} data={data} fill={color} />
+                  );
                 }}
                 activeDot={(dotProps) => {
                   const { key, ...rest } = dotProps;
-                  return <ActiveSquareDot key={key} {...rest} data={data} fill={color} />;
-                }}                
+                  return (
+                    <ActiveSquareDot
+                      key={key}
+                      {...rest}
+                      data={data}
+                      fill={color}
+                    />
+                  );
+                }}
               />
             </AreaChart>
           </ResponsiveContainer>

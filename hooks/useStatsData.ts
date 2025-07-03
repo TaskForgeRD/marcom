@@ -10,12 +10,20 @@ import { getFilteredStats, formatChange } from "@/lib/utils/statsUtils";
 export const useStatsData = () => {
   const { selectedPreset, filters } = useFilterStore();
   const filteredMateri = useFilteredMateri();
-  const { stats: socketStats, loading: socketLoading, error: socketError, refreshStats } = useSocket();
+  const {
+    stats: socketStats,
+    loading: socketLoading,
+    error: socketError,
+    refreshStats,
+  } = useSocket();
 
-  const dateRange = filters?.start_date && filters?.end_date ? { 
-    from: new Date(filters.start_date), 
-    to: new Date(filters.end_date) 
-  } : undefined;
+  const dateRange =
+    filters?.start_date && filters?.end_date
+      ? {
+          from: new Date(filters.start_date),
+          to: new Date(filters.end_date),
+        }
+      : undefined;
 
   const waktuLabel = formatPresetLabel(selectedPreset, dateRange);
 
@@ -23,7 +31,9 @@ export const useStatsData = () => {
     const months = Array.from({ length: 12 }).map((_, idx) => {
       const month = dayjs().month(idx);
       const itemsInMonth = filteredMateri.filter(
-        (m: { start_date: string | number | Date | dayjs.Dayjs | null | undefined; }) => dayjs(m.start_date).month() === idx && filterFn(m)
+        (m: {
+          start_date: string | number | Date | dayjs.Dayjs | null | undefined;
+        }) => dayjs(m.start_date).month() === idx && filterFn(m)
       );
       return {
         name: month.format("MMM"),
@@ -36,38 +46,59 @@ export const useStatsData = () => {
   const stats = useMemo(() => {
     const baseStats = {
       total: getFilteredStats(filteredMateri, () => true, dateRange),
-      fitur: getFilteredStats(filteredMateri, (m) => m.fitur, dateRange, (m) => m.fitur?.trim().toLowerCase()),
-      komunikasi: getFilteredStats(filteredMateri, (m) => m.nama_materi, dateRange),
-      aktif: getFilteredStats(filteredMateri, (m) => dayjs().isBefore(m.end_date), dateRange),
-      expired: getFilteredStats(filteredMateri, (m) => dayjs().isAfter(m.end_date), dateRange),
-      dokumen: getFilteredStats(filteredMateri, (m) => m.dokumenMateri?.length > 0, dateRange)
+      fitur: getFilteredStats(
+        filteredMateri,
+        (m) => m.fitur,
+        dateRange,
+        (m) => m.fitur?.trim().toLowerCase()
+      ),
+      komunikasi: getFilteredStats(
+        filteredMateri,
+        (m) => m.nama_materi,
+        dateRange
+      ),
+      aktif: getFilteredStats(
+        filteredMateri,
+        (m) => dayjs().isBefore(m.end_date),
+        dateRange
+      ),
+      expired: getFilteredStats(
+        filteredMateri,
+        (m) => dayjs().isAfter(m.end_date),
+        dateRange
+      ),
+      dokumen: getFilteredStats(
+        filteredMateri,
+        (m) => m.dokumenMateri?.length > 0,
+        dateRange
+      ),
     };
 
     // Add chart data
     return {
       total: { ...baseStats.total, chartData: [] },
-      fitur: { 
-        ...baseStats.fitur, 
-        chartData: getMonthlyChartData((m) => m.fitur) 
+      fitur: {
+        ...baseStats.fitur,
+        chartData: getMonthlyChartData((m) => m.fitur),
       },
-      komunikasi: { 
-        ...baseStats.komunikasi, 
-        chartData: getMonthlyChartData((m) => m.nama_materi) 
+      komunikasi: {
+        ...baseStats.komunikasi,
+        chartData: getMonthlyChartData((m) => m.nama_materi),
       },
-      aktif: { 
-        ...baseStats.aktif, 
-        chartData: getMonthlyChartData((m) => dayjs().isBefore(m.end_date)) 
+      aktif: {
+        ...baseStats.aktif,
+        chartData: getMonthlyChartData((m) => dayjs().isBefore(m.end_date)),
       },
-      expired: { 
-        ...baseStats.expired, 
-        chartData: getMonthlyChartData((m) => dayjs().isAfter(m.end_date)) 
+      expired: {
+        ...baseStats.expired,
+        chartData: getMonthlyChartData((m) => dayjs().isAfter(m.end_date)),
       },
-      dokumen: { 
-        ...baseStats.dokumen, 
-        chartData: getMonthlyChartData((m) => m.dokumenMateri?.length > 0) 
+      dokumen: {
+        ...baseStats.dokumen,
+        chartData: getMonthlyChartData((m) => m.dokumenMateri?.length > 0),
       },
     };
-  }, [filteredMateri, dateRange]); 
+  }, [filteredMateri, dateRange]);
 
   return {
     selectedPreset,
@@ -84,9 +115,12 @@ export const useStatsData = () => {
           changeLabel: formatChange(val.change),
         },
       ])
-    ) as Record<string, typeof stats.total & { 
-      changeLabel: string; 
-      chartData: { name: string; value: number }[] 
-    }>,
+    ) as Record<
+      string,
+      typeof stats.total & {
+        changeLabel: string;
+        chartData: { name: string; value: number }[];
+      }
+    >,
   };
 };

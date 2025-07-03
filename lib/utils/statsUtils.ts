@@ -20,18 +20,25 @@ export const getFilteredStats = (
   const isInRange = (date: string) => {
     if (!dateRange) return true;
     const d = dayjs(date);
-    return d.isSameOrAfter(dayjs(dateRange.from), "day") &&
-           d.isSameOrBefore(dayjs(dateRange.to), "day");
+    return (
+      d.isSameOrAfter(dayjs(dateRange.from), "day") &&
+      d.isSameOrBefore(dayjs(dateRange.to), "day")
+    );
   };
 
   const current = data.filter((d) => isInRange(d.start_date) && filterFn(d));
   const prev = data.filter((d) => {
     if (!dateRange) return false;
-    const rangeDays = dayjs(dateRange.to).diff(dayjs(dateRange.from), "day") + 1;
+    const rangeDays =
+      dayjs(dateRange.to).diff(dayjs(dateRange.from), "day") + 1;
     const prevStart = dayjs(dateRange.from).subtract(rangeDays, "day");
     const prevEnd = dayjs(dateRange.from).subtract(1, "day");
     const dDate = dayjs(d.start_date);
-    return dDate.isAfter(prevStart, "day") && dDate.isBefore(prevEnd, "day") && filterFn(d);
+    return (
+      dDate.isAfter(prevStart, "day") &&
+      dDate.isBefore(prevEnd, "day") &&
+      filterFn(d)
+    );
   });
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
