@@ -19,6 +19,7 @@ export default function UploadThumbnail({
 }: UploadThumbnailProps) {
   const { setValue, watch } = useFormContext();
   const [thumbnail, setThumbnail] = useState<File | null>(null);
+  const [error, setError] = useState<string>("");
 
   const value = watch(name);
   const preview =
@@ -28,11 +29,51 @@ export default function UploadThumbnail({
         ? getImageUrl(value)
         : null;
 
+  const validateFile = (file: File): string | null => {
+    // Validate file size (15MB)
+    const maxSize = 15 * 1024 * 1024;
+    if (file.size > maxSize) {
+      return `File terlalu besar. Maksimal 15MB, ukuran file: ${(file.size / 1024 / 1024).toFixed(2)}MB`;
+    }
+
+    // Validate MIME type
+    const validTypes = [
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+      "image/bmp",
+    ];
+    if (!validTypes.includes(file.type)) {
+      return `Tipe file tidak valid. Hanya menerima: JPG, PNG, GIF, WebP, BMP`;
+    }
+
+    // Validate file extension
+    const allowedExtensions = ["jpg", "jpeg", "png", "gif", "webp", "bmp"];
+    const fileExtension = file.name.split(".").pop()?.toLowerCase();
+    if (!fileExtension || !allowedExtensions.includes(fileExtension)) {
+      return `Ekstensi file tidak valid. Hanya menerima: ${allowedExtensions.join(", ")}`;
+    }
+
+    return null;
+  };
+
   const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (readOnly) return;
 
     const file = e.target.files?.[0];
     if (file) {
+      setError("");
+
+      // Frontend validation
+      const validationError = validateFile(file);
+      if (validationError) {
+        setError(validationError);
+        e.target.value = ""; // Reset input
+        return;
+      }
+
       setThumbnail(file);
       setValue(name, file);
     }
@@ -45,7 +86,7 @@ export default function UploadThumbnail({
         <label className="cursor-pointer">
           <input
             type="file"
-            accept="image/*"
+            accept="image/jpeg,image/jpg,image/png,image/gif,image/webp,image/bmp"
             className="hidden"
             onChange={handleThumbnailChange}
             disabled={readOnly}
@@ -65,8 +106,21 @@ export default function UploadThumbnail({
             )}
           </Card>
         </label>
-        {thumbnail && <p className="text-sm">{thumbnail.name}</p>}
+        <div className="flex flex-col">
+          {thumbnail && (
+            <div>
+              <p className="text-sm font-medium">{thumbnail.name}</p>
+              <p className="text-xs text-gray-500">
+                {(thumbnail.size / 1024 / 1024).toFixed(2)}MB
+              </p>
+            </div>
+          )}
+          {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
+        </div>
       </div>
+      <p className="text-xs text-gray-500">
+        Maksimal 15MB. Format: JPG, PNG, GIF, WebP, BMP
+      </p>
     </div>
   );
 }
