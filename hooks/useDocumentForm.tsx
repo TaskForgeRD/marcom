@@ -66,8 +66,8 @@ export function useDocumentForm(defaultValues?: Partial<FormDataType>) {
 
       const isEditMode = !!selectedMateri;
       const url = isEditMode
-        ? `http://localhost:5000/api/materi/${selectedMateri?.id}`
-        : "http://localhost:5000/api/materi";
+        ? `${process.env.NEXT_PUBLIC_API_URL}/materi/${selectedMateri?.id}`
+        : `${process.env.NEXT_PUBLIC_API_URL}/materi`;
       const method = isEditMode ? "PUT" : "POST";
 
       const raw = localStorage.getItem("marcom-auth-store");
