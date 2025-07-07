@@ -66,12 +66,15 @@ export const useMultiApiStore = create<MultiApiStore>()(
       try {
         const raw = localStorage.getItem("marcom-auth-store");
         const token = raw ? JSON.parse(raw)?.state?.token : null;
-        const response = await fetch("http://localhost:5000/api/jenis", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/jenis`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
         if (!response.ok) throw new Error("Gagal mengambil data jenis");
 
@@ -89,12 +92,15 @@ export const useMultiApiStore = create<MultiApiStore>()(
       try {
         const raw = localStorage.getItem("marcom-auth-store");
         const token = raw ? JSON.parse(raw)?.state?.token : null;
-        const response = await fetch("http://localhost:5000/api/fitur", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/fitur`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
         if (!response.ok) throw new Error("Gagal mengambil data fitur");
 
@@ -112,12 +118,15 @@ export const useMultiApiStore = create<MultiApiStore>()(
       try {
         const raw = localStorage.getItem("marcom-auth-store");
         const token = raw ? JSON.parse(raw)?.state?.token : null;
-        const response = await fetch("http://localhost:5000/api/brands", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/brands`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
         if (!response.ok) throw new Error("Gagal mengambil data brands");
 
@@ -135,12 +144,15 @@ export const useMultiApiStore = create<MultiApiStore>()(
       try {
         const raw = localStorage.getItem("marcom-auth-store");
         const token = raw ? JSON.parse(raw)?.state?.token : null;
-        const response = await fetch("http://localhost:5000/api/clusters", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/clusters`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
         if (!response.ok) throw new Error("Gagal mengambil data clusters");
 

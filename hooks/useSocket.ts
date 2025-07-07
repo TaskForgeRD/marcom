@@ -39,7 +39,8 @@ export const useSocket = (): UseSocketReturn => {
     }
 
     // Initialize socket connection
-    const socket = io("http://localhost:5001", {
+    const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL!, {
+      path: "/socket.io",
       auth: {
         token: token,
       },

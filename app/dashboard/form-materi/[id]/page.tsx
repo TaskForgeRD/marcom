@@ -26,7 +26,7 @@ export default function DetailMateriPage() {
           const raw = localStorage.getItem("marcom-auth-store");
           const token = raw ? JSON.parse(raw)?.state?.token : null;
           const response = await fetch(
-            `http://localhost:5000/api/materi/${id}`,
+            `${process.env.NEXT_PUBLIC_API_URL}/materi/${id}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,

@@ -17,12 +17,15 @@ export const useMateri = create<MateriStore>()(
 
         if (!token) throw new Error("Token tidak ditemukan");
 
-        const response = await fetch("http://localhost:5000/api/materi", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/materi`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
         if (!response.ok) throw new Error("Gagal mengambil data");
 
