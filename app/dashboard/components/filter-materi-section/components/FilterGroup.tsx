@@ -18,11 +18,11 @@ const FilterGroup = ({
   // Memoized filter options berdasarkan data dari API
   const filterOptions = useMemo(() => {
     return {
-      brand: brands.map((brand) => brand.name),
-      cluster: clusters.map((cluster) => cluster.name),
-      fitur: fitur.map((f) => f.name),
-      status: ["Aktif", "Expired"],
-      jenis: jenis.map((j) => j.name),
+      brand: ["Semua Brand", ...brands.map((brand) => brand.name)],
+      cluster: ["Semua Cluster", ...clusters.map((cluster) => cluster.name)],
+      fitur: ["Semua Fitur", ...fitur.map((f) => f.name)],
+      status: ["Semua Status", "Aktif", "Expired"],
+      jenis: ["Semua Jenis", ...jenis.map((j) => j.name)],
     };
   }, [brands, clusters, fitur, jenis]);
 
@@ -37,6 +37,8 @@ const FilterGroup = ({
     "jenis",
   ];
 
+  console.log(filterOptions);
+
   return (
     <div className="flex items-center space-x-3">
       <span className="text-sm font-medium">Filter</span>
@@ -46,7 +48,14 @@ const FilterGroup = ({
             key={key}
             label={key}
             value={selectedFilters[key] || ""}
-            onChange={(value) => handleFilterChange(key, value)}
+            onChange={(value) => {
+              // Jika pilih "Semua", simpan sebagai "Semua [Key]" bukan empty string
+              if (value.startsWith("Semua") || value === "Semua Status") {
+                handleFilterChange(key, value); // Simpan value asli "Semua Brand", dll
+              } else {
+                handleFilterChange(key, value);
+              }
+            }}
             options={filterOptions[key].map((opt) => ({
               value: opt,
               label: opt,

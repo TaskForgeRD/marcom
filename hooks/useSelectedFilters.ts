@@ -10,7 +10,12 @@ export default function useSelectedFilters() {
   >({});
 
   const handleFilterChange = (key: FilterKey, value: string) => {
-    setTempFilter(key, value);
+    // Untuk store filter, tetap kirim empty string jika "Semua"
+    const filterValue =
+      value.startsWith("Semua") || value === "Semua Status" ? "" : value;
+    setTempFilter(key, filterValue);
+
+    // Untuk UI state, simpan value asli untuk ditampilkan
     setSelectedFilters((prev) => ({ ...prev, [key]: value }));
   };
 

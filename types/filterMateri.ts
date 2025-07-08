@@ -8,14 +8,17 @@ export type Filters = {
   end_date?: string;
 };
 
+// types/filterMateri.ts - Update interface untuk menambahkan onlyVisualDocs
 export interface FilterStore {
-  filters: Filters;
-  tempFilters: Filters;
+  filters: Record<string, any>;
+  tempFilters: Record<string, any>;
   searchQuery: string;
   selectedPreset: string;
-  setTempFilter: (key: keyof Filters, value: string) => void;
+  onlyVisualDocs: boolean; // Tambahkan ini
+  setTempFilter: (key: string, value: any) => void;
   applyFilters: () => void;
   resetFilters: () => void;
   setSearchQuery: (query: string) => void;
   setSelectedPreset: (preset: string) => void;
+  setOnlyVisualDocs: (value: boolean) => void; // Tambahkan ini
 }

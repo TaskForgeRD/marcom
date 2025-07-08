@@ -83,9 +83,11 @@ export function useDocumentForm(defaultValues?: Partial<FormDataType>) {
         },
       });
 
-      if (!response.ok) throw new Error("Gagal menyimpan data");
-
       const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result?.message || "Gagal menyimpan data");
+      }
 
       useMateri.getState().viewMateri(result.id);
 
@@ -119,7 +121,10 @@ export function useDocumentForm(defaultValues?: Partial<FormDataType>) {
       console.error(error);
       toast({
         title: "Gagal menyimpan",
-        description: "Terjadi kesalahan, coba lagi nanti.",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Terjadi kesalahan, coba lagi nanti.",
         className: "bg-red-100 text-red-800",
       });
     } finally {

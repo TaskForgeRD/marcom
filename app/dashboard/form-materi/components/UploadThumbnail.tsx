@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Upload } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { useFormContext } from "react-hook-form";
 import Image from "next/image";
 import { getImageUrl } from "@/lib/utils";
+import get from "lodash.get";
+
+import { toast } from "@/hooks/use-toast";
 
 interface UploadThumbnailProps {
   name: string;
@@ -17,11 +20,21 @@ export default function UploadThumbnail({
   label = "Upload Thumbnail",
   readOnly = false,
 }: UploadThumbnailProps) {
-  const { setValue, watch } = useFormContext();
-  const [thumbnail, setThumbnail] = useState<File | null>(null);
-  const [error, setError] = useState<string>("");
+  const {
+    setValue,
+    register,
+    watch,
+    trigger,
+    formState: { errors },
+  } = useFormContext();
+
+  // Daftarkan field secara manual karena input type="file" disembunyikan
+  useEffect(() => {
+    register(name);
+  }, [register, name]);
 
   const value = watch(name);
+
   const preview =
     value instanceof File
       ? URL.createObjectURL(value)
@@ -30,13 +43,11 @@ export default function UploadThumbnail({
         : null;
 
   const validateFile = (file: File): string | null => {
-    // Validate file size (15MB)
     const maxSize = 15 * 1024 * 1024;
     if (file.size > maxSize) {
       return `File terlalu besar. Maksimal 15MB, ukuran file: ${(file.size / 1024 / 1024).toFixed(2)}MB`;
     }
 
-    // Validate MIME type
     const validTypes = [
       "image/jpeg",
       "image/jpg",
@@ -49,7 +60,6 @@ export default function UploadThumbnail({
       return `Tipe file tidak valid. Hanya menerima: JPG, PNG, GIF, WebP, BMP`;
     }
 
-    // Validate file extension
     const allowedExtensions = ["jpg", "jpeg", "png", "gif", "webp", "bmp"];
     const fileExtension = file.name.split(".").pop()?.toLowerCase();
     if (!fileExtension || !allowedExtensions.includes(fileExtension)) {
@@ -64,20 +74,25 @@ export default function UploadThumbnail({
 
     const file = e.target.files?.[0];
     if (file) {
-      setError("");
-
-      // Frontend validation
       const validationError = validateFile(file);
       if (validationError) {
-        setError(validationError);
-        e.target.value = ""; // Reset input
+        toast({
+          title: "Upload gagal",
+          description: validationError,
+          variant: "destructive",
+          className: "bg-red-100 text-red-800",
+        });
         return;
       }
 
-      setThumbnail(file);
-      setValue(name, file);
+      // Set file dan validasi ke react-hook-form
+      setValue(name, file, { shouldValidate: true });
+      trigger(name);
     }
   };
+
+  const error = get(errors, name);
+  const errorMessage = typeof error?.message === "string" ? error.message : "";
 
   return (
     <div className="space-y-2">
@@ -106,18 +121,18 @@ export default function UploadThumbnail({
             )}
           </Card>
         </label>
-        <div className="flex flex-col">
-          {thumbnail && (
-            <div>
-              <p className="text-sm font-medium">{thumbnail.name}</p>
-              <p className="text-xs text-gray-500">
-                {(thumbnail.size / 1024 / 1024).toFixed(2)}MB
-              </p>
-            </div>
-          )}
-          {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
-        </div>
+        {value instanceof File && (
+          <div className="flex flex-col">
+            <p className="text-sm font-medium">{value.name}</p>
+            <p className="text-xs text-gray-500">
+              {(value.size / 1024 / 1024).toFixed(2)}MB
+            </p>
+          </div>
+        )}
       </div>
+
+      {errorMessage && <p className="text-sm text-red-500">{errorMessage}</p>}
+
       <p className="text-xs text-gray-500">
         Maksimal 15MB. Format: JPG, PNG, GIF, WebP, BMP
       </p>

@@ -6,10 +6,11 @@ import { useState } from "react";
 import RealTimeStats from "./RealTimeStats";
 import StatsChartCard from "./components/stats-chart-card";
 import ToggleControls from "@/app/dashboard/uiRama/toggle-controls";
+import { useFilterStore } from "@/stores/filter-materi.store";
 
 export default function StatsSection() {
-  const [onlyVisualDocs, setOnlyVisualDocs] = useState(false);
   const [showStatsSection, setShowStatsSection] = useState(true);
+  const { onlyVisualDocs, setOnlyVisualDocs } = useFilterStore();
 
   return (
     <section>
