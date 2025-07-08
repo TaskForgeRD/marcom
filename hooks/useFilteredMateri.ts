@@ -2,12 +2,24 @@ import { useMemo } from "react";
 import { useMateri } from "@/stores/materi.store";
 import { useFilterStore } from "../stores/filter-materi.store";
 
+// Fungsi helper: cek apakah materi masih aktif berdasarkan end_date UTC
+function isMateriAktif(itemEndDate: string | null): boolean {
+  if (!itemEndDate) return false;
+
+  const now = new Date();
+  const todayUTC = new Date(
+    Date.UTC(now.getFullYear(), now.getMonth(), now.getDate())
+  );
+
+  const endDate = new Date(itemEndDate);
+  return endDate >= todayUTC;
+}
+
 export default function useFilteredMateri() {
   const { data } = useMateri();
   const { filters, searchQuery, onlyVisualDocs } = useFilterStore();
 
   const filteredData = useMemo(() => {
-    // Buat 'today' dalam UTC jam 00:00:00 untuk konsistensi
     const now = new Date();
     const todayUTC = new Date(
       Date.UTC(now.getFullYear(), now.getMonth(), now.getDate())
@@ -17,25 +29,24 @@ export default function useFilteredMateri() {
       const { start_date, end_date, status, fitur, brand, cluster, jenis } =
         filters;
 
-      // Konversi string ISO jadi Date object
-      const itemstart_date = item.start_date ? new Date(item.start_date) : null;
-      const itemend_date = item.end_date ? new Date(item.end_date) : null;
+      const itemStartDate = item.start_date ? new Date(item.start_date) : null;
+      const itemEndDate = item.end_date ? new Date(item.end_date) : null;
+
+      const filterStartDate = start_date ? new Date(start_date) : null;
+      const filterEndDate = end_date ? new Date(end_date) : null;
 
       // Filter berdasarkan range tanggal
-      const filterstart_date = start_date ? new Date(start_date) : null;
-      const filterend_date = end_date ? new Date(end_date) : null;
-
       const isInRange =
-        (!filterstart_date ||
-          (itemend_date && itemend_date >= filterstart_date)) &&
-        (!filterend_date ||
-          (itemstart_date && itemstart_date <= filterend_date));
+        (!filterStartDate || (itemEndDate && itemEndDate >= filterStartDate)) &&
+        (!filterEndDate || (itemStartDate && itemStartDate <= filterEndDate));
 
       // Filter berdasarkan status
       const isStatusMatch =
         !status ||
-        (status === "Aktif" && itemend_date && itemend_date >= todayUTC) ||
-        (status === "Expired" && itemend_date && itemend_date < todayUTC);
+        (status === "Aktif" && item.end_date && isMateriAktif(item.end_date)) ||
+        (status === "Expired" &&
+          item.end_date &&
+          !isMateriAktif(item.end_date));
 
       // Filter berdasarkan pencarian
       const searchLower = searchQuery.toLowerCase();
@@ -55,7 +66,7 @@ export default function useFilteredMateri() {
       const isFiturMatch = !fitur || item.fitur === fitur;
       const isBrandMatch = !brand || item.brand === brand;
       const isClusterMatch = !cluster || item.cluster === cluster;
-      const isjenisMatch = !jenis || item.jenis === jenis;
+      const isJenisMatch = !jenis || item.jenis === jenis;
 
       // Filter berdasarkan Key Visual
       const hasKeyVisualDoc = onlyVisualDocs
@@ -72,7 +83,7 @@ export default function useFilteredMateri() {
         isFiturMatch &&
         isBrandMatch &&
         isClusterMatch &&
-        isjenisMatch &&
+        isJenisMatch &&
         hasKeyVisualDoc
       );
     });
