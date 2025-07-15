@@ -8,6 +8,9 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Marcom Dashboard",
   description: "Platform manajemen konten marketing dan komunikasi",
+  icons: {
+    icon: "/bri_new.svg",
+  },
 };
 
 interface RootLayoutProps {
