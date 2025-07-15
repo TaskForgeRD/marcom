@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/select";
 import { useFormContext } from "react-hook-form";
 import { Label } from "@/components/ui/label";
+import get from "lodash.get";
 
 interface ReusableSelectProps {
   name?: string;
@@ -34,10 +35,15 @@ export default function SelectField({
 
   const handleChange = (val: string) => {
     if (!readOnly) {
-      if (isForm) form.setValue(name!, val);
+      if (isForm) form.setValue(name!, val, { shouldValidate: true });
+
       if (onChange) onChange(val);
     }
   };
+
+  const rawError = isForm ? get(form.formState.errors, name!) : null;
+  const errorMessage =
+    typeof rawError?.message === "string" ? rawError.message : "";
 
   return (
     <div className="space-y-2">
@@ -60,11 +66,7 @@ export default function SelectField({
           ))}
         </SelectContent>
       </Select>
-      {isForm && form.formState.errors[name!] && (
-        <p className="text-red-500">
-          {form.formState.errors[name!]?.message as string}
-        </p>
-      )}
+      {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
     </div>
   );
 }

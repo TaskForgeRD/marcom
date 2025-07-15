@@ -1,6 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useFormContext } from "react-hook-form";
+import get from "lodash.get";
 
 interface InputFieldProps {
   name: string;
@@ -26,6 +27,8 @@ export default function InputField({
     formState: { errors },
   } = useFormContext();
 
+  const errorMessage = get(errors, name)?.message as string;
+
   return (
     <div className={`space-y-2 ${className}`}>
       <Label htmlFor={name}>{label}</Label>
@@ -35,13 +38,9 @@ export default function InputField({
         type={type}
         placeholder={placeholder}
         disabled={disabled}
-        readOnly={readOnly} // Mengatur properti readOnly pada input
+        readOnly={readOnly}
       />
-      {errors[name] && (
-        <p className="text-red-500 text-sm">
-          {errors[name]?.message as string}
-        </p>
-      )}
+      {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
     </div>
   );
 }

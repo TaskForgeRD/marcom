@@ -27,6 +27,11 @@ const MateriRow: React.FC<MateriRowProps> = ({ materi }) => {
     router.push(`/dashboard/form-materi/${materi.id}?mode=view`);
   };
 
+  const handleMateriClick = (event: React.MouseEvent, linkDokumen: string) => {
+    event.stopPropagation(); // Mencegah event bubbling ke parent TableRow
+    window.open(linkDokumen, "_blank", "noopener,noreferrer");
+  };
+
   console.log(materi);
 
   return (
@@ -69,16 +74,12 @@ const MateriRow: React.FC<MateriRowProps> = ({ materi }) => {
                   )}
                   <Button
                     variant="link"
-                    asChild
-                    className="text-blue-600 underline"
+                    className="text-blue-600 underline hover:bg-blue-50 hover:text-blue-800 px-2 py-1 rounded-md transition-colors duration-200"
+                    onClick={(event) =>
+                      handleMateriClick(event, dokumen.linkDokumen || "")
+                    }
                   >
-                    <a
-                      href={dokumen.linkDokumen}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Lihat Materi {index + 1}
-                    </a>
+                    Lihat Materi {index + 1}
                   </Button>
                 </div>
               )
