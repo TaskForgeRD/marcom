@@ -12,7 +12,8 @@ function isMateriAktif(itemEndDate: string | null): boolean {
   );
 
   const endDate = new Date(itemEndDate);
-  return endDate >= todayUTC;
+  // Ubah dari >= menjadi >
+  return endDate > todayUTC;
 }
 
 export default function useFilteredMateri() {
