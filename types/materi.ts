@@ -38,5 +38,5 @@ export interface MateriStore {
   setCurrentPage: (page: number) => void;
   viewMateri: (id: string) => void;
   selectedMateri: Materi | null;
-  setSelectedMateri: (materi: Materi) => void;
+  setSelectedMateri: (materi: Materi | null) => void;
 }

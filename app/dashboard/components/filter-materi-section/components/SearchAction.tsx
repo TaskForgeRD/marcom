@@ -2,9 +2,10 @@ import { PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SearchInput from "@/app/dashboard/uiRama/searchInput";
 import ButtonWithIcon from "@/app/dashboard/uiRama/buttonWithIcon";
+import { useMateri } from "@/stores/materi.store"; // 👈 Tambahkan ini
+import { useRouter } from "next/navigation"; // 👈 Tambahkan ini
 
 const SearchAndActions = ({
-  handleTambahMateri,
   handleResetFilters,
   applyFilters,
   setSearchQuery,
@@ -14,6 +15,14 @@ const SearchAndActions = ({
   applyFilters: () => void;
   setSearchQuery: (query: string) => void;
 }) => {
+  const router = useRouter();
+  const { setSelectedMateri } = useMateri();
+
+  const handleTambahMateri = () => {
+    setSelectedMateri(null); // 🧹 reset state sebelum pindah ke form tambah
+    router.push("/dashboard/form-materi");
+  };
+
   return (
     <div className="flex flex-wrap justify-between items-center gap-3">
       <div className="flex items-center space-x-4">

@@ -11,24 +11,22 @@ import { useMateri } from "@/stores/materi.store";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-// Tambahkan prop materiId
 interface FormMateriProps {
   mode?: string;
-  materiId?: string; // ← ini penting untuk tahu mana materi yang dipilih
+  materiId?: string;
 }
 
 export default function FormMateri({ mode }: FormMateriProps) {
   const router = useRouter();
-  const selectedMateri = useMateri((state) => state.selectedMateri);
+  const { selectedMateri, setSelectedMateri } = useMateri();
   const isViewMode = mode === "view";
 
-  const { data } = useMateri();
-
-  console.log(data);
-
+  // Reset selectedMateri jika masuk ke mode "tambah"
   useEffect(() => {
-    console.log("selectedMateri in FormMateri:", selectedMateri);
-  }, [selectedMateri]);
+    if (!mode) {
+      setSelectedMateri(null);
+    }
+  }, [mode, setSelectedMateri]);
 
   const {
     methods,
@@ -37,7 +35,7 @@ export default function FormMateri({ mode }: FormMateriProps) {
     isDialogOpen,
     setIsDialogOpen,
     onSubmit,
-  } = useDocumentForm(selectedMateri ?? undefined);
+  } = useDocumentForm(mode ? (selectedMateri ?? undefined) : undefined);
 
   const handleCancel = () => {
     router.push("/dashboard");
@@ -54,13 +52,11 @@ export default function FormMateri({ mode }: FormMateriProps) {
             Detail Materi Komunikasi
           </p>
         )}
-
         {mode === "edit" && (
           <p className="text-sm text-blue-600 font-medium">
             Edit Materi Komunikasi
           </p>
         )}
-
         <h1 className="text-2xl font-semibold text-foreground">
           {isViewMode || mode === "edit"
             ? (selectedMateri?.nama_materi ?? "-")
