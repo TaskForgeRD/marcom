@@ -1,29 +1,15 @@
-"use client";
+import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useAuthStore } from "@/stores/auth.store";
+export default async function Home() {
+  const cookieStore = cookies();
+  const token = (await cookieStore).get("accessToken");
 
-export default function HomePage() {
-  const router = useRouter();
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const isLoading = useAuthStore((state) => state.isLoading);
+  if (token) {
+    // Sudah login
+    redirect("/dashboard");
+  }
 
-  useEffect(() => {
-    if (!isLoading) {
-      if (isAuthenticated) {
-        router.replace("/dashboard");
-      } else {
-        router.replace("/login");
-      }
-    }
-  }, [isAuthenticated, isLoading, router]);
-
-  return (
-    <main className="min-h-screen flex items-center justify-center">
-      <p className="text-sm text-muted-foreground animate-pulse">
-        Memuat halaman...
-      </p>
-    </main>
-  );
+  // Belum login
+  redirect("/login");
 }
