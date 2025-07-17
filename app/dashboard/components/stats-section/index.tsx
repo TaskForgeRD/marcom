@@ -19,38 +19,38 @@ export default function StatsSection() {
 
   return (
     <section>
-      {showStatsSection ? <RealTimeStats /> : <StatsChartCard />}
-      <Collapsible
-        open={showStatsSection}
-        onOpenChange={() => setShowStatsSection((prev) => !prev)}
-        className="flex w-[350px] flex-col gap-2"
+      <div
+        className={`transition-all duration-300 ease-in-out ${
+          showStatsSection ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"
+        }`}
+        style={{
+          overflow: "hidden",
+        }}
       >
-        <CollapsibleTrigger asChild>
-          <ToggleControls
-            label="Lihat data yang ada dokumen visual saja"
-            switchState={onlyVisualDocs}
-            onToggleSwitch={setOnlyVisualDocs}
-            togglePanelState={showStatsSection}
-            onTogglePanel={() => setShowStatsSection((prev) => !prev)}
-            togglePanelLabel={{
-              show: "Sembunyikan Detail Summary",
-              hide: "Lihat Detail Summary",
-            }}
-          />
-        </CollapsibleTrigger>
+        <RealTimeStats />
+      </div>
+      <div
+        className={`transition-all duration-300 ease-in-out ${
+          showStatsSection ? "max-h-0 opacity-0" : "max-h-[1000px] opacity-100"
+        }`}
+        style={{
+          overflow: "hidden",
+        }}
+      >
+        <StatsChartCard />
+      </div>
+      <ToggleControls
+        label="Lihat data yang ada dokumen visual saja"
+        switchState={onlyVisualDocs}
+        onToggleSwitch={setOnlyVisualDocs}
+        togglePanelState={showStatsSection}
+        onTogglePanel={() => setShowStatsSection((prev) => !prev)}
+        togglePanelLabel={{
+          show: "Sembunyikan Detail Summary",
+          hide: "Lihat Detail Summary",
+        }}
+      />
 
-        <CollapsibleContent
-          style={{ transitionDuration: "0.3s" }}
-          className="flex flex-col gap-2"
-        >
-          <div className="rounded-md border px-4 py-2 font-mono text-sm">
-            @radix-ui/colors
-          </div>
-          <div className="rounded-md border px-4 py-2 font-mono text-sm">
-            @stitches/react
-          </div>
-        </CollapsibleContent>
-      </Collapsible>
     </section>
   );
 }
