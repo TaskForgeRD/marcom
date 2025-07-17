@@ -13,29 +13,22 @@ const FilterGroup = ({
   selectedFilters,
   handleFilterChange,
 }: FilterGroupProps) => {
-  const { brands, clusters, fitur, jenis } = useMultiApiStore();
+  const { clusters, fitur, jenis } = useMultiApiStore();
 
   // Memoized filter options berdasarkan data dari API
   const filterOptions = useMemo(() => {
     return {
-      brand: ["Semua Brand", ...brands.map((brand) => brand.name)],
       cluster: ["Semua Cluster", ...clusters.map((cluster) => cluster.name)],
       fitur: ["Semua Fitur", ...fitur.map((f) => f.name)],
       status: ["Semua Status", "Aktif", "Expired"],
       jenis: ["Semua Jenis", ...jenis.map((j) => j.name)],
     };
-  }, [brands, clusters, fitur, jenis]);
+  }, [clusters, fitur, jenis]);
 
   console.log(filterOptions);
 
   // Filter keys untuk ditampilkan
-  const filterKeys: FilterKey[] = [
-    "brand",
-    "cluster",
-    "fitur",
-    "status",
-    "jenis",
-  ];
+  const filterKeys: FilterKey[] = ["cluster", "fitur", "status", "jenis"];
 
   console.log(filterOptions);
 
