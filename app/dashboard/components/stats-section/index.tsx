@@ -7,6 +7,11 @@ import RealTimeStats from "./RealTimeStats";
 import StatsChartCard from "./components/stats-chart-card";
 import ToggleControls from "@/app/dashboard/uiRama/toggle-controls";
 import { useFilterStore } from "@/stores/filter-materi.store";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 export default function StatsSection() {
   const [showStatsSection, setShowStatsSection] = useState(true);
@@ -45,6 +50,7 @@ export default function StatsSection() {
           hide: "Lihat Detail Summary",
         }}
       />
+
     </section>
   );
 }
