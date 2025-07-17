@@ -1,11 +1,9 @@
-// components/stats-section/RealTimeStats.tsx
-import React from "react";
 import { RefreshCw, Wifi, WifiOff, Clock } from "lucide-react";
 import { useStatsData } from "@/hooks/useStatsData";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { statsConfig } from "./StatsConfig";
-import Card from "@/app/dashboard/uiRama/card";
+import StatsCard from "@/app/dashboard/uiRama/card";
 
 export default function RealTimeStats() {
   const {
@@ -16,6 +14,9 @@ export default function RealTimeStats() {
     error,
     lastUpdated,
     refreshStats,
+    filters,
+    setTempFilter,
+    applyFilters,
   } = useStatsData();
 
   const statsMap = {
@@ -40,7 +41,25 @@ export default function RealTimeStats() {
     });
   };
 
-  console.log(statsMap);
+  const colorsMap = {
+    fitur: "default",
+    komunikasi: "default",
+    aktif: "success",
+    expired: "error",
+    dokumen: "accent",
+    total: "default",
+  };
+
+  const handleCardClick = (key: string) => {
+    const statusKey = filters?.status;
+    if (statusKey && key.toLowerCase() === statusKey.toLowerCase()) {
+      setTempFilter("status", "");
+      applyFilters();
+    } else {
+      setTempFilter("status", key);
+      applyFilters();
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -96,25 +115,36 @@ export default function RealTimeStats() {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 px-4">
         {statsConfig.map(({ key, title, icon }) => {
           const { now, changeLabel } = statsMap[key];
+          const statusKey = filters?.status;
+          let isActive = false;
+          if (statusKey && key.toLowerCase() === statusKey.toLowerCase()) {
+            isActive = true;
+          }
+
           return (
             <div key={key} className="relative">
-              <Card
+              <StatsCard
                 title={title}
                 value={loading ? "..." : now.toString()}
                 change={changeLabel}
                 subtext={waktuLabel}
                 icon={icon}
+                active={isActive}
                 showChange={!hideChangeAndSubtext}
+                color={colorsMap[key]}
+                onClick={() => {
+                  handleCardClick(key);
+                }}
               />
               {/* Live indicator */}
-              {!error && (
-                <div className="absolute top-2 right-2">
-                  <div
-                    className="h-2 w-2 bg-green-500 rounded-full animate-pulse"
-                    title="Real-time data"
-                  />
-                </div>
-              )}
+              {/* {!error && ( */}
+              {/*   <div className="absolute top-2 right-2"> */}
+              {/*     <div */}
+              {/*       className="h-2 w-2 bg-green-500 rounded-full animate-pulse" */}
+              {/*       title="Real-time data" */}
+              {/*     /> */}
+              {/*   </div> */}
+              {/* )} */}
             </div>
           );
         })}
