@@ -16,7 +16,7 @@ const FilterGroup = ({
   const { clusters, fitur, jenis } = useMultiApiStore();
 
   // Memoized filter options berdasarkan data dari API
-  const filterOptions = useMemo(() => {
+  const filterOptions: Partial<Record<FilterKey, string[]>> = useMemo(() => {
     return {
       cluster: ["Semua Cluster", ...clusters.map((cluster) => cluster.name)],
       fitur: ["Semua Fitur", ...fitur.map((f) => f.name)],
@@ -49,10 +49,12 @@ const FilterGroup = ({
                 handleFilterChange(key, value);
               }
             }}
-            options={filterOptions[key].map((opt) => ({
-              value: opt,
-              label: opt,
-            }))}
+            options={
+              filterOptions[key]?.map((opt) => ({
+                value: opt,
+                label: opt,
+              })) || []
+            }
             showLabel={false}
           />
         ))}
