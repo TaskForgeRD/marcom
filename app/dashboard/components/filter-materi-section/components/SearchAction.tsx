@@ -38,7 +38,11 @@ const SearchAndActions = ({
         />
       </div>
       <div className="flex space-x-2">
-        <Button variant="ghost" onClick={handleResetFilters}>
+        <Button
+          className="text-red-800 hover:text-red-600"
+          variant="ghost"
+          onClick={handleResetFilters}
+        >
           Reset Filter
         </Button>
         <Button

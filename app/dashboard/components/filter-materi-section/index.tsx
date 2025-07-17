@@ -23,7 +23,7 @@ export default function FilterOption() {
   }, [fetchAllData]);
 
   return (
-    <div className="pt-4 pr-8 pb-4 pl-8 bg-gray-50 space-y-4">
+    <div className="pt-4 pr-8 pb-4 pl-8 bg-slate-100 space-y-4">
       <FilterGroup
         selectedFilters={selectedFilters}
         handleFilterChange={handleFilterChange}
