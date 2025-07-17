@@ -8,8 +8,8 @@ interface StatsCardProps {
   subtext?: string;
   icon?: JSX.Element;
   showChange?: boolean;
-  color: string;
-  active: boolean;
+  color?: string;
+  active?: boolean;
   onClick?: () => void;
 }
 

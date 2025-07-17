@@ -15,11 +15,9 @@ const FilterDateSection: React.FC = () => {
 
   const { dateRange, isCustomRange, handleDateChange, handlePresetSelection } =
     useDateRange();
-  const filterOptions = React.useMemo(() => {
-    return {
-      brand: ["Semua Brand", ...brands.map((brand) => brand.name)],
-    };
-  }, [brands]);
+  const filterOptions: Partial<Record<FilterKey, string[]>> = {
+    brand: ["Semua Brand", ...brands.map((brand) => brand.name)],
+  };
   const filterKeys: FilterKey[] = ["brand"];
 
   return (
@@ -53,10 +51,12 @@ const FilterDateSection: React.FC = () => {
               handleFilterChange(key, value);
             }
           }}
-          options={filterOptions[key].map((opt) => ({
-            value: opt,
-            label: opt,
-          }))}
+          options={
+            filterOptions[key]?.map((opt) => ({
+              value: opt,
+              label: opt,
+            })) || []
+          }
           showLabel={false}
         />
       ))}
