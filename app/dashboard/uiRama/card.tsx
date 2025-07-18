@@ -11,6 +11,7 @@ interface StatsCardProps {
   color?: string;
   active?: boolean;
   onClick?: () => void;
+  subtitle?: string; // Tambahkan prop subtitle
 }
 
 const StatsCard = ({
@@ -23,6 +24,7 @@ const StatsCard = ({
   color,
   active = false,
   onClick,
+  subtitle, // Tambahkan prop subtitle
 }: StatsCardProps) => {
   const getTextColor = () => {
     switch (color) {
@@ -38,6 +40,7 @@ const StatsCard = ({
         return "text-gray-800";
     }
   };
+
   return (
     <Card
       className={`p-0 pt-3 shadow-sm border rounded-lg overflow-hidden relative transition-all hover:border-blue-500 ${active ? "border-blue-500" : "border-gray-200"}`}
@@ -47,9 +50,17 @@ const StatsCard = ({
     >
       <CardContent className="flex flex-col space-y-6 ">
         <div className="flex justify-between items-center">
-          <span className={`text-sm font-semibold truncate ${getTextColor()} `}>
-            {title}
-          </span>
+          <div className="flex flex-col">
+            <span
+              className={`text-sm font-semibold truncate ${getTextColor()} `}
+            >
+              {title}
+            </span>
+            {/* Tampilkan subtitle jika ada */}
+            {subtitle && (
+              <span className="text-xs text-gray-500 mt-1">({subtitle})</span>
+            )}
+          </div>
           {icon && (
             <div
               className={`w-55 h-55 ${getTextColor()}`}

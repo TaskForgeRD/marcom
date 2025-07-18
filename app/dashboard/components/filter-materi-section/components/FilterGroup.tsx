@@ -62,7 +62,7 @@ const FilterGroup = ({
       </div>
       <div className="flex space-x-2 ml-auto">
         <Button
-          className="text-black border border-black bg-transparent hover:bg-blue-600"
+          className="text-black hover:text-black border border-black bg-transparent hover:bg-gray-200"
           onClick={applyFilters}
         >
           Terapkan
