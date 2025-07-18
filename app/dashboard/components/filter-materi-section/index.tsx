@@ -27,12 +27,12 @@ export default function FilterOption() {
       <FilterGroup
         selectedFilters={selectedFilters}
         handleFilterChange={handleFilterChange}
+        handleResetFilters={handleResetFilters}
+        applyFilters={applyFilters}
       />
       <HorizontalLine />
       <SearchAndActions
-        handleTambahMateri={() => router.push("/dashboard/form-materi")}
-        handleResetFilters={handleResetFilters}
-        applyFilters={applyFilters}
+        // handleTambahMateri={() => router.push("/dashboard/form-materi")}
         setSearchQuery={setSearchQuery}
       />
     </div>

@@ -50,15 +50,48 @@ export default function RealTimeStats() {
     total: "default",
   };
 
-  const handleCardClick = (key: string) => {
-    const statusKey = filters?.status;
-    if (statusKey && key.toLowerCase() === statusKey.toLowerCase()) {
-      setTempFilter("status", "");
-      applyFilters();
-    } else {
-      setTempFilter("status", key);
-      applyFilters();
+  // Mapping dari key stats card ke nilai filter yang sesuai
+  const getFilterValue = (key: string) => {
+    switch (key.toLowerCase()) {
+      case "aktif":
+        return "Aktif";
+      case "expired":
+        return "Expired";
+      case "total":
+        return ""; // Semua status
+      case "komunikasi":
+        return ""; // Mungkin tidak ada filter status khusus untuk ini
+      case "fitur":
+        return ""; // Mungkin tidak ada filter status khusus untuk ini
+      case "dokumen":
+        return ""; // Mungkin tidak ada filter status khusus untuk ini
+      default:
+        return "";
     }
+  };
+
+  const handleCardClick = (key: string) => {
+    const currentStatus = filters?.status;
+    const targetFilterValue = getFilterValue(key);
+
+    // Debug log untuk melihat nilai yang dikirim
+    console.log("Card clicked:", key);
+    console.log("Current filter status:", currentStatus);
+    console.log("Target filter value:", targetFilterValue);
+
+    // Jika card yang diklik sudah aktif (filter sama), reset filter
+    if (currentStatus === targetFilterValue && targetFilterValue !== "") {
+      console.log("Resetting filter");
+      setTempFilter("status", "");
+    } else {
+      console.log("Setting filter to:", targetFilterValue);
+      setTempFilter("status", targetFilterValue);
+    }
+
+    // Apply filter dengan delay singkat
+    setTimeout(() => {
+      applyFilters();
+    }, 100);
   };
 
   return (
@@ -115,11 +148,12 @@ export default function RealTimeStats() {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 px-4">
         {statsConfig.map(({ key, title, icon }) => {
           const { now, changeLabel } = statsMap[key];
-          const statusKey = filters?.status;
-          let isActive = false;
-          if (statusKey && key.toLowerCase() === statusKey.toLowerCase()) {
-            isActive = true;
-          }
+          const currentStatus = filters?.status;
+          const targetFilterValue = getFilterValue(key);
+
+          // Card aktif jika filter status cocok dengan target value dari card
+          const isActive =
+            currentStatus === targetFilterValue && targetFilterValue !== "";
 
           return (
             <div key={key} className="relative">

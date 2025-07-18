@@ -1,5 +1,6 @@
 // FilterGroup.tsx
 import { useMemo } from "react";
+import { Button } from "@/components/ui/button";
 import SelectField from "../../../uiRama/selectField";
 import { useMultiApiStore } from "@/stores/api.store";
 import { FilterKey } from "../../../../../constants/filter-options";
@@ -7,11 +8,15 @@ import { FilterKey } from "../../../../../constants/filter-options";
 type FilterGroupProps = {
   selectedFilters: Partial<Record<FilterKey, string>>;
   handleFilterChange: (key: FilterKey, value: string) => void;
+  handleResetFilters: () => void;
+  applyFilters: () => void;
 };
 
 const FilterGroup = ({
   selectedFilters,
   handleFilterChange,
+  handleResetFilters,
+  applyFilters,
 }: FilterGroupProps) => {
   const { clusters, fitur, jenis } = useMultiApiStore();
 
@@ -25,17 +30,13 @@ const FilterGroup = ({
     };
   }, [clusters, fitur, jenis]);
 
-  console.log(filterOptions);
-
   // Filter keys untuk ditampilkan
   const filterKeys: FilterKey[] = ["cluster", "fitur", "status", "jenis"];
-
-  console.log(filterOptions);
 
   return (
     <div className="flex items-center space-x-3">
       <span className="text-sm font-medium">Filter</span>
-      <div className="grid grid-cols-5 gap-2 w-full">
+      <div className="grid grid-cols-4 gap-2 flex-1">
         {filterKeys.map((key) => (
           <SelectField
             key={key}
@@ -58,6 +59,21 @@ const FilterGroup = ({
             showLabel={false}
           />
         ))}
+      </div>
+      <div className="flex space-x-2 ml-auto">
+        <Button
+          className="text-black border border-black bg-transparent hover:bg-blue-600"
+          onClick={applyFilters}
+        >
+          Terapkan
+        </Button>
+        <Button
+          className="text-red-800 hover:text-red-600"
+          variant="ghost"
+          onClick={handleResetFilters}
+        >
+          Reset Filter
+        </Button>
       </div>
     </div>
   );

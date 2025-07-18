@@ -50,7 +50,6 @@ export default function StatsSection() {
           hide: "Lihat Detail Summary",
         }}
       />
-
     </section>
   );
 }

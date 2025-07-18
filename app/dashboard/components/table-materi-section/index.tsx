@@ -14,16 +14,24 @@ import {
 } from "@/components/ui/table";
 
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, PlusCircle } from "lucide-react";
 import { materiTableColumns } from "@/app/dashboard/components/table-materi-section/TableColumnConfig";
 import LoadingSpinner from "@/app/dashboard/components/table-materi-section/components/LoadingSpinner";
 import MateriRow from "@/app/dashboard/components/table-materi-section/components/MateriRow";
+import { useRouter } from "next/navigation";
 
 export default function TableMateriSection() {
-  const { loading, currentPage, itemsPerPage, fetchData, setCurrentPage } =
-    useMateri();
+  const {
+    loading,
+    currentPage,
+    itemsPerPage,
+    fetchData,
+    setCurrentPage,
+    setSelectedMateri,
+  } = useMateri();
   const filteredData = useFilteredMateri();
   const tableRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     fetchData();
@@ -90,13 +98,29 @@ export default function TableMateriSection() {
     }, 50);
   };
 
+  const handleTambahMateri = () => {
+    setSelectedMateri(null); // 🧹 reset state sebelum pindah ke form tambah
+    router.push("/dashboard/form-materi");
+  };
+
   if (loading) {
     return <LoadingSpinner />;
   }
 
   return (
     <section className="p-4 overflow-x-auto" ref={tableRef}>
-      <h2 className="text-2xl font-bold mb-6">Daftar Materi Komunikasi</h2>
+      {/* Header dengan tombol Tambah Materi */}
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-2xl font-bold">Daftar Materi Komunikasi</h2>
+        <Button
+          onClick={handleTambahMateri}
+          className="bg-black text-white hover:bg-gray-800 flex items-center gap-2"
+        >
+          <PlusCircle className="h-4 w-4" />
+          Tambah Materi Komunikasi
+        </Button>
+      </div>
+
       <Table>
         <TableHeader>
           <TableRow>
