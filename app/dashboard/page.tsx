@@ -1,19 +1,16 @@
-import FilterMateriSection from "./components/filter-materi-section";
+import { DashboardShell } from "@/components/ui/dashboardShell";
 import FilterDateSection from "@/app/dashboard/components/filter-date-section";
-import MateriTabelSection from "./components/table-materi-section";
-import StatsSection from "./components/stats-section";
+import StatsSection from "@/app/dashboard/components/stats-section";
+import FilterMateriSection from "@/app/dashboard/components/filter-materi-section";
+import MateriTabelSection from "@/app/dashboard/components/table-materi-section";
 
-export default function Page() {
-  const unused = 123;
-
-  console.log("test");
-
+export default function DashboardPage() {
   return (
-    <main className="min-h-screen w-full max-w-full">
+    <DashboardShell title="Dashboard">
       <FilterDateSection />
       <StatsSection />
       <FilterMateriSection />
       <MateriTabelSection />
-    </main>
+    </DashboardShell>
   );
 }
