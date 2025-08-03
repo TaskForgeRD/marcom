@@ -1,36 +1,39 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import { useAuthStore } from "@/stores/auth.store";
 
 export const useAuth = () => {
   const store = useAuthStore();
   const hasInitialized = useRef(false);
+  const initPromise = useRef<Promise<void> | null>(null);
 
-  useEffect(() => {
-    if (hasInitialized.current) return;
+  // Stable callback untuk mencegah infinite loop
+  const initializeAuth = useCallback(async () => {
+    if (hasInitialized.current || initPromise.current) {
+      return initPromise.current;
+    }
 
-    const initializeAuth = async () => {
-      if (store.token && !store.user && !store.isAuthenticated) {
-        console.log("Token found but no user, verifying token...");
-        await store.verifyToken();
-      } else if (!store.token) {
-        console.log("No token found, setting as unauthenticated");
-        store.setLoading(false);
-      } else if (store.token && store.user && store.isAuthenticated) {
-        console.log("Already authenticated, setting loading to false");
+    console.log("Starting auth initialization...");
+    hasInitialized.current = true;
+
+    initPromise.current = (async () => {
+      try {
+        if (store.token && !store.user && !store.isAuthenticated) {
+          console.log("Token found but no user, verifying token...");
+          await store.verifyToken();
+        } else if (!store.token) {
+          console.log("No token found, setting as unauthenticated");
+          store.setLoading(false);
+        } else if (store.token && store.user && store.isAuthenticated) {
+          console.log("Already authenticated, setting loading to false");
+          store.setLoading(false);
+        }
+      } catch (error) {
+        console.error("Auth initialization failed:", error);
         store.setLoading(false);
       }
-    };
+    })();
 
-    const timeoutId = setTimeout(() => {
-      if (!hasInitialized.current) {
-        hasInitialized.current = true;
-        initializeAuth();
-      }
-    }, 100);
-
-    return () => {
-      clearTimeout(timeoutId);
-    };
+    return initPromise.current;
   }, [
     store.token,
     store.user,
@@ -38,6 +41,13 @@ export const useAuth = () => {
     store.verifyToken,
     store.setLoading,
   ]);
+
+  useEffect(() => {
+    // Hanya jalankan jika belum diinisialisasi dan sedang loading
+    if (!hasInitialized.current && store.isLoading) {
+      initializeAuth();
+    }
+  }, [initializeAuth, store.isLoading]);
 
   return {
     user: store.user,

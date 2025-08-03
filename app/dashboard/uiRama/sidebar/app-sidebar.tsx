@@ -6,9 +6,6 @@ import { usePathname, useSearchParams } from "next/navigation";
 import {
   Database,
   Home,
-  FileText,
-  Settings,
-  HelpCircle,
   ChevronRight,
   Tag,
   Grid3X3,
@@ -58,11 +55,11 @@ const navigationItems = [
         title: "Brand",
         url: "/master-data?tab=brands",
         icon: Tag,
-        tabValue: "brands", // PERBAIKAN: tambahkan tabValue untuk matching yang tepat
+        tabValue: "brands",
       },
       {
         title: "Cluster",
-        url: "/master-data?tab=clusters", // PERBAIKAN: ubah ke "clusters" untuk konsistensi
+        url: "/master-data?tab=clusters",
         icon: Grid3X3,
         tabValue: "clusters",
       },
@@ -111,7 +108,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           {navigationItems.map((item) => {
             const isActive = pathname === item.url;
-            // PERBAIKAN: perbaiki logic untuk mendeteksi active state pada Master Data
             const hasActiveSubItem =
               pathname === "/master-data" &&
               item.items?.some((subItem) => subItem.tabValue === currentTab);
@@ -140,7 +136,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     <CollapsibleContent>
                       <SidebarMenuSub>
                         {item.items.map((subItem) => {
-                          // PERBAIKAN: gunakan tabValue untuk matching yang tepat
                           const isSubActive = currentTab === subItem.tabValue;
 
                           return (
