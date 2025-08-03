@@ -1,3 +1,5 @@
+import { Badge } from "@/components/ui/badge";
+
 interface StatusBadgeProps {
   start_date: string;
   end_date: string;
@@ -10,11 +12,13 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ end_date }) => {
   const isActive = today <= end;
 
   return (
-    <span
-      className={`font-semibold ${isActive ? "text-green-500" : "text-red-500"}`}
+    <Badge
+      variant={!isActive ? "destructive" : "secondary"}
+      className={`text-xs ${isActive ? "bg-green-100 text-green-700 border border-green-300" : ""}`}
     >
+      {" "}
       {isActive ? "Aktif" : "Expired"}
-    </span>
+    </Badge>
   );
 };
 

@@ -8,6 +8,10 @@ interface StatsCardProps {
   subtext?: string;
   icon?: JSX.Element;
   showChange?: boolean;
+  color?: string;
+  active?: boolean;
+  onClick?: () => void;
+  subtitle?: string; // Tambahkan prop subtitle
 }
 
 const StatsCard = ({
@@ -17,16 +21,64 @@ const StatsCard = ({
   subtext,
   icon,
   showChange = true,
+  color,
+  active = false,
+  onClick,
+  subtitle, // Tambahkan prop subtitle
 }: StatsCardProps) => {
+  const getTextColor = () => {
+    switch (color) {
+      case "default":
+        return "text-grey-600";
+      case "success":
+        return "text-green-600";
+      case "error":
+        return "text-red-600";
+      case "accent":
+        return "text-purple-600";
+      default:
+        return "text-gray-800";
+    }
+  };
+
   return (
-    <Card className="p-0 pt-3 shadow-sm border rounded-lg">
-      <CardContent className="flex flex-col space-y-6">
+    <Card
+      className={`p-0 pt-3 shadow-sm border rounded-lg overflow-hidden relative transition-all hover:border-blue-500 ${active ? "border-blue-500" : "border-gray-200"}`}
+      onClick={() => {
+        onClick?.();
+      }}
+    >
+      <CardContent className="flex flex-col space-y-6 ">
         <div className="flex justify-between items-center">
-          <span className="text-sm font-semibold truncate">{title}</span>
-          {icon && <div className="w-5 h-5 text-gray-500">{icon}</div>}
+          <div className="flex flex-col">
+            <span
+              className={`text-sm font-semibold truncate ${getTextColor()} `}
+            >
+              {title}
+            </span>
+            {/* Tampilkan subtitle jika ada */}
+            {subtitle && (
+              <span className="text-xs text-gray-500 mt-1">({subtitle})</span>
+            )}
+          </div>
+          {icon && (
+            <div
+              className={`w-55 h-55 ${getTextColor()}`}
+              style={{
+                opacity: 0.25,
+                position: "absolute",
+                top: "-20px",
+                right: "-20px",
+              }}
+            >
+              {icon}
+            </div>
+          )}
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-2xl font-bold">{value}</span>
+          <span className={`text-2xl font-bold ${getTextColor()}`}>
+            {value}
+          </span>
           {showChange && change && subtext && (
             <span className="text-sm text-gray-400">
               {change} {subtext}

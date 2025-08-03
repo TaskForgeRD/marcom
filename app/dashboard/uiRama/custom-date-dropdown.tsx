@@ -12,17 +12,20 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { PresetDate } from "../../../constants/preset-date";
 import { useFilterStore } from "@/stores/filter-materi.store";
+import clsx from "clsx";
 
 interface CustomDateDropdownProps {
   dateRange?: { from: Date; to: Date };
   isCustomRange: boolean;
   handlePresetSelection: (preset: PresetDate) => void;
+  highlightDropdown?: boolean;
 }
 
 const CustomDateDropdown: React.FC<CustomDateDropdownProps> = ({
   dateRange,
   isCustomRange,
   handlePresetSelection,
+  highlightDropdown = false,
 }) => {
   const { setSelectedPreset } = useFilterStore();
 
@@ -42,7 +45,13 @@ const CustomDateDropdown: React.FC<CustomDateDropdownProps> = ({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="w-[260px] justify-between">
+        <Button
+          variant="outline"
+          className={clsx(
+            "w-[260px] justify-between",
+            highlightDropdown ? "border-blue-500 focus:border-blue-500" : ""
+          )}
+        >
           {displayLabel()}
           <ChevronDownIcon className="ml-2 h-4 w-4" />
         </Button>

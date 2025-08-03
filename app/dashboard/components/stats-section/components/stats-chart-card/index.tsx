@@ -4,9 +4,11 @@ import React from "react";
 import { useStatsData } from "@/hooks/useStatsData";
 import { ChartCard } from "@/app/dashboard/uiRama/chart/ChartCard";
 import { statsConfig } from "@/app/dashboard/components/stats-section/StatsConfig";
+import { useFilterStore } from "@/stores/filter-materi.store";
 
 export default function Page() {
   const { stats } = useStatsData();
+  const { onlyVisualDocs } = useFilterStore();
 
   return (
     <div className="flex flex-wrap gap-4 px-4 py-4">
@@ -32,7 +34,8 @@ export default function Page() {
               value={data.now}
               data={data.chartData}
               color={item.color}
-              subtitle={item.subtitle}
+              // Hanya tampilkan subtitle jika onlyVisualDocs aktif dan item memiliki subtitle
+              subtitle={onlyVisualDocs && item.subtitle ? item.subtitle : null}
             />
           </div>
         );

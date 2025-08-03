@@ -8,7 +8,8 @@ import { formatPresetLabel } from "@/lib/utils/dateUtils";
 import { getFilteredStats, formatChange } from "@/lib/utils/statsUtils";
 
 export const useStatsData = () => {
-  const { selectedPreset, filters } = useFilterStore();
+  const { selectedPreset, filters, applyFilters, setTempFilter } =
+    useFilterStore();
   const filteredMateri = useFilteredMateri();
   const {
     stats: socketStats,
@@ -105,6 +106,9 @@ export const useStatsData = () => {
     waktuLabel,
     loading: socketLoading,
     error: socketError,
+    applyFilters,
+    setTempFilter,
+    filters,
     lastUpdated: socketStats?.lastUpdated,
     refreshStats,
     stats: Object.fromEntries(
