@@ -10,12 +10,22 @@ import {
   UserCheck,
   Shield,
   Eye,
+  Database,
 } from "lucide-react";
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from "@/components/ui/table";
 import { DashboardShell } from "@/components/ui/dashboardShell";
 import { useAuth } from "@/hooks/use-auth.hook";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
-// Types based on your backend
 type Role = "superadmin" | "admin" | "guest";
 
 interface User {
@@ -35,7 +45,6 @@ interface ApiResponse {
   user?: User;
 }
 
-// Real API functions using your backend
 const userApi = {
   getUsers: async (token: string): Promise<ApiResponse> => {
     try {
@@ -170,7 +179,6 @@ export default function UsersPage() {
 
   console.log("Current user:", currentUser);
 
-  // Current user role from auth context
   const currentUserRole: Role = currentUser?.role as Role;
 
   useEffect(() => {
@@ -365,33 +373,24 @@ export default function UsersPage() {
   return (
     <DashboardShell title="User Management">
       <div className="p-6 space-y-6">
-        {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">
-              Manajemen Pengguna
-            </h1>
-            <p className="text-gray-600 mt-1">
-              Kelola pengguna dan peran mereka
-            </p>
+          <div className="flex items-center gap-3">
+            <Database className="h-8 w-8 text-blue-600" />
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">
+                Manajemen Pengguna
+              </h1>
+              <p className="text-sm text-gray-600">
+                Kelola pengguna dan peran mereka
+              </p>
+            </div>
           </div>
-
-          {currentUserRole === "superadmin" && (
-            <button
-              onClick={handleCreateUser}
-              className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              <Plus className="w-4 h-4" />
-              Tambah Pengguna
-            </button>
-          )}
         </div>
 
-        {/* Filters */}
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <input
+            <Input
               type="text"
               placeholder="Cari pengguna..."
               value={searchTerm}
@@ -400,51 +399,41 @@ export default function UsersPage() {
             />
           </div>
 
-          <select
-            value={selectedRole}
-            onChange={(e) => setSelectedRole(e.target.value as Role | "all")}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          >
-            <option value="all">Semua Peran</option>
-            <option value="superadmin">Super Admin</option>
-            <option value="admin">Admin</option>
-            <option value="guest">Guest</option>
-          </select>
+          {currentUserRole === "superadmin" && (
+            <Button
+              onClick={handleCreateUser}
+              className="flex items-center gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              Tambah Pengguna
+            </Button>
+          )}
         </div>
 
-        {/* Users Table */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Pengguna
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Email
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Peran
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Dibuat
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Aksi
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {filteredUsers.map((user) => (
-                  <tr key={user.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
+        <div className="border rounded-lg overflow-hidden">
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-gray-50">
+                <TableHead>Pengguna</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Peran</TableHead>
+                <TableHead className="w-32">Aksi</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredUsers.length > 0 ? (
+                filteredUsers.map((user) => (
+                  <TableRow key={user.id} className="hover:bg-gray-50">
+                    {/* Kolom Pengguna */}
+                    <TableCell>
                       <div className="flex items-center">
                         <img
                           className="h-10 w-10 rounded-full object-cover"
                           src={
                             user.avatar_url ||
-                            `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=6366f1&color=fff`
+                            `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                              user.name
+                            )}&background=6366f1&color=fff`
                           }
                           alt={user.name}
                         />
@@ -454,68 +443,75 @@ export default function UsersPage() {
                           </div>
                         </div>
                       </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    </TableCell>
+
+                    {/* Kolom Email */}
+                    <TableCell>
                       <div className="text-sm text-gray-900">{user.email}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    </TableCell>
+
+                    {/* Kolom Peran */}
+                    <TableCell>
                       <span
-                        className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium border ${getRoleBadgeColor(user.role)}`}
+                        className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium border ${getRoleBadgeColor(
+                          user.role
+                        )}`}
                       >
                         {getRoleIcon(user.role)}
                         {user.role || "Tidak Ada Peran"}
                       </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {user.created_at
-                        ? new Date(user.created_at).toLocaleDateString("id-ID")
-                        : "-"}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <div className="flex items-center justify-end gap-2">
+                    </TableCell>
+
+                    {/* Kolom Aksi */}
+                    <TableCell>
+                      <div className="flex items-center gap-2">
                         {canEditUser(user) && (
-                          <button
+                          <Button
+                            variant="outline"
+                            size="sm"
                             onClick={() => handleEditUser(user)}
-                            className="text-blue-600 hover:text-blue-900 p-1 rounded hover:bg-blue-50"
+                            className="h-8 w-8 p-0"
                             title="Edit pengguna"
                           >
-                            <Edit className="w-4 h-4" />
-                          </button>
+                            <Edit className="h-4 w-4" />
+                          </Button>
                         )}
-
                         {canDeleteUser(user) && (
-                          <button
+                          <Button
+                            variant="outline"
+                            size="sm"
                             onClick={() => handleDeleteUser(user)}
-                            className="text-red-600 hover:text-red-900 p-1 rounded hover:bg-red-50"
+                            className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
                             title="Hapus pengguna"
                           >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
                         )}
                       </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {filteredUsers.length === 0 && (
-            <div className="text-center py-12">
-              <User className="mx-auto h-12 w-12 text-gray-400" />
-              <h3 className="mt-2 text-sm font-medium text-gray-900">
-                Tidak ada pengguna ditemukan
-              </h3>
-              <p className="mt-1 text-sm text-gray-500">
-                {searchTerm || selectedRole !== "all"
-                  ? "Coba sesuaikan filter pencarian Anda"
-                  : "Mulai dengan menambahkan pengguna baru"}
-              </p>
-            </div>
-          )}
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={4} className="text-center py-12">
+                    <div className="flex flex-col items-center">
+                      <User className="mx-auto h-12 w-12 text-gray-400" />
+                      <h3 className="mt-2 text-sm font-medium text-gray-900">
+                        Tidak ada pengguna ditemukan
+                      </h3>
+                      <p className="mt-1 text-sm text-gray-500">
+                        {searchTerm || selectedRole !== "all"
+                          ? "Coba sesuaikan filter pencarian Anda"
+                          : "Mulai dengan menambahkan pengguna baru"}
+                      </p>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
         </div>
 
-        {/* Modal */}
         {showModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
             <div className="bg-white rounded-lg max-w-md w-full p-6">

@@ -36,17 +36,18 @@ export default function MasterDataTable({
 
   return (
     <div className="space-y-4">
-      {/* Search and Add Button */}
-      <div className="flex justify-between items-center">
-        <div className="relative w-72">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+      <div className="flex flex-col sm:flex-row gap-4 mb-6">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
           <Input
+            type="text"
             placeholder={`Cari ${entityName.toLowerCase()}...`}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
+            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
+
         <Button onClick={onCreate} className="flex items-center gap-2">
           <Plus className="h-4 w-4" />
           Tambah {entityName}

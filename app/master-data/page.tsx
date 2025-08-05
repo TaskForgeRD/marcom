@@ -153,7 +153,6 @@ export default function MasterDataPage() {
   return (
     <DashboardShell title="Master Data">
       <div className="p-6 space-y-6">
-        {/* Header */}
         <div className="flex items-center gap-3">
           <Database className="h-8 w-8 text-blue-600" />
           <div>
