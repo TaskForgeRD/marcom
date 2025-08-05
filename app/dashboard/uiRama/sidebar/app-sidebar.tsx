@@ -70,6 +70,12 @@ const navigationItems = [
       },
     ],
   },
+  {
+    title: "Users",
+    url: "/users",
+    icon: Users,
+    isCollapsible: false,
+  },
 ];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
