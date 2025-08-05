@@ -12,7 +12,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Edit, Trash2, Plus, Search } from "lucide-react";
-import { format } from "date-fns";
 
 interface MasterDataTableProps {
   data: any[];
