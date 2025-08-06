@@ -84,10 +84,8 @@ export default function UserFormDialog({
 
     setIsLoading(true);
     try {
-      // PERBAIKAN: Panggil onSave dan tunggu hasilnya
       await onSave(formData);
 
-      // PERBAIKAN: Toast success hanya muncul jika tidak ada error
       toast({
         title: "Berhasil",
         description: `Pengguna berhasil ${user ? "diperbarui" : "ditambahkan"}`,
@@ -95,8 +93,6 @@ export default function UserFormDialog({
       });
       onClose();
     } catch (error: any) {
-      // PERBAIKAN: Error handling yang lebih spesifik
-      console.error("Error in form submission:", error);
       toast({
         title: "Gagal",
         description:

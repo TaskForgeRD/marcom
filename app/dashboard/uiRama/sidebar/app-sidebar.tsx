@@ -13,6 +13,8 @@ import {
   Layers,
   Users,
   Bell,
+  Box,
+  Puzzle,
 } from "lucide-react";
 
 import {
@@ -53,19 +55,19 @@ const navigationItems = [
       {
         title: "Cluster",
         url: "/master-data?tab=clusters",
-        icon: Grid3X3,
+        icon: Box,
         tabValue: "clusters",
       },
       {
         title: "Fitur",
         url: "/master-data?tab=fitur",
-        icon: Layers,
+        icon: Puzzle,
         tabValue: "fitur",
       },
       {
         title: "Jenis",
         url: "/master-data?tab=jenis",
-        icon: Users,
+        icon: Layers,
         tabValue: "jenis",
       },
     ],

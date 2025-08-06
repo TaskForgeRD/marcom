@@ -73,12 +73,12 @@ export const UserDropdown = ({
             </div>
           </DropdownMenuLabel>
 
-          <DropdownMenuSeparator />
+          {/* <DropdownMenuSeparator />
 
           <DropdownMenuItem className="cursor-pointer">
             <UserIcon className="mr-2 h-4 w-4" />
             <span>Profil</span>
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
 
           <DropdownMenuSeparator />
 

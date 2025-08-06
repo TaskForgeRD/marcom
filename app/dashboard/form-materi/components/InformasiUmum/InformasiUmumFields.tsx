@@ -1,6 +1,7 @@
 import SelectField from "@/app/dashboard/uiRama/selectField";
 import InputField from "@/app/dashboard/uiRama/inputField";
 import DatePickerForm from "../DatePickerForm";
+import { useFormContext } from "react-hook-form";
 
 export type Option = {
   value: string;
@@ -22,6 +23,9 @@ export default function InformasiUmumFields({
   jenisOptions,
   readOnly = true,
 }: InformasiUmumFieldsProps) {
+  const { watch } = useFormContext();
+  const startDate = watch("start_date");
+  const parsedStartDate = startDate ? new Date(startDate) : undefined;
   return (
     <>
       <SelectField
@@ -65,6 +69,7 @@ export default function InformasiUmumFields({
           name="end_date"
           label="Pilih Tanggal Berakhir"
           readOnly={readOnly}
+          minDate={parsedStartDate}
         />
       </div>
     </>

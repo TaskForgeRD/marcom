@@ -39,6 +39,7 @@ export default function InputField({
         placeholder={placeholder}
         disabled={disabled}
         readOnly={readOnly}
+        className={readOnly ? "text-gray-500 cursor-not-allowed" : ""}
       />
       {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
     </div>

@@ -17,12 +17,14 @@ interface DatePickerProps {
   name: string;
   label: string;
   readOnly?: boolean;
+  minDate?: Date;
 }
 
 export default function DatePickerForm({
   name,
   label,
   readOnly = false,
+  minDate,
 }: DatePickerProps) {
   const {
     setValue,
@@ -68,6 +70,7 @@ export default function DatePickerForm({
               selected={date}
               onSelect={handleSelect}
               initialFocus
+              disabled={(date) => (minDate ? date <= minDate : false)} // ⬅ tanggal yang dinonaktifkan
             />
           </PopoverContent>
         )}

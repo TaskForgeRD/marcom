@@ -12,6 +12,8 @@ import {
   Layers,
   Grid3X3,
   Shield,
+  Box,
+  Puzzle,
 } from "lucide-react";
 import MasterDataTable from "@/app/master-data/components/masterDataTable";
 import CreateEditDialog from "@/app/master-data/components/createEditDialog";
@@ -95,7 +97,7 @@ export default function MasterDataPage() {
     {
       id: "clusters",
       label: "Cluster",
-      icon: Grid3X3,
+      icon: Box,
       data: clusters,
       createFn: createCluster,
       updateFn: updateCluster,
@@ -105,7 +107,7 @@ export default function MasterDataPage() {
     {
       id: "fitur",
       label: "Fitur",
-      icon: Layers,
+      icon: Puzzle,
       data: fitur,
       createFn: createFitur,
       updateFn: updateFitur,
@@ -115,7 +117,7 @@ export default function MasterDataPage() {
     {
       id: "jenis",
       label: "Jenis",
-      icon: Users,
+      icon: Layers,
       data: jenis,
       createFn: createJenis,
       updateFn: updateJenis,
@@ -144,18 +146,14 @@ export default function MasterDataPage() {
   const handleSave = async (name: string) => {
     if (!activeConfig) return;
 
-    try {
-      if (selectedItem) {
-        await activeConfig.updateFn(selectedItem.id, name);
-      } else {
-        await activeConfig.createFn(name);
-      }
-      setIsCreateDialogOpen(false);
-      setIsEditDialogOpen(false);
-      setSelectedItem(null);
-    } catch (error) {
-      console.error("Error saving data:", error);
+    if (selectedItem) {
+      await activeConfig.updateFn(selectedItem.id, name);
+    } else {
+      await activeConfig.createFn(name);
     }
+    setIsCreateDialogOpen(false);
+    setIsEditDialogOpen(false);
+    setSelectedItem(null);
   };
 
   const handleConfirmDelete = async () => {
@@ -266,7 +264,7 @@ export default function MasterDataPage() {
           }}
           onSave={handleSave}
           title={`Tambah ${activeConfig?.label}`}
-          entityName={activeConfig?.label.toLowerCase() || ""}
+          entityName={activeConfig?.label || ""}
         />
 
         <CreateEditDialog
@@ -277,7 +275,7 @@ export default function MasterDataPage() {
           }}
           onSave={handleSave}
           title={`Edit ${activeConfig?.label}`}
-          entityName={activeConfig?.label.toLowerCase() || ""}
+          entityName={activeConfig?.label || ""}
           initialValue={selectedItem?.name}
         />
 
@@ -289,7 +287,7 @@ export default function MasterDataPage() {
           }}
           onConfirm={handleConfirmDelete}
           itemName={selectedItem?.name}
-          entityName={activeConfig?.label.toLowerCase() || ""}
+          entityName={activeConfig?.label || ""}
         />
       </div>
     </DashboardShell>

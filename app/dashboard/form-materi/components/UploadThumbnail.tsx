@@ -1,11 +1,17 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
-import { Upload } from "lucide-react";
+import { Upload, Eye } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { useFormContext } from "react-hook-form";
 import Image from "next/image";
 import { getImageUrl } from "@/lib/utils";
 import get from "lodash.get";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 import { toast } from "@/hooks/use-toast";
 
@@ -20,6 +26,8 @@ export default function UploadThumbnail({
   label = "Upload Thumbnail",
   readOnly = false,
 }: UploadThumbnailProps) {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
   const {
     setValue,
     register,
@@ -91,51 +99,138 @@ export default function UploadThumbnail({
     }
   };
 
+  const handleThumbnailClick = () => {
+    if (readOnly && preview) {
+      setIsDialogOpen(true);
+    }
+  };
+
   const error = get(errors, name);
   const errorMessage = typeof error?.message === "string" ? error.message : "";
 
   return (
-    <div className="space-y-2">
-      <Label>{label}</Label>
-      <div className="flex items-center gap-4">
-        <label className="cursor-pointer">
-          <input
-            type="file"
-            accept="image/jpeg,image/jpg,image/png,image/gif,image/webp,image/bmp"
-            className="hidden"
-            onChange={handleThumbnailChange}
-            disabled={readOnly}
-          />
-          <Card className="w-16 h-16 flex items-center justify-center border rounded-lg hover:bg-gray-100">
-            {preview ? (
-              <Image
-                width={64}
-                height={64}
-                src={preview}
-                alt="Thumbnail Preview"
-                unoptimized
-                className="w-full h-full object-cover rounded-lg"
+    <>
+      <div className="space-y-2">
+        <Label>{label}</Label>
+        <div className="flex items-center gap-4">
+          {readOnly ? (
+            // Mode view - klik untuk buka dialog
+            <div
+              className={`w-16 h-16 flex items-center justify-center border rounded-lg ${
+                preview
+                  ? "cursor-pointer hover:opacity-80 transition-opacity"
+                  : ""
+              } relative group`}
+              onClick={handleThumbnailClick}
+            >
+              {preview ? (
+                <>
+                  <Image
+                    width={64}
+                    height={64}
+                    src={preview}
+                    alt="Thumbnail Preview"
+                    unoptimized
+                    className="w-full h-full object-cover rounded-lg"
+                  />
+                  {/* Overlay dengan icon eye saat hover */}
+                  <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 rounded-lg flex items-center justify-center">
+                    <Eye className="w-4 h-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                  </div>
+                </>
+              ) : (
+                <Upload className="w-5 h-5 text-gray-500" />
+              )}
+            </div>
+          ) : (
+            // Mode edit - label untuk upload
+            <label className="cursor-pointer">
+              <input
+                type="file"
+                accept="image/jpeg,image/jpg,image/png,image/gif,image/webp,image/bmp"
+                className="hidden"
+                onChange={handleThumbnailChange}
+                disabled={readOnly}
               />
-            ) : (
-              <Upload className="w-5 h-5 text-gray-500" />
-            )}
-          </Card>
-        </label>
-        {value instanceof File && (
-          <div className="flex flex-col">
-            <p className="text-sm font-medium">{value.name}</p>
-            <p className="text-xs text-gray-500">
-              {(value.size / 1024 / 1024).toFixed(2)}MB
-            </p>
-          </div>
+              <Card className="w-16 h-16 flex items-center justify-center border rounded-lg hover:bg-gray-100">
+                {preview ? (
+                  <Image
+                    width={64}
+                    height={64}
+                    src={preview}
+                    alt="Thumbnail Preview"
+                    unoptimized
+                    className="w-full h-full object-cover rounded-lg"
+                  />
+                ) : (
+                  <Upload className="w-5 h-5 text-gray-500" />
+                )}
+              </Card>
+            </label>
+          )}
+
+          {value instanceof File && (
+            <div className="flex flex-col">
+              <p className="text-sm font-medium">{value.name}</p>
+              <p className="text-xs text-gray-500">
+                {(value.size / 1024 / 1024).toFixed(2)}MB
+              </p>
+            </div>
+          )}
+        </div>
+
+        {errorMessage && <p className="text-sm text-red-500">{errorMessage}</p>}
+
+        {!readOnly && (
+          <p className="text-xs text-gray-500">
+            Maksimal 15MB. Format: JPG, PNG, GIF, WebP, BMP
+          </p>
         )}
       </div>
 
-      {errorMessage && <p className="text-sm text-red-500">{errorMessage}</p>}
-
-      <p className="text-xs text-gray-500">
-        Maksimal 15MB. Format: JPG, PNG, GIF, WebP, BMP
-      </p>
-    </div>
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent
+          className="w-screen h-screen max-w-none max-h-none p-0 
+    [&>button]:bg-red-500 
+    [&>button]:hover:bg-red-600 
+    [&>button]:text-white 
+    [&>button]:rounded-md 
+    [&>button]:w-12 
+    [&>button]:h-12 
+    [&>button]:flex 
+    [&>button]:items-center 
+    [&>button]:justify-center 
+    [&>button_svg]:w-6 
+    [&>button_svg]:h-6"
+        >
+          {" "}
+          <DialogHeader className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10"></DialogHeader>
+          {preview && (
+            <div className="flex items-center justify-center w-full h-full bg-black">
+              <div className="relative w-full h-full">
+                <Image
+                  src={preview}
+                  alt="Thumbnail Preview"
+                  fill
+                  unoptimized
+                  className="object-contain"
+                />
+              </div>
+            </div>
+          )}
+          {value instanceof File && (
+            <div className="px-4 pb-4 text-sm text-gray-600 text-center">
+              <p>
+                <strong>Nama file:</strong> {value.name}
+              </p>
+              <p>
+                <strong>Ukuran:</strong> {(value.size / 1024 / 1024).toFixed(2)}
+                MB
+              </p>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

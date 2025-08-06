@@ -6,6 +6,7 @@ import UploadThumbnail from "./UploadThumbnail";
 import { KeywordsInput } from "./KeywordsInput";
 import ButtonWithIcon from "../../uiRama/buttonWithIcon";
 import { Plus, Trash2 } from "lucide-react";
+import { useAuthStore } from "@/stores/auth.store";
 
 interface DokumenMateriProps {
   readOnly?: boolean;
@@ -17,6 +18,10 @@ export default function DokumenMateri({ readOnly = true }: DokumenMateriProps) {
     control,
     name: "dokumenMateri",
   });
+
+  // Get current user role
+  const { user } = useAuthStore();
+  const currentUserRole = user?.role;
 
   const addDokumen = () => {
     append({
@@ -38,13 +43,22 @@ export default function DokumenMateri({ readOnly = true }: DokumenMateriProps) {
               Dokumen Materi {index + 1}
             </h3>
 
-            <InputField
-              name={`dokumenMateri.${index}.linkDokumen`}
-              label="Input Link Dokumen Materi"
-              placeholder="Masukkan link dokumen"
-              type="url"
-              readOnly={readOnly}
-            />
+            {/* Input Link Dokumen dengan blur condition */}
+            <div
+              className={
+                readOnly && currentUserRole === "guest"
+                  ? "blur-sm pointer-events-none"
+                  : ""
+              }
+            >
+              <InputField
+                name={`dokumenMateri.${index}.linkDokumen`}
+                label="Input Link Dokumen Materi"
+                placeholder="Masukkan link dokumen"
+                type="url"
+                readOnly={readOnly}
+              />
+            </div>
 
             <SelectField
               name={`dokumenMateri.${index}.tipeMateri`}
