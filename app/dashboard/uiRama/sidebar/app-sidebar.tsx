@@ -92,7 +92,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     setOpenMenus((prev) => ({ ...prev, [title]: !prev[title] }));
   };
 
-  // Check apakah sidebar dalam mode collapsed
   const isCollapsed = state === "collapsed";
 
   return (

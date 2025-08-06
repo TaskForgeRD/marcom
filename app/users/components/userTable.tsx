@@ -22,6 +22,7 @@ import {
   User,
 } from "lucide-react";
 import { User as UserType, Role } from "@/stores/user.store";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface UserTableProps {
   users: UserType[];
@@ -39,6 +40,15 @@ export default function UserTable({
   onCreate,
 }: UserTableProps) {
   const [searchTerm, setSearchTerm] = useState("");
+
+  const getUserInitials = (name: string): string => {
+    return name
+      .split(" ")
+      .map((word) => word.charAt(0))
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  };
 
   const getRoleIcon = (role?: Role) => {
     switch (role) {
@@ -123,16 +133,15 @@ export default function UserTable({
                 <TableRow key={user.id} className="hover:bg-gray-50">
                   <TableCell>
                     <div className="flex items-center">
-                      <img
-                        className="h-10 w-10 rounded-full object-cover"
-                        src={
-                          user.avatar_url ||
-                          `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                            user.name
-                          )}&background=6366f1&color=fff`
-                        }
-                        alt={user.name}
-                      />
+                      <Avatar className="h-10 w-10">
+                        <AvatarImage
+                          src={user.avatar_url ?? undefined}
+                          alt={user.name}
+                        />
+                        <AvatarFallback className="text-sm font-medium">
+                          {getUserInitials(user.name)}
+                        </AvatarFallback>
+                      </Avatar>
                       <div className="ml-4">
                         <div className="text-sm font-medium text-gray-900">
                           {user.name}

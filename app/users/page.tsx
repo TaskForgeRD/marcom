@@ -47,17 +47,13 @@ export default function UsersPage() {
     name: string;
     role: Role;
   }) => {
-    try {
-      if (selectedUser) {
-        await updateUser(selectedUser.id, userData);
-      } else {
-        await createUser(userData);
-      }
-      setIsFormDialogOpen(false);
-      setSelectedUser(null);
-    } catch (error) {
-      console.error("Error saving user:", error);
+    if (selectedUser) {
+      await updateUser(selectedUser.id, userData);
+    } else {
+      await createUser(userData);
     }
+    setIsFormDialogOpen(false);
+    setSelectedUser(null);
   };
 
   const handleConfirmDelete = async () => {

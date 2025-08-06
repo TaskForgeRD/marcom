@@ -4,16 +4,30 @@ import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Database, Settings, Users, Tag, Layers, Grid3X3 } from "lucide-react";
+import {
+  Database,
+  Settings,
+  Users,
+  Tag,
+  Layers,
+  Grid3X3,
+  Shield,
+} from "lucide-react";
 import MasterDataTable from "@/app/master-data/components/masterDataTable";
 import CreateEditDialog from "@/app/master-data/components/createEditDialog";
 import DeleteConfirmDialog from "@/app/master-data/components/deleteConfirmDialog";
 import { useMasterDataStore } from "@/stores/master-data.store";
 import { DashboardShell } from "@/components/ui/dashboardShell";
+import { useAuth } from "@/hooks/use-auth.hook";
+import { Role } from "@/stores/user.store";
 
 export default function MasterDataPage() {
+  const { user: currentUser } = useAuth();
   const searchParams = useSearchParams();
   const router = useRouter();
+
+  // Get current user role
+  const currentUserRole: Role = currentUser?.role as Role;
 
   // Get tab from URL, default to 'brands'
   const tabFromUrl = searchParams.get("tab") || "brands";
@@ -44,12 +58,18 @@ export default function MasterDataPage() {
     fetchAllData,
   } = useMasterDataStore();
 
-  // Fetch data when component mounts
-  useEffect(() => {
-    fetchAllData();
-  }, [fetchAllData]);
+  // Check if user has permission to access this page
+  const hasPermission =
+    currentUserRole === "superadmin" || currentUserRole === "admin";
 
-  // PERBAIKAN: Sinkronkan activeTab dengan URL setiap kali searchParams berubah
+  // Fetch data when component mounts (only if user has permission)
+  useEffect(() => {
+    if (hasPermission) {
+      fetchAllData();
+    }
+  }, [fetchAllData, hasPermission]);
+
+  // Sinkronkan activeTab dengan URL setiap kali searchParams berubah
   useEffect(() => {
     const currentTab = searchParams.get("tab") || "brands";
     setActiveTab(currentTab);
@@ -73,7 +93,7 @@ export default function MasterDataPage() {
       description: "Kelola data brand yang tersedia dalam sistem",
     },
     {
-      id: "clusters", // PERBAIKAN: ubah dari "clusters" ke "cluster" untuk konsistensi dengan URL
+      id: "clusters",
       label: "Cluster",
       icon: Grid3X3,
       data: clusters,
@@ -149,6 +169,25 @@ export default function MasterDataPage() {
       console.error("Error deleting data:", error);
     }
   };
+
+  // Show access denied if user doesn't have permission
+  if (!hasPermission) {
+    return (
+      <DashboardShell title="Master Data">
+        <div className="p-6">
+          <div className="text-center py-12">
+            <Shield className="mx-auto h-12 w-12 text-gray-400" />
+            <h3 className="mt-2 text-sm font-medium text-gray-900">
+              Akses Ditolak
+            </h3>
+            <p className="mt-1 text-sm text-gray-500">
+              Anda tidak memiliki izin untuk mengakses halaman ini.
+            </p>
+          </div>
+        </div>
+      </DashboardShell>
+    );
+  }
 
   return (
     <DashboardShell title="Master Data">
