@@ -7,6 +7,7 @@ import InformasiUmum from "./InformasiUmum";
 import DokumenMateri from "./DokumenMateri";
 import FormFooter from "./FormFooter";
 import { useMateri } from "@/stores/materi.store";
+import { useAuthStore } from "@/stores/auth.store";
 
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -19,6 +20,11 @@ interface FormMateriProps {
 export default function FormMateri({ mode }: FormMateriProps) {
   const router = useRouter();
   const { selectedMateri, setSelectedMateri } = useMateri();
+
+  // Ambil user dari auth store untuk mengecek role
+  const { user } = useAuthStore();
+  const currentUserRole = user?.role;
+
   const isViewMode = mode === "view";
 
   // Reset selectedMateri jika masuk ke mode "tambah"
@@ -40,6 +46,10 @@ export default function FormMateri({ mode }: FormMateriProps) {
   const handleCancel = () => {
     router.push("/dashboard");
   };
+
+  // Cek apakah user bisa edit materi (bukan guest)
+  const canEditMateri: boolean =
+    currentUserRole !== undefined && currentUserRole !== "guest";
 
   const brandValue = methods.watch("cluster");
   console.log("Current brand value:", brandValue);
@@ -82,6 +92,7 @@ export default function FormMateri({ mode }: FormMateriProps) {
           }}
           onCancel={handleCancel}
           isViewMode={isViewMode}
+          showPrimary={isViewMode ? canEditMateri : true} // Hide edit button for guests
         />
 
         <ConfirmDialog

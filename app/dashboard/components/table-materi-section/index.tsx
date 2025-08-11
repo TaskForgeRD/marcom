@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { useMateri } from "@/stores/materi.store";
+import { useAuthStore } from "@/stores/auth.store";
 import useFilteredMateri from "@/hooks/useFilteredMateri";
 import { paginate } from "@/lib/paginate";
 import {
@@ -29,6 +30,11 @@ export default function TableMateriSection() {
     setCurrentPage,
     setSelectedMateri,
   } = useMateri();
+
+  // Ambil user dari auth store untuk mengecek role
+  const { user } = useAuthStore();
+  const currentUserRole = user?.role;
+
   const filteredData = useFilteredMateri();
   const tableRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -103,22 +109,28 @@ export default function TableMateriSection() {
     router.push("/dashboard/form-materi");
   };
 
+  // Cek apakah user bisa menambah materi (bukan guest)
+  const canAddMateri: boolean =
+    currentUserRole !== undefined && currentUserRole !== "guest";
+
   if (loading) {
     return <LoadingSpinner />;
   }
 
   return (
     <section className="p-4 overflow-x-auto" ref={tableRef}>
-      {/* Header dengan tombol Tambah Materi */}
+      {/* Header dengan tombol Tambah Materi (conditional rendering) */}
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold">Daftar Materi Komunikasi</h2>
-        <Button
-          onClick={handleTambahMateri}
-          className="bg-black text-white hover:bg-gray-800 flex items-center gap-2"
-        >
-          <PlusCircle className="h-4 w-4" />
-          Tambah Materi Komunikasi
-        </Button>
+        {canAddMateri && (
+          <Button
+            onClick={handleTambahMateri}
+            className="bg-black text-white hover:bg-gray-800 flex items-center gap-2"
+          >
+            <PlusCircle className="h-4 w-4" />
+            Tambah Materi Komunikasi
+          </Button>
+        )}
       </div>
 
       <Table>

@@ -1,6 +1,6 @@
 "use client";
 
-import { UserCircle, LogOut, User as UserIcon } from "lucide-react";
+import { UserCircle, LogOut, User as UserIcon, Shield } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth.hook";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 
 interface UserDropdownProps {
   readonly showWelcome?: boolean;
@@ -22,7 +23,15 @@ export const UserDropdown = ({
   showWelcome = false,
   className,
 }: UserDropdownProps) => {
-  const { user, logout } = useAuth();
+  const { user, logout } = useAuth() as {
+    user: {
+      name: string;
+      email: string;
+      avatar_url?: string;
+      role?: string;
+    } | null;
+    logout: () => void;
+  };
 
   if (!user) return null;
 
@@ -39,6 +48,34 @@ export const UserDropdown = ({
       .toUpperCase()
       .slice(0, 2);
   };
+
+  // Fungsi untuk mendapatkan warna dan label role
+  const getRoleInfo = (role: string | undefined) => {
+    switch (role?.toLowerCase()) {
+      case "superadmin":
+        return {
+          label: "Super Admin",
+          variant: "destructive" as const,
+        };
+      case "admin":
+        return {
+          label: "Admin",
+          variant: "default" as const,
+        };
+      case "guest":
+        return {
+          label: "Guest",
+          variant: "secondary" as const,
+        };
+      default:
+        return {
+          label: "User",
+          variant: "outline" as const,
+        };
+    }
+  };
+
+  const roleInfo = getRoleInfo(user.role);
 
   return (
     <div className={`flex items-center gap-3 ${className}`}>
@@ -65,20 +102,27 @@ export const UserDropdown = ({
 
         <DropdownMenuContent align="end" className="w-56">
           <DropdownMenuLabel>
-            <div className="flex flex-col space-y-1">
+            <div className="flex flex-col space-y-2">
               <p className="text-sm font-medium leading-none">{user.name}</p>
               <p className="text-xs leading-none text-muted-foreground">
                 {user.email}
               </p>
+              {/* Badge Role */}
+              <div className="flex items-center gap-1">
+                <Shield className="h-3 w-3 text-muted-foreground" />
+                <Badge variant={roleInfo.variant} className="text-xs">
+                  {roleInfo.label}
+                </Badge>
+              </div>
             </div>
           </DropdownMenuLabel>
 
-          {/* <DropdownMenuSeparator />
+          <DropdownMenuSeparator />
 
           <DropdownMenuItem className="cursor-pointer">
             <UserIcon className="mr-2 h-4 w-4" />
             <span>Profil</span>
-          </DropdownMenuItem> */}
+          </DropdownMenuItem>
 
           <DropdownMenuSeparator />
 
