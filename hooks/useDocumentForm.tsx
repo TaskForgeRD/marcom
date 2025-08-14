@@ -18,7 +18,7 @@ export function useDocumentForm(defaultValues?: Partial<FormDataType>) {
   const { toast } = useToast();
 
   const selectedMateri = useMateri((state) => state.selectedMateri);
-  const fetchData = useMateri((state) => state.fetchData);
+  const fetchData = useMateri((state) => state.fetchPaginatedData);
 
   const [isLoading, setIsLoading] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);

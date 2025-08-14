@@ -3,8 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useMateri } from "@/stores/materi.store";
 import { useAuthStore } from "@/stores/auth.store";
-import useFilteredMateri from "@/hooks/useFilteredMateri";
-import { paginate } from "@/lib/paginate";
+import { useFilterStore } from "@/stores/filter-materi.store";
 import {
   Table,
   TableBody,
@@ -13,7 +12,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, PlusCircle } from "lucide-react";
 import { materiTableColumns } from "@/app/dashboard/components/table-materi-section/TableColumnConfig";
@@ -23,77 +21,46 @@ import { useRouter } from "next/navigation";
 
 export default function TableMateriSection() {
   const {
+    data,
     loading,
     currentPage,
+    totalPages,
+    total,
     itemsPerPage,
-    fetchData,
+    fetchPaginatedData,
     setCurrentPage,
     setSelectedMateri,
   } = useMateri();
 
-  // Ambil user dari auth store untuk mengecek role
   const { user } = useAuthStore();
-  const currentUserRole = user?.role;
-
-  const filteredData = useFilteredMateri();
+  const { filters, searchQuery, onlyVisualDocs } = useFilterStore();
   const tableRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
+  const currentUserRole = user?.role;
+
+  const start = total === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
+  const end = Math.min(currentPage * itemsPerPage, total);
+
+  // Fetch data when component mounts or filters change
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    const apiFilters = {
+      search: searchQuery,
+      status: filters.status || "",
+      brand: filters.brand || "",
+      cluster: filters.cluster || "",
+      fitur: filters.fitur || "",
+      jenis: filters.jenis || "",
+      start_date: filters.start_date || "",
+      end_date: filters.end_date || "",
+      only_visual_docs: onlyVisualDocs.toString(),
+    };
 
-  // Sort data berdasarkan created_at atau updated_at (terbaru di atas)
-  const sortedData = [...filteredData].sort((a, b) => {
-    // Gunakan updated_at jika ada, jika tidak gunakan created_at
-    const dateA = new Date(a.updated_at || a.created_at);
-    const dateB = new Date(b.updated_at || b.created_at);
-    return dateB.getTime() - dateA.getTime(); // Descending order (terbaru di atas)
-  });
-
-  const { paginatedData, startIndex, endIndex, total } = paginate(
-    sortedData,
-    currentPage,
-    itemsPerPage
-  );
-
-  // Hitung total halaman
-  const totalPages = Math.ceil(total / itemsPerPage);
-
-  // Handler untuk navigasi
-  const handlePreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-      // Maintain scroll position
-      setTimeout(() => {
-        if (tableRef.current) {
-          tableRef.current.scrollIntoView({
-            behavior: "instant",
-            block: "start",
-          });
-        }
-      }, 50);
-    }
-  };
-
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-      // Maintain scroll position
-      setTimeout(() => {
-        if (tableRef.current) {
-          tableRef.current.scrollIntoView({
-            behavior: "instant",
-            block: "start",
-          });
-        }
-      }, 50);
-    }
-  };
+    fetchPaginatedData(1, apiFilters); // Reset to page 1 when filters change
+  }, [filters, searchQuery, onlyVisualDocs, fetchPaginatedData]);
 
   const handlePageClick = (page: number) => {
     setCurrentPage(page);
-    // Maintain scroll position
     setTimeout(() => {
       if (tableRef.current) {
         tableRef.current.scrollIntoView({
@@ -105,12 +72,11 @@ export default function TableMateriSection() {
   };
 
   const handleTambahMateri = () => {
-    setSelectedMateri(null); // 🧹 reset state sebelum pindah ke form tambah
+    setSelectedMateri(null);
     router.push("/dashboard/form-materi");
   };
 
-  // Cek apakah user bisa menambah materi (bukan guest)
-  const canAddMateri: boolean =
+  const canAddMateri =
     currentUserRole !== undefined && currentUserRole !== "guest";
 
   if (loading) {
@@ -119,7 +85,7 @@ export default function TableMateriSection() {
 
   return (
     <section className="p-4 overflow-x-auto" ref={tableRef}>
-      {/* Header dengan tombol Tambah Materi (conditional rendering) */}
+      {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold">Daftar Materi Komunikasi</h2>
         {canAddMateri && (
@@ -142,10 +108,8 @@ export default function TableMateriSection() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {paginatedData.length > 0 ? (
-            paginatedData.map((materi) => (
-              <MateriRow key={materi.id} materi={materi} />
-            ))
+          {data.length > 0 ? (
+            data.map((materi) => <MateriRow key={materi.id} materi={materi} />)
           ) : (
             <TableRow>
               <TableCell
@@ -159,20 +123,18 @@ export default function TableMateriSection() {
         </TableBody>
       </Table>
 
-      {/* Pagination Info */}
+      {/* Pagination */}
       <div className="mt-4 flex items-center justify-between">
         <p className="text-sm text-gray-600">
-          Menampilkan {startIndex + 1}-{endIndex} dari {total} materi
+          Menampilkan {start}-{end} dari {total} data
         </p>
 
-        {/* Pagination Controls */}
         {totalPages > 1 && (
           <div className="flex items-center space-x-2">
-            {/* Previous Button */}
             <Button
               variant="outline"
               size="sm"
-              onClick={handlePreviousPage}
+              onClick={() => handlePageClick(currentPage - 1)}
               disabled={currentPage === 1}
               className="flex items-center gap-1"
             >
@@ -180,10 +142,20 @@ export default function TableMateriSection() {
               Previous
             </Button>
 
-            {/* Page Numbers */}
             <div className="flex items-center space-x-1">
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                (page) => (
+              {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                let page;
+                if (totalPages <= 5) {
+                  page = i + 1;
+                } else if (currentPage <= 3) {
+                  page = i + 1;
+                } else if (currentPage >= totalPages - 2) {
+                  page = totalPages - 4 + i;
+                } else {
+                  page = currentPage - 2 + i;
+                }
+
+                return (
                   <Button
                     key={page}
                     variant={currentPage === page ? "default" : "outline"}
@@ -193,15 +165,14 @@ export default function TableMateriSection() {
                   >
                     {page}
                   </Button>
-                )
-              )}
+                );
+              })}
             </div>
 
-            {/* Next Button */}
             <Button
               variant="outline"
               size="sm"
-              onClick={handleNextPage}
+              onClick={() => handlePageClick(currentPage + 1)}
               disabled={currentPage === totalPages}
               className="flex items-center gap-1"
             >
