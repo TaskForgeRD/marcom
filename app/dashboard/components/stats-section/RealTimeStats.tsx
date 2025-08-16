@@ -1,44 +1,100 @@
+// app/dashboard/components/stats-section/RealTimeStats.tsx - Fixed version
 import { RefreshCw, Wifi, WifiOff, Clock } from "lucide-react";
-import { useStatsData } from "@/hooks/useStatsData";
+import { useSocket } from "@/hooks/useSocket";
+import { useFilterStore } from "@/stores/filter-materi.store";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { statsConfig } from "./StatsConfig";
 import StatsCard from "@/app/dashboard/uiRama/card";
+import { useEffect, useRef, useMemo } from "react";
 
 export default function RealTimeStats() {
   const {
-    selectedPreset,
-    waktuLabel,
+    socket,
+    connected,
     stats,
     loading,
     error,
-    lastUpdated,
     refreshStats,
+    requestStatsWithFilters,
+  } = useSocket();
+
+  const {
     filters,
+    searchQuery,
+    onlyVisualDocs,
+    selectedPreset,
     setTempFilter,
     applyFilters,
-  } = useStatsData();
+  } = useFilterStore();
 
-  const statsMap = {
-    total: stats.total,
-    komunikasi: stats.komunikasi,
-    fitur: stats.fitur,
-    aktif: stats.aktif,
-    expired: stats.expired,
-    dokumen: stats.dokumen,
-  };
+  // Use ref to track if filters have been sent to prevent infinite requests
+  const lastFiltersRef = useRef<string>("");
+
+  // Memoize API filters to prevent recreation on every render
+  const apiFilters = useMemo(
+    () => ({
+      search: searchQuery || "",
+      status: filters.status || "",
+      brand: filters.brand || "",
+      cluster: filters.cluster || "",
+      fitur: filters.fitur || "",
+      jenis: filters.jenis || "",
+      start_date: filters.start_date || "",
+      end_date: filters.end_date || "",
+      only_visual_docs: onlyVisualDocs,
+    }),
+    [filters, searchQuery, onlyVisualDocs]
+  );
+
+  // Request stats with filters when filters change
+  useEffect(() => {
+    if (!connected || !socket) return;
+
+    // Create a string representation of filters to compare
+    const filtersString = JSON.stringify(apiFilters);
+
+    // Only request if filters actually changed
+    if (filtersString !== lastFiltersRef.current) {
+      console.log("Filters changed, requesting new stats:", apiFilters);
+      lastFiltersRef.current = filtersString;
+
+      // Add a small delay to debounce rapid filter changes
+      const timeoutId = setTimeout(() => {
+        requestStatsWithFilters(apiFilters);
+      }, 300);
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [apiFilters, connected, socket, requestStatsWithFilters]);
+
+  const statsMap = useMemo(
+    () => ({
+      total: stats?.total || 0,
+      komunikasi: stats?.komunikasi || 0,
+      fitur: stats?.fitur || 0,
+      aktif: stats?.aktif || 0,
+      expired: stats?.expired || 0,
+      dokumen: stats?.dokumen || 0,
+    }),
+    [stats]
+  );
 
   const hideChangeAndSubtext =
     selectedPreset === "All time" ||
     selectedPreset === "Pilih tanggal tertentu";
 
   const formatLastUpdated = (timestamp: string) => {
-    const date = new Date(timestamp);
-    return date.toLocaleTimeString("id-ID", {
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-    });
+    try {
+      const date = new Date(timestamp);
+      return date.toLocaleTimeString("id-ID", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      });
+    } catch (err) {
+      return "Invalid time";
+    }
   };
 
   const colorsMap = {
@@ -48,7 +104,7 @@ export default function RealTimeStats() {
     expired: "error",
     dokumen: "accent",
     total: "default",
-  };
+  } as const;
 
   // Mapping dari key stats card ke nilai filter yang sesuai
   const getFilterValue = (key: string) => {
@@ -58,13 +114,9 @@ export default function RealTimeStats() {
       case "expired":
         return "Expired";
       case "total":
-        return ""; // Semua status
       case "komunikasi":
-        return ""; // Mungkin tidak ada filter status khusus untuk ini
       case "fitur":
-        return ""; // Mungkin tidak ada filter status khusus untuk ini
       case "dokumen":
-        return ""; // Mungkin tidak ada filter status khusus untuk ini
       default:
         return "";
     }
@@ -74,24 +126,26 @@ export default function RealTimeStats() {
     const currentStatus = filters?.status;
     const targetFilterValue = getFilterValue(key);
 
-    // Debug log untuk melihat nilai yang dikirim
-    console.log("Card clicked:", key);
-    console.log("Current filter status:", currentStatus);
-    console.log("Target filter value:", targetFilterValue);
+    console.log(
+      "Card clicked:",
+      key,
+      "Current:",
+      currentStatus,
+      "Target:",
+      targetFilterValue
+    );
 
     // Jika card yang diklik sudah aktif (filter sama), reset filter
     if (currentStatus === targetFilterValue && targetFilterValue !== "") {
-      console.log("Resetting filter");
       setTempFilter("status", "");
     } else {
-      console.log("Setting filter to:", targetFilterValue);
       setTempFilter("status", targetFilterValue);
     }
 
-    // Apply filter dengan delay singkat
+    // Apply filter
     setTimeout(() => {
       applyFilters();
-    }, 100);
+    }, 50);
   };
 
   return (
@@ -100,23 +154,23 @@ export default function RealTimeStats() {
       <div className="flex items-center justify-between px-4">
         <div className="flex items-center space-x-2">
           <div className="flex items-center space-x-1">
-            {error ? (
+            {error || !connected ? (
               <WifiOff className="h-4 w-4 text-red-500" />
             ) : (
               <Wifi className="h-4 w-4 text-green-500" />
             )}
             <Badge
-              variant={error ? "destructive" : "secondary"}
-              className={`text-xs ${!error ? "bg-green-100 text-green-700 border border-green-300" : ""}`}
+              variant={error || !connected ? "destructive" : "secondary"}
+              className={`text-xs ${connected && !error ? "bg-green-100 text-green-700 border border-green-300" : ""}`}
             >
-              {error ? "Offline" : "Live"}
+              {error || !connected ? "Offline" : "Live"}
             </Badge>
           </div>
 
-          {lastUpdated && (
+          {stats?.lastUpdated && (
             <div className="flex items-center space-x-1 text-xs text-muted-foreground">
               <Clock className="h-3 w-3" />
-              <span>Updated: {formatLastUpdated(lastUpdated)}</span>
+              <span>Updated: {formatLastUpdated(stats.lastUpdated)}</span>
             </div>
           )}
         </div>
@@ -125,7 +179,7 @@ export default function RealTimeStats() {
           variant="outline"
           size="sm"
           onClick={refreshStats}
-          disabled={loading}
+          disabled={loading || !connected}
           className="h-8"
         >
           <RefreshCw
@@ -144,10 +198,19 @@ export default function RealTimeStats() {
         </div>
       )}
 
+      {/* Connection Status Message */}
+      {!connected && !error && (
+        <div className="mx-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+          <p className="text-sm text-yellow-600">
+            Connecting to real-time server...
+          </p>
+        </div>
+      )}
+
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 px-4">
         {statsConfig.map(({ key, title, icon }) => {
-          const { now, changeLabel } = statsMap[key];
+          const value = statsMap[key];
           const currentStatus = filters?.status;
           const targetFilterValue = getFilterValue(key);
 
@@ -159,26 +222,15 @@ export default function RealTimeStats() {
             <div key={key} className="relative">
               <StatsCard
                 title={title}
-                value={loading ? "..." : now.toString()}
-                change={changeLabel}
-                subtext={waktuLabel}
+                value={loading ? "..." : value.toString()}
+                change=""
+                subtext=""
                 icon={icon}
                 active={isActive}
-                showChange={!hideChangeAndSubtext}
+                showChange={false}
                 color={colorsMap[key]}
-                onClick={() => {
-                  handleCardClick(key);
-                }}
+                onClick={() => handleCardClick(key)}
               />
-              {/* Live indicator */}
-              {/* {!error && ( */}
-              {/*   <div className="absolute top-2 right-2"> */}
-              {/*     <div */}
-              {/*       className="h-2 w-2 bg-green-500 rounded-full animate-pulse" */}
-              {/*       title="Real-time data" */}
-              {/*     /> */}
-              {/*   </div> */}
-              {/* )} */}
             </div>
           );
         })}
