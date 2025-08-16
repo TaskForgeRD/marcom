@@ -38,11 +38,9 @@ export default function TableMateriSection() {
   const router = useRouter();
 
   const currentUserRole = user?.role;
-
   const start = total === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
   const end = Math.min(currentPage * itemsPerPage, total);
 
-  // Fetch data when component mounts or filters change
   useEffect(() => {
     const apiFilters = {
       search: searchQuery,
@@ -61,6 +59,21 @@ export default function TableMateriSection() {
 
   const handlePageClick = (page: number) => {
     setCurrentPage(page);
+
+    const apiFilters = {
+      search: searchQuery,
+      status: filters.status || "",
+      brand: filters.brand || "",
+      cluster: filters.cluster || "",
+      fitur: filters.fitur || "",
+      jenis: filters.jenis || "",
+      start_date: filters.start_date || "",
+      end_date: filters.end_date || "",
+      only_visual_docs: onlyVisualDocs.toString(),
+    };
+
+    fetchPaginatedData(page, apiFilters);
+
     setTimeout(() => {
       if (tableRef.current) {
         tableRef.current.scrollIntoView({

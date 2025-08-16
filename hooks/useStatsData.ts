@@ -1,22 +1,13 @@
-// hooks/useStatsData.ts - Fixed filter functionality
 import { useMemo } from "react";
 import { useFilterStore } from "@/stores/filter-materi.store";
-import useFilteredMateri from "@/hooks/useFilteredMateri";
-import { useSocket } from "@/hooks/useSocket";
-import dayjs from "dayjs";
+import { useMateri } from "@/stores/materi.store";
 import { formatPresetLabel } from "@/lib/utils/dateUtils";
-import { getFilteredStats, formatChange } from "@/lib/utils/statsUtils";
+import { formatChange } from "@/lib/utils/statsUtils";
 
 export const useStatsData = () => {
   const { selectedPreset, filters, applyFilters, setTempFilter } =
     useFilterStore();
-  const filteredMateri = useFilteredMateri();
-  const {
-    stats: socketStats,
-    loading: socketLoading,
-    error: socketError,
-    refreshStats,
-  } = useSocket();
+  const { stats, fetchWithStats } = useMateri();
 
   const dateRange =
     filters?.start_date && filters?.end_date
@@ -28,103 +19,45 @@ export const useStatsData = () => {
 
   const waktuLabel = formatPresetLabel(selectedPreset, dateRange);
 
-  const getMonthlyChartData = (filterFn: (m: any) => boolean) => {
-    const months = Array.from({ length: 12 }).map((_, idx) => {
-      const month = dayjs().month(idx);
-      const itemsInMonth = filteredMateri.filter(
-        (m: {
-          start_date: string | number | Date | dayjs.Dayjs | null | undefined;
-        }) => dayjs(m.start_date).month() === idx && filterFn(m)
-      );
-      return {
-        name: month.format("MMM"),
-        value: itemsInMonth.length,
-      };
-    });
-    return months;
+  const refreshStats = async () => {
+    const apiFilters = {
+      search: filters.search || "",
+      status: filters.status || "",
+      brand: filters.brand || "",
+      cluster: filters.cluster || "",
+      fitur: filters.fitur || "",
+      jenis: filters.jenis || "",
+      start_date: filters.start_date || "",
+      end_date: filters.end_date || "",
+      only_visual_docs: filters.only_visual_docs?.toString() || "false",
+    };
+
+    await fetchWithStats(1, apiFilters);
   };
 
-  const stats = useMemo(() => {
-    const baseStats = {
-      total: getFilteredStats(filteredMateri, () => true, dateRange),
-      fitur: getFilteredStats(
-        filteredMateri,
-        (m) => m.fitur,
-        dateRange,
-        (m) => m.fitur?.trim().toLowerCase()
-      ),
-      komunikasi: getFilteredStats(
-        filteredMateri,
-        (m) => m.nama_materi,
-        dateRange
-      ),
-      aktif: getFilteredStats(
-        filteredMateri,
-        (m) => dayjs().isBefore(m.end_date),
-        dateRange
-      ),
-      expired: getFilteredStats(
-        filteredMateri,
-        (m) => dayjs().isAfter(m.end_date),
-        dateRange
-      ),
-      dokumen: getFilteredStats(
-        filteredMateri,
-        (m) => m.dokumenMateri?.length > 0,
-        dateRange
-      ),
-    };
+  const formattedStats = useMemo(() => {
+    if (!stats) return {};
 
-    // Add chart data
     return {
-      total: { ...baseStats.total, chartData: [] },
-      fitur: {
-        ...baseStats.fitur,
-        chartData: getMonthlyChartData((m) => m.fitur),
-      },
-      komunikasi: {
-        ...baseStats.komunikasi,
-        chartData: getMonthlyChartData((m) => m.nama_materi),
-      },
-      aktif: {
-        ...baseStats.aktif,
-        chartData: getMonthlyChartData((m) => dayjs().isBefore(m.end_date)),
-      },
-      expired: {
-        ...baseStats.expired,
-        chartData: getMonthlyChartData((m) => dayjs().isAfter(m.end_date)),
-      },
-      dokumen: {
-        ...baseStats.dokumen,
-        chartData: getMonthlyChartData((m) => m.dokumenMateri?.length > 0),
-      },
+      total: { now: stats.total || 0, changeLabel: formatChange(0) },
+      fitur: { now: stats.fitur || 0, changeLabel: formatChange(0) },
+      komunikasi: { now: stats.komunikasi || 0, changeLabel: formatChange(0) },
+      aktif: { now: stats.aktif || 0, changeLabel: formatChange(0) },
+      expired: { now: stats.expired || 0, changeLabel: formatChange(0) },
+      dokumen: { now: stats.dokumen || 0, changeLabel: formatChange(0) },
     };
-  }, [filteredMateri, dateRange]);
+  }, [stats]);
 
   return {
     selectedPreset,
     waktuLabel,
-    loading: socketLoading,
-    error: socketError,
+    loading: false,
+    error: null,
     applyFilters,
     setTempFilter,
     filters,
-    lastUpdated: socketStats?.lastUpdated,
+    lastUpdated: new Date().toISOString(),
     refreshStats,
-    stats: Object.fromEntries(
-      Object.entries(stats).map(([key, val]) => [
-        key,
-        {
-          ...val,
-          changeLabel: formatChange(val.change),
-        },
-      ])
-    ) as Record<
-      string,
-      typeof stats.total & {
-        changeLabel: string;
-        chartData: { name: string; value: number }[];
-      }
-    >,
+    stats: formattedStats,
   };
 };

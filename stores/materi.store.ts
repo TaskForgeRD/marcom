@@ -3,6 +3,7 @@ import { logger } from "../middleware/logger";
 
 interface MateriStore {
   data: any[];
+  stats: any;
   loading: boolean;
   currentPage: number;
   itemsPerPage: number;
@@ -10,8 +11,8 @@ interface MateriStore {
   total: number;
   highlightedId: number | null;
   selectedMateri: any;
-  currentFilters: any; // ✅ Tambah state untuk menyimpan filter
   fetchPaginatedData: (page?: number, filters?: any) => Promise<void>;
+  fetchWithStats: (page?: number, filters?: any) => Promise<void>;
   setCurrentPage: (page: number) => void;
   viewMateri: (id: number) => void;
   setSelectedMateri: (materi: any) => void;
@@ -20,6 +21,7 @@ interface MateriStore {
 export const useMateri = create<MateriStore>()(
   logger((set, get) => ({
     data: [],
+    stats: {},
     loading: true,
     currentPage: 1,
     itemsPerPage: 10,
@@ -27,16 +29,12 @@ export const useMateri = create<MateriStore>()(
     total: 0,
     highlightedId: null,
     selectedMateri: null,
-    currentFilters: {}, // ✅ Inisialisasi filter
 
     fetchPaginatedData: async (page?: number, filters?: any) => {
       const currentPage = page || get().currentPage;
-      const { itemsPerPage, currentFilters } = get();
+      const { itemsPerPage } = get();
 
-      // ✅ Gunakan filter yang diberikan atau filter yang tersimpan
-      const activeFilters = filters || currentFilters;
-
-      set({ loading: true, currentFilters: activeFilters }); // ✅ Simpan filter
+      set({ loading: true });
 
       try {
         const raw = localStorage.getItem("marcom-auth-store");
@@ -44,11 +42,10 @@ export const useMateri = create<MateriStore>()(
 
         if (!token) throw new Error("Token tidak ditemukan");
 
-        // Build query parameters
         const params = new URLSearchParams({
           page: currentPage.toString(),
           limit: itemsPerPage.toString(),
-          ...activeFilters, // ✅ Gunakan filter yang aktif
+          ...(filters || {}),
         });
 
         const response = await fetch(
@@ -65,8 +62,6 @@ export const useMateri = create<MateriStore>()(
 
         const result = await response.json();
 
-        console.log("🔍 RAW API Response:", result);
-
         set({
           data: result.data,
           total: result.total,
@@ -80,16 +75,59 @@ export const useMateri = create<MateriStore>()(
       }
     },
 
+    fetchWithStats: async (page?: number, filters?: any) => {
+      const currentPage = page || get().currentPage;
+      const { itemsPerPage } = get();
+
+      set({ loading: true });
+
+      try {
+        const raw = localStorage.getItem("marcom-auth-store");
+        const token = raw ? JSON.parse(raw)?.state?.token : null;
+
+        if (!token) throw new Error("Token tidak ditemukan");
+
+        const params = new URLSearchParams({
+          page: currentPage.toString(),
+          limit: itemsPerPage.toString(),
+          ...(filters || {}),
+        });
+
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/materi/with-stats?${params}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (!response.ok) throw new Error("Gagal mengambil data");
+
+        const result = await response.json();
+
+        set({
+          data: result.data,
+          stats: result.stats,
+          total: result.total,
+          totalPages: result.totalPages,
+          currentPage: result.page,
+          loading: false,
+        });
+      } catch (error) {
+        console.error(error);
+        set({ loading: false });
+      }
+    },
+
     setCurrentPage: (page) => {
       set({ currentPage: page });
-      // ✅ Tidak perlu parameter kedua karena filter sudah tersimpan di state
-      get().fetchPaginatedData(page);
     },
 
     viewMateri: (id) => set({ highlightedId: id }),
 
     setSelectedMateri: (materi) => {
-      console.log("🔄 Setting selectedMateri:", materi);
       set({ selectedMateri: materi });
     },
   }))
