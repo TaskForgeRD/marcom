@@ -10,7 +10,6 @@ export default function HomePage() {
   const { isAuthenticated, isLoading } = useAuth();
 
   useEffect(() => {
-    // Hanya redirect ketika loading selesai
     if (!isLoading) {
       if (isAuthenticated) {
         router.replace("/dashboard");
@@ -20,7 +19,6 @@ export default function HomePage() {
     }
   }, [isAuthenticated, isLoading, router]);
 
-  // Show loading state while checking authentication
   return (
     <main className="min-h-screen flex items-center justify-center bg-background">
       <div className="flex items-center gap-3">

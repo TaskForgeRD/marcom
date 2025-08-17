@@ -6,13 +6,7 @@ import { useFormContext } from "react-hook-form";
 import Image from "next/image";
 import { getImageUrl } from "@/lib/utils";
 import get from "lodash.get";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-
+import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
 
 interface UploadThumbnailProps {
@@ -36,7 +30,6 @@ export default function UploadThumbnail({
     formState: { errors },
   } = useFormContext();
 
-  // Daftarkan field secara manual karena input type="file" disembunyikan
   useEffect(() => {
     register(name);
   }, [register, name]);
@@ -93,7 +86,6 @@ export default function UploadThumbnail({
         return;
       }
 
-      // Set file dan validasi ke react-hook-form
       setValue(name, file, { shouldValidate: true });
       trigger(name);
     }
@@ -114,7 +106,6 @@ export default function UploadThumbnail({
         <Label>{label}</Label>
         <div className="flex items-center gap-4">
           {readOnly ? (
-            // Mode view - klik untuk buka dialog
             <div
               className={`w-16 h-16 flex items-center justify-center border rounded-lg ${
                 preview
@@ -133,7 +124,6 @@ export default function UploadThumbnail({
                     unoptimized
                     className="w-full h-full object-cover rounded-lg"
                   />
-                  {/* Overlay dengan icon eye saat hover */}
                   <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 rounded-lg flex items-center justify-center">
                     <Eye className="w-4 h-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
                   </div>
@@ -143,7 +133,6 @@ export default function UploadThumbnail({
               )}
             </div>
           ) : (
-            // Mode edit - label untuk upload
             <label className="cursor-pointer">
               <input
                 type="file"
@@ -203,7 +192,6 @@ export default function UploadThumbnail({
     [&>button_svg]:w-6 
     [&>button_svg]:h-6"
         >
-          {" "}
           <DialogHeader className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10"></DialogHeader>
           {preview && (
             <div className="flex items-center justify-center w-full h-full bg-black">

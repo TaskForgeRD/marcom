@@ -68,7 +68,6 @@ export default function UsersPage() {
     }
   };
 
-  // Check if user has permission to access this page
   if (currentUserRole !== "superadmin") {
     return (
       <DashboardShell title="User Management">
@@ -100,7 +99,6 @@ export default function UsersPage() {
   return (
     <DashboardShell title="User Management">
       <div className="p-6 space-y-6">
-        {/* Header */}
         <div className="flex items-center gap-3">
           <Database className="h-8 w-8 text-blue-600" />
           <div>
@@ -113,7 +111,6 @@ export default function UsersPage() {
           </div>
         </div>
 
-        {/* Main Content */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -132,7 +129,6 @@ export default function UsersPage() {
           </CardContent>
         </Card>
 
-        {/* Dialogs */}
         <UserFormDialog
           open={isFormDialogOpen}
           onClose={() => {

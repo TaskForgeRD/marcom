@@ -31,8 +31,6 @@ export default function DeleteConfirmDialog({
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  console.log(entityName);
-
   const handleConfirm = async () => {
     setIsLoading(true);
     try {

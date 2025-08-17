@@ -1,12 +1,9 @@
 import {
   Layers,
   Package,
-  Zap,
-  Clock,
   FileText,
-  CircleCheck,
-  CircleXIcon,
   CircleCheckIcon,
+  CircleXIcon,
 } from "lucide-react";
 import { JSX } from "react";
 

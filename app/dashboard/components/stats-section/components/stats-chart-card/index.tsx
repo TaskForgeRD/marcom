@@ -34,7 +34,6 @@ export default function Page() {
               value={data.now}
               data={data.chartData}
               color={item.color}
-              // Hanya tampilkan subtitle jika onlyVisualDocs aktif dan item memiliki subtitle
               subtitle={onlyVisualDocs && item.subtitle ? item.subtitle : null}
             />
           </div>

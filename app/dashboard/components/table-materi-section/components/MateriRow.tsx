@@ -6,14 +6,11 @@ import { format } from "date-fns";
 import Image from "next/image";
 import StatusBadge from "./StatusBadge";
 import { getImageUrl } from "@/lib/utils";
-
 import { useRouter } from "next/navigation";
-
 import { useMateri } from "@/stores/materi.store";
 import { Key } from "react";
 
 interface MateriRowProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   materi: any;
 }
 
@@ -28,11 +25,9 @@ const MateriRow: React.FC<MateriRowProps> = ({ materi }) => {
   };
 
   const handleMateriClick = (event: React.MouseEvent, linkDokumen: string) => {
-    event.stopPropagation(); // Mencegah event bubbling ke parent TableRow
+    event.stopPropagation();
     window.open(linkDokumen, "_blank", "noopener,noreferrer");
   };
-
-  console.log(materi);
 
   return (
     <TableRow
@@ -106,9 +101,7 @@ const MateriRow: React.FC<MateriRowProps> = ({ materi }) => {
       <TableCell>
         {Array.isArray(materi.dokumenMateri)
           ? materi.dokumenMateri
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               .flatMap((dokumen: { keywords: any }) => dokumen.keywords || [])
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               .filter((keyword: any) => keyword)
               .join(", ")
           : "-"}

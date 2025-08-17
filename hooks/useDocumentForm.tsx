@@ -73,8 +73,6 @@ export function useDocumentForm(defaultValues?: Partial<FormDataType>) {
       const raw = localStorage.getItem("marcom-auth-store");
       const token = raw ? JSON.parse(raw)?.state?.token : null;
 
-      console.log(data);
-
       const response = await fetch(url, {
         method,
         body: formData,

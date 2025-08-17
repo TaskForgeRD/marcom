@@ -28,28 +28,16 @@ class AuthApi {
     response: Response,
     context?: string
   ): Promise<T> {
-    console.log(`API Response [${context || "unknown"}]:`, {
-      status: response.status,
-      statusText: response.statusText,
-      ok: response.ok,
-      url: response.url,
-    });
-
     if (!response.ok) {
       let errorData: any = {};
 
       try {
         const text = await response.text();
-        console.log(`Raw error response [${context}]:`, text);
 
         if (text) {
           errorData = JSON.parse(text);
         }
       } catch (parseError) {
-        console.error(
-          `Failed to parse error response [${context}]:`,
-          parseError
-        );
         errorData = {};
       }
 
@@ -68,7 +56,6 @@ class AuthApi {
 
     try {
       const text = await response.text();
-      console.log(`Raw success response [${context}]:`, text);
 
       if (!text) {
         return {} as T;
@@ -76,10 +63,6 @@ class AuthApi {
 
       return JSON.parse(text);
     } catch (parseError) {
-      console.error(
-        `Failed to parse success response [${context}]:`,
-        parseError
-      );
       throw new AuthApiError(
         "Invalid JSON response from server",
         500,
@@ -111,7 +94,6 @@ class AuthApi {
         "verifyToken"
       );
 
-      // Validate the user data structure
       if (!data.user) {
         throw new AuthApiError(
           "User data not found in response",
@@ -120,12 +102,9 @@ class AuthApi {
         );
       }
 
-      // Parse and validate user data with better error handling
       try {
         return UserSchema.parse(data.user);
       } catch (zodError) {
-        console.error("User schema validation failed:", zodError);
-        console.error("Received user data:", data.user);
         throw new AuthApiError(
           "Invalid user data format received from server",
           500,
@@ -138,7 +117,6 @@ class AuthApi {
         throw error;
       }
 
-      console.error("Token verification failed:", error);
       throw new AuthApiError(
         "Failed to verify token",
         0,
@@ -184,11 +162,6 @@ class AuthApi {
         );
       }
 
-      console.log(
-        "Sending Google callback with code:",
-        code.substring(0, 20) + "..."
-      );
-
       const requestBody = { code };
 
       const response = await fetch(`${this.baseUrl}/google/callback`, {
@@ -205,11 +178,9 @@ class AuthApi {
         "handleGoogleCallback"
       );
 
-      // Check for specific error codes from server
       if (!data.success) {
         const errorMessage = data.message || "Google callback failed";
 
-        // Handle specific error codes
         if ((data as any).error_code === "USER_NOT_REGISTERED") {
           throw new AuthApiError(
             errorMessage,
@@ -245,14 +216,10 @@ class AuthApi {
         );
       }
 
-      // Parse and validate response with better error handling
       try {
         const validatedData = GoogleCallbackResponseSchema.parse(data);
-        console.log("Successfully validated Google callback response");
         return validatedData;
       } catch (zodError) {
-        console.error("Google callback schema validation failed:", zodError);
-        console.error("Received callback data:", data);
         throw new AuthApiError(
           "Invalid callback response format received from server",
           500,
@@ -265,7 +232,6 @@ class AuthApi {
         throw error;
       }
 
-      console.error("Google callback failed:", error);
       throw new AuthApiError(
         "Failed to handle Google callback",
         0,
@@ -278,7 +244,6 @@ class AuthApi {
   async logout(token: string): Promise<void> {
     try {
       if (!token) {
-        console.warn("No token provided for logout");
         return;
       }
 
@@ -292,12 +257,10 @@ class AuthApi {
 
       await this.handleResponse<void>(response, "logout");
     } catch (error) {
-      // Logout errors are non-critical, just log them
       console.warn("Logout request failed:", error);
     }
   }
 
-  // Helper method to check API connectivity
   async healthCheck(): Promise<boolean> {
     try {
       const response = await fetch(`${API_BASE_URL}/health`, {

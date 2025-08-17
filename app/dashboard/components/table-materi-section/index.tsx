@@ -54,7 +54,7 @@ export default function TableMateriSection() {
       only_visual_docs: onlyVisualDocs.toString(),
     };
 
-    fetchPaginatedData(1, apiFilters); // Reset to page 1 when filters change
+    fetchPaginatedData(1, apiFilters);
   }, [filters, searchQuery, onlyVisualDocs, fetchPaginatedData]);
 
   const handlePageClick = (page: number) => {
@@ -98,7 +98,6 @@ export default function TableMateriSection() {
 
   return (
     <section className="p-4 overflow-x-auto" ref={tableRef}>
-      {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold">Daftar Materi Komunikasi</h2>
         {canAddMateri && (
@@ -136,7 +135,6 @@ export default function TableMateriSection() {
         </TableBody>
       </Table>
 
-      {/* Pagination */}
       <div className="mt-4 flex items-center justify-between">
         <p className="text-sm text-gray-600">
           Menampilkan {start}-{end} dari {total} data

@@ -8,7 +8,7 @@ export const useFilterStore = create<FilterStore>()(
     tempFilters: {},
     searchQuery: "",
     selectedPreset: "All time",
-    onlyVisualDocs: false, // Tambahkan state untuk filter Key Visual
+    onlyVisualDocs: false,
     setTempFilter: (key, value) =>
       set((state) => ({ tempFilters: { ...state.tempFilters, [key]: value } })),
     applyFilters: () => set((state) => ({ filters: state.tempFilters })),
@@ -17,10 +17,10 @@ export const useFilterStore = create<FilterStore>()(
         filters: {},
         tempFilters: {},
         searchQuery: "",
-        onlyVisualDocs: false, // Reset filter Key Visual
+        onlyVisualDocs: false,
       }),
     setSearchQuery: (query) => set({ searchQuery: query }),
     setSelectedPreset: (preset) => set({ selectedPreset: preset }),
-    setOnlyVisualDocs: (value: any) => set({ onlyVisualDocs: value }), // Tambahkan setter untuk filter Key Visual
+    setOnlyVisualDocs: (value: any) => set({ onlyVisualDocs: value }),
   }))
 );

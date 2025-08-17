@@ -16,7 +16,6 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ end_date }) => {
       variant={!isActive ? "destructive" : "secondary"}
       className={`text-xs ${isActive ? "bg-green-100 text-green-700 border border-green-300" : ""}`}
     >
-      {" "}
       {isActive ? "Aktif" : "Expired"}
     </Badge>
   );

@@ -33,16 +33,13 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (!authLoading && isAuthenticated) {
-      console.log("User is authenticated, redirecting to dashboard");
       router.replace("/dashboard");
     }
   }, [isAuthenticated, authLoading, router]);
 
   useEffect(() => {
     const handleCallback = async () => {
-      // Prevent multiple executions
       if (callbackProcessed || isProcessingCallback) {
-        console.log("Callback already processed or in progress");
         return;
       }
 
@@ -50,27 +47,18 @@ export default function LoginPage() {
       const error = searchParams.get("error");
       const errorDescription = searchParams.get("error_description");
 
-      // Handle OAuth errors first
       if (error) {
-        console.error("OAuth error:", error, errorDescription);
         const displayError = errorDescription || error || "Login dibatalkan.";
         showErrorToast(displayError);
         setCallbackProcessed(true);
 
-        // Clean URL
         setTimeout(() => {
           window.history.replaceState({}, document.title, "/login");
         }, 100);
         return;
       }
 
-      // Process authorization code
       if (code) {
-        console.log(
-          "Processing OAuth callback with code:",
-          code.substring(0, 10) + "..."
-        );
-
         setIsProcessingCallback(true);
         setCallbackProcessed(true);
         setAccountNotFoundError(false);
@@ -80,34 +68,22 @@ export default function LoginPage() {
           const success = await googleCallback(code);
 
           if (success) {
-            console.log(
-              "Login callback successful, redirecting to dashboard..."
-            );
             showSuccessToast("Login berhasil!", "Mengarahkan ke dashboard...");
-
-            // Clean URL before redirect
             window.history.replaceState({}, document.title, "/login");
-
             router.replace("/dashboard");
           } else {
-            console.error("Login callback returned false");
             setErrorMessage("Login callback gagal");
             setAccountNotFoundError(false);
           }
         } catch (error: any) {
-          console.error("OAuth callback error:", error);
-
-          // Handle specific error types
           if (
             error?.code === "USER_NOT_REGISTERED" ||
             error?.message?.includes("belum terdaftar") ||
             error?.message?.includes("not registered")
           ) {
-            console.log("User not registered, showing account not found error");
             setAccountNotFoundError(true);
             setErrorMessage(error.message || "Akun belum terdaftar");
           } else {
-            console.error("Other callback error:", error);
             const displayError =
               error?.message || "Terjadi kesalahan saat memproses login";
             showErrorToast(displayError);
@@ -119,9 +95,7 @@ export default function LoginPage() {
       }
     };
 
-    // Only process if we have search params
     if (searchParams.toString() && !callbackProcessed) {
-      console.log("Search params found, processing callback...");
       handleCallback();
     }
   }, [
@@ -134,30 +108,24 @@ export default function LoginPage() {
 
   const handleGoogleLogin = async () => {
     try {
-      console.log("Starting Google login process...");
       setAccountNotFoundError(false);
       setErrorMessage("");
-      setCallbackProcessed(false); // Reset for new login attempt
+      setCallbackProcessed(false);
       await googleLogin();
     } catch (error: any) {
-      console.error("Google login failed:", error);
       const displayError = error?.message || "Google login gagal";
       showErrorToast(displayError);
     }
   };
 
   const handleTryAgain = () => {
-    console.log("Resetting login state for retry");
     setAccountNotFoundError(false);
     setCallbackProcessed(false);
     setErrorMessage("");
     setIsProcessingCallback(false);
-
-    // Paksa reload halaman tanpa query param (agar useEffect bisa trigger ulang)
     window.location.href = "/login";
   };
 
-  // Show loading while auth is initializing
   if (authLoading && !isProcessingCallback && !callbackProcessed) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -171,7 +139,6 @@ export default function LoginPage() {
     );
   }
 
-  // Show loading while redirecting authenticated user
   if (isAuthenticated && !accountNotFoundError) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -185,7 +152,6 @@ export default function LoginPage() {
     );
   }
 
-  // Show account not found error screen
   if (accountNotFoundError) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background px-4">

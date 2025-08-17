@@ -10,17 +10,13 @@ export default function DetailMateriPage() {
   const searchParams = useSearchParams();
   const mode = searchParams.get("mode") ?? undefined;
 
-  const { data, setSelectedMateri, selectedMateri } = useMateri();
+  const { data, setSelectedMateri } = useMateri();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchMateriDetail = async () => {
-      // Cek dulu apakah ada di store
       let materi = data.find((item) => item.id === Number(id));
 
-      console.log(materi);
-
-      // Jika tidak ada (karena refresh), ambil dari API
       if (!materi && id) {
         try {
           const raw = localStorage.getItem("marcom-auth-store");
@@ -48,7 +44,6 @@ export default function DetailMateriPage() {
       }
 
       setIsLoading(false);
-      console.log(materi);
     };
 
     fetchMateriDetail();

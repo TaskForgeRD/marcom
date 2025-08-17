@@ -14,7 +14,7 @@ interface MateriStore {
   fetchPaginatedData: (page?: number, filters?: any) => Promise<void>;
   fetchWithStats: (page?: number, filters?: any) => Promise<void>;
   setCurrentPage: (page: number) => void;
-  viewMateri: (id: number) => void;
+  viewMateri: (id: any) => void;
   setSelectedMateri: (materi: any) => void;
 }
 

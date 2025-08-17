@@ -8,12 +8,12 @@ import { useMultiApiStore } from "@/stores/api.store";
 import { FilterKey } from "@/constants/filter-options";
 import SelectField from "../../uiRama/selectField";
 import useSelectedFilters from "@/hooks/useSelectedFilters";
-import { useFilterStore } from "@/stores/filter-materi.store"; // Import store filter
+import { useFilterStore } from "@/stores/filter-materi.store";
 
 const FilterDateSection: React.FC = () => {
   const { brands } = useMultiApiStore();
   const { selectedFilters, handleFilterChange } = useSelectedFilters();
-  const { setTempFilter, applyFilters } = useFilterStore(); // Ambil fungsi dari store
+  const { setTempFilter, applyFilters } = useFilterStore();
 
   const { dateRange, isCustomRange, handleDateChange, handlePresetSelection } =
     useDateRange();
@@ -23,18 +23,14 @@ const FilterDateSection: React.FC = () => {
   const filterKeys: FilterKey[] = ["brand"];
 
   const handleBrandChange = (value: string) => {
-    // Update selected filters
     handleFilterChange("brand", value);
 
-    // Update temp filter - jika "Semua Brand" dipilih, set sebagai empty string atau null
-    // supaya filter logic menganggap tidak ada filter brand
     if (value === "Semua Brand") {
-      setTempFilter("brand", ""); // atau null
+      setTempFilter("brand", "");
     } else {
       setTempFilter("brand", value);
     }
 
-    // Langsung apply filter tanpa menunggu tombol "Terapkan Filter"
     setTimeout(() => {
       applyFilters();
     }, 0);
@@ -63,7 +59,7 @@ const FilterDateSection: React.FC = () => {
           highlight={true}
           label={key}
           value={selectedFilters[key] || ""}
-          onChange={handleBrandChange} // Gunakan handler yang baru
+          onChange={handleBrandChange}
           options={
             filterOptions[key]?.map((opt) => ({
               value: opt,

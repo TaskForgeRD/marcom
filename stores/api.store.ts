@@ -1,45 +1,37 @@
 import { create } from "zustand";
 import { logger } from "../middleware/logger";
 
-// Types untuk setiap data
 interface Jenis {
   id: number;
   name: string;
-  // tambahkan properti lain sesuai struktur data API
 }
 
 interface Fitur {
   id: number;
   name: string;
-  // tambahkan properti lain sesuai struktur data API
 }
 
 interface Brand {
   id: number;
   name: string;
-  // tambahkan properti lain sesuai struktur data API
 }
 
 interface Cluster {
   id: number;
   name: string;
-  // tambahkan properti lain sesuai struktur data API
 }
 
 interface MultiApiStore {
-  // Data states
   jenis: Jenis[];
   fitur: Fitur[];
   brands: Brand[];
   clusters: Cluster[];
 
-  // Loading states
   jenisLoading: boolean;
   fiturLoading: boolean;
   brandsLoading: boolean;
   clustersLoading: boolean;
 
-  // Actions
   fetchJenis: () => Promise<void>;
   fetchFitur: () => Promise<void>;
   fetchBrands: () => Promise<void>;
@@ -49,7 +41,6 @@ interface MultiApiStore {
 
 export const useMultiApiStore = create<MultiApiStore>()(
   logger((set, get) => ({
-    // Initial states
     jenis: [],
     fitur: [],
     brands: [],
@@ -60,7 +51,6 @@ export const useMultiApiStore = create<MultiApiStore>()(
     brandsLoading: false,
     clustersLoading: false,
 
-    // Fetch Jenis
     fetchJenis: async () => {
       set({ jenisLoading: true });
       try {
@@ -86,7 +76,6 @@ export const useMultiApiStore = create<MultiApiStore>()(
       }
     },
 
-    // Fetch Fitur
     fetchFitur: async () => {
       set({ fiturLoading: true });
       try {
@@ -112,7 +101,6 @@ export const useMultiApiStore = create<MultiApiStore>()(
       }
     },
 
-    // Fetch Brands
     fetchBrands: async () => {
       set({ brandsLoading: true });
       try {
@@ -138,7 +126,6 @@ export const useMultiApiStore = create<MultiApiStore>()(
       }
     },
 
-    // Fetch Clusters
     fetchClusters: async () => {
       set({ clustersLoading: true });
       try {
@@ -164,7 +151,6 @@ export const useMultiApiStore = create<MultiApiStore>()(
       }
     },
 
-    // Fetch semua data sekaligus
     fetchAllData: async () => {
       const { fetchJenis, fetchFitur, fetchBrands, fetchClusters } = get();
 

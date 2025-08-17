@@ -1,4 +1,3 @@
-// FilterOption.tsx
 "use client";
 
 import { useRouter } from "next/navigation";
@@ -17,7 +16,6 @@ export default function FilterOption() {
   const { selectedFilters, handleFilterChange, handleResetFilters } =
     useSelectedFilters();
 
-  // Fetch data saat komponen mount
   useEffect(() => {
     fetchAllData();
   }, [fetchAllData]);
@@ -31,10 +29,7 @@ export default function FilterOption() {
         applyFilters={applyFilters}
       />
       <HorizontalLine />
-      <SearchAndActions
-        // handleTambahMateri={() => router.push("/dashboard/form-materi")}
-        setSearchQuery={setSearchQuery}
-      />
+      <SearchAndActions setSearchQuery={setSearchQuery} />
     </div>
   );
 }

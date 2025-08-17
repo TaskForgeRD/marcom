@@ -19,7 +19,6 @@ export default function DokumenMateri({ readOnly = true }: DokumenMateriProps) {
     name: "dokumenMateri",
   });
 
-  // Get current user role
   const { user } = useAuthStore();
   const currentUserRole = user?.role;
 
@@ -32,8 +31,6 @@ export default function DokumenMateri({ readOnly = true }: DokumenMateriProps) {
     });
   };
 
-  console.log("Fields", fields);
-
   return (
     <div className="space-y-6">
       {fields.map((field, index) => (
@@ -43,7 +40,6 @@ export default function DokumenMateri({ readOnly = true }: DokumenMateriProps) {
               Dokumen Materi {index + 1}
             </h3>
 
-            {/* Input Link Dokumen dengan blur condition */}
             <div
               className={
                 readOnly && currentUserRole === "guest"

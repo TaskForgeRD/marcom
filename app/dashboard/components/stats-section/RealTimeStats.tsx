@@ -1,4 +1,3 @@
-// app/dashboard/components/stats-section/RealTimeStats.tsx - Fixed version
 import { RefreshCw, Wifi, WifiOff, Clock } from "lucide-react";
 import { useSocket } from "@/hooks/useSocket";
 import { useFilterStore } from "@/stores/filter-materi.store";
@@ -28,10 +27,8 @@ export default function RealTimeStats() {
     applyFilters,
   } = useFilterStore();
 
-  // Use ref to track if filters have been sent to prevent infinite requests
   const lastFiltersRef = useRef<string>("");
 
-  // Memoize API filters to prevent recreation on every render
   const apiFilters = useMemo(
     () => ({
       search: searchQuery || "",
@@ -47,19 +44,14 @@ export default function RealTimeStats() {
     [filters, searchQuery, onlyVisualDocs]
   );
 
-  // Request stats with filters when filters change
   useEffect(() => {
     if (!connected || !socket) return;
 
-    // Create a string representation of filters to compare
     const filtersString = JSON.stringify(apiFilters);
 
-    // Only request if filters actually changed
     if (filtersString !== lastFiltersRef.current) {
-      console.log("Filters changed, requesting new stats:", apiFilters);
       lastFiltersRef.current = filtersString;
 
-      // Add a small delay to debounce rapid filter changes
       const timeoutId = setTimeout(() => {
         requestStatsWithFilters(apiFilters);
       }, 300);
@@ -106,7 +98,6 @@ export default function RealTimeStats() {
     total: "default",
   } as const;
 
-  // Mapping dari key stats card ke nilai filter yang sesuai
   const getFilterValue = (key: string) => {
     switch (key.toLowerCase()) {
       case "aktif":
@@ -126,23 +117,12 @@ export default function RealTimeStats() {
     const currentStatus = filters?.status;
     const targetFilterValue = getFilterValue(key);
 
-    console.log(
-      "Card clicked:",
-      key,
-      "Current:",
-      currentStatus,
-      "Target:",
-      targetFilterValue
-    );
-
-    // Jika card yang diklik sudah aktif (filter sama), reset filter
     if (currentStatus === targetFilterValue && targetFilterValue !== "") {
       setTempFilter("status", "");
     } else {
       setTempFilter("status", targetFilterValue);
     }
 
-    // Apply filter
     setTimeout(() => {
       applyFilters();
     }, 50);
@@ -150,7 +130,6 @@ export default function RealTimeStats() {
 
   return (
     <div className="space-y-4">
-      {/* Real-time Status Header */}
       <div className="flex items-center justify-between px-4">
         <div className="flex items-center space-x-2">
           <div className="flex items-center space-x-1">
@@ -189,7 +168,6 @@ export default function RealTimeStats() {
         </Button>
       </div>
 
-      {/* Error Message */}
       {error && (
         <div className="mx-4 p-3 bg-red-50 border border-red-200 rounded-md">
           <p className="text-sm text-red-600">
@@ -198,7 +176,6 @@ export default function RealTimeStats() {
         </div>
       )}
 
-      {/* Connection Status Message */}
       {!connected && !error && (
         <div className="mx-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
           <p className="text-sm text-yellow-600">
@@ -207,14 +184,12 @@ export default function RealTimeStats() {
         </div>
       )}
 
-      {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 px-4">
         {statsConfig.map(({ key, title, icon }) => {
           const value = statsMap[key];
           const currentStatus = filters?.status;
           const targetFilterValue = getFilterValue(key);
 
-          // Card aktif jika filter status cocok dengan target value dari card
           const isActive =
             currentStatus === targetFilterValue && targetFilterValue !== "";
 

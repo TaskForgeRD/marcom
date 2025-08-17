@@ -54,7 +54,6 @@ export default function MasterDataTable({
         </Button>
       </div>
 
-      {/* Table */}
       <div className="border rounded-lg overflow-hidden">
         <Table>
           <TableHeader>
@@ -117,7 +116,6 @@ export default function MasterDataTable({
         </Table>
       </div>
 
-      {/* Summary */}
       <div className="text-sm text-gray-600">
         Total: {filteredData.length} {entityName.toLowerCase()}
         {searchQuery && ` (dari ${data.length} total)`}

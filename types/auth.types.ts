@@ -1,10 +1,8 @@
 import { z } from "zod";
 
-// More flexible User schema to handle different API responses
 export const UserSchema = z
   .object({
     id: z.union([z.number(), z.string()]).transform((val) => {
-      // Convert string IDs to numbers if possible, otherwise keep as string
       if (typeof val === "string") {
         const numId = parseInt(val, 10);
         return isNaN(numId) ? val : numId;
@@ -15,7 +13,7 @@ export const UserSchema = z
     name: z.string().min(1),
     avatar_url: z.string().url().optional().nullable(),
   })
-  .passthrough(); // Allow additional fields from API
+  .passthrough();
 
 export const AuthResponseSchema = z.object({
   token: z.string(),
@@ -30,7 +28,7 @@ export const GoogleCallbackResponseSchema = z
     user: UserSchema.optional(),
     message: z.string().optional(),
   })
-  .passthrough(); // Allow additional fields
+  .passthrough();
 
 export type User = z.infer<typeof UserSchema>;
 export type AuthResponse = z.infer<typeof AuthResponseSchema>;

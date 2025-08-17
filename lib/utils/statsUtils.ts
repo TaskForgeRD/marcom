@@ -9,12 +9,9 @@ export const formatChange = (change: number): string =>
   change === 0 ? "0" : change > 0 ? `+${change}` : `${change}`;
 
 export const getFilteredStats = (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any[],
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   filterFn: (item: any) => boolean,
   dateRange?: { from: Date; to: Date },
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   uniqueBy?: (item: any) => string | undefined
 ) => {
   const isInRange = (date: string) => {
@@ -41,7 +38,6 @@ export const getFilteredStats = (
     );
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const count = (arr: any[]) =>
     uniqueBy ? new Set(arr.map(uniqueBy).filter(Boolean)).size : arr.length;
 

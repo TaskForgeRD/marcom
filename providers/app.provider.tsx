@@ -8,18 +8,13 @@ interface AppProvidersProps {
   readonly children: ReactNode;
 }
 
-/**
- * Root provider yang menggabungkan semua provider aplikasi
- */
 export function AppProviders({ children }: AppProvidersProps) {
   const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
-    // Ensure client-side hydration is complete
     setIsHydrated(true);
   }, []);
 
-  // Prevent hydration mismatch by not rendering until client-side
   if (!isHydrated) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">

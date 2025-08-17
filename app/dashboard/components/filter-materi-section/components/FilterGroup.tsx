@@ -1,4 +1,3 @@
-// FilterGroup.tsx
 import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import SelectField from "../../../uiRama/selectField";
@@ -20,7 +19,6 @@ const FilterGroup = ({
 }: FilterGroupProps) => {
   const { clusters, fitur, jenis } = useMultiApiStore();
 
-  // Memoized filter options berdasarkan data dari API
   const filterOptions: Partial<Record<FilterKey, string[]>> = useMemo(() => {
     return {
       cluster: ["Semua Cluster", ...clusters.map((cluster) => cluster.name)],
@@ -30,7 +28,6 @@ const FilterGroup = ({
     };
   }, [clusters, fitur, jenis]);
 
-  // Filter keys untuk ditampilkan
   const filterKeys: FilterKey[] = ["cluster", "fitur", "status", "jenis"];
 
   return (
@@ -43,9 +40,8 @@ const FilterGroup = ({
             label={key}
             value={selectedFilters[key] || ""}
             onChange={(value) => {
-              // Jika pilih "Semua", simpan sebagai "Semua [Key]" bukan empty string
               if (value.startsWith("Semua") || value === "Semua Status") {
-                handleFilterChange(key, value); // Simpan value asli "Semua Brand", dll
+                handleFilterChange(key, value);
               } else {
                 handleFilterChange(key, value);
               }

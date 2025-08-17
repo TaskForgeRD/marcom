@@ -7,10 +7,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Database,
   Settings,
-  Users,
   Tag,
   Layers,
-  Grid3X3,
   Shield,
   Box,
   Puzzle,
@@ -28,10 +26,8 @@ export default function MasterDataPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  // Get current user role
   const currentUserRole: Role = currentUser?.role as Role;
 
-  // Get tab from URL, default to 'brands'
   const tabFromUrl = searchParams.get("tab") || "brands";
   const [activeTab, setActiveTab] = useState(tabFromUrl);
 
@@ -60,24 +56,20 @@ export default function MasterDataPage() {
     fetchAllData,
   } = useMasterDataStore();
 
-  // Check if user has permission to access this page
   const hasPermission =
     currentUserRole === "superadmin" || currentUserRole === "admin";
 
-  // Fetch data when component mounts (only if user has permission)
   useEffect(() => {
     if (hasPermission) {
       fetchAllData();
     }
   }, [fetchAllData, hasPermission]);
 
-  // Sinkronkan activeTab dengan URL setiap kali searchParams berubah
   useEffect(() => {
     const currentTab = searchParams.get("tab") || "brands";
     setActiveTab(currentTab);
   }, [searchParams]);
 
-  // Update URL when tab changes
   const handleTabChange = (newTab: string) => {
     setActiveTab(newTab);
     router.push(`/master-data?tab=${newTab}`, { scroll: false });
@@ -168,7 +160,6 @@ export default function MasterDataPage() {
     }
   };
 
-  // Show access denied if user doesn't have permission
   if (!hasPermission) {
     return (
       <DashboardShell title="Master Data">
@@ -198,7 +189,6 @@ export default function MasterDataPage() {
           </div>
         </div>
 
-        {/* Main Content */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -255,7 +245,6 @@ export default function MasterDataPage() {
           </CardContent>
         </Card>
 
-        {/* Dialogs */}
         <CreateEditDialog
           open={isCreateDialogOpen}
           onClose={() => {

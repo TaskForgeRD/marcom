@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { logger } from "../middleware/logger";
 
-// Types
 export type Role = "superadmin" | "admin" | "guest";
 
 export interface User {
@@ -22,24 +21,20 @@ interface ApiResponse {
 }
 
 interface UserStore {
-  // Data states
   users: User[];
   loading: boolean;
 
-  // Actions
   fetchUsers: () => Promise<void>;
   createUser: (userData: Partial<User>) => Promise<void>;
   updateUser: (id: number, userData: Partial<User>) => Promise<void>;
   deleteUser: (id: number) => Promise<void>;
 }
 
-// Helper function to get auth token
 const getAuthToken = (): string | null => {
   const raw = localStorage.getItem("marcom-auth-store");
   return raw ? JSON.parse(raw)?.state?.token : null;
 };
 
-// Helper function for API requests
 const makeApiRequest = async (
   endpoint: string,
   method: string = "GET",
@@ -77,16 +72,13 @@ const makeApiRequest = async (
 
 export const useUserStore = create<UserStore>()(
   logger((set, get) => ({
-    // Initial states
     users: [],
     loading: false,
 
-    // Actions
     fetchUsers: async () => {
       set({ loading: true });
       try {
         const result = await makeApiRequest("/users");
-        console.log("Fetched users:", result.users);
         if (result.success && result.users) {
           set({ users: result.users, loading: false });
         } else {
@@ -103,7 +95,7 @@ export const useUserStore = create<UserStore>()(
       try {
         const result = await makeApiRequest("/users", "POST", userData);
         if (result.success) {
-          await get().fetchUsers(); // Refresh data
+          await get().fetchUsers();
         } else {
           throw new Error(result.message || "Gagal menambahkan pengguna");
         }
@@ -117,7 +109,7 @@ export const useUserStore = create<UserStore>()(
       try {
         const result = await makeApiRequest(`/users/${id}`, "PUT", userData);
         if (result.success) {
-          await get().fetchUsers(); // Refresh data
+          await get().fetchUsers();
         } else {
           throw new Error(result.message || "Gagal memperbarui pengguna");
         }
@@ -131,7 +123,7 @@ export const useUserStore = create<UserStore>()(
       try {
         const result = await makeApiRequest(`/users/${id}`, "DELETE");
         if (result.success) {
-          await get().fetchUsers(); // Refresh data
+          await get().fetchUsers();
         } else {
           throw new Error(result.message || "Gagal menghapus pengguna");
         }
