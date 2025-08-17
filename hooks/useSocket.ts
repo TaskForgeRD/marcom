@@ -1,6 +1,20 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { io, Socket } from "socket.io-client";
 
+interface MonthlyData {
+  month: string;
+  value: number;
+}
+
+interface DetailedMonthlyData {
+  total: MonthlyData[];
+  fitur: MonthlyData[];
+  komunikasi: MonthlyData[];
+  aktif: MonthlyData[];
+  expired: MonthlyData[];
+  dokumen: MonthlyData[];
+}
+
 interface StatsData {
   total: number;
   fitur: number;
@@ -9,6 +23,7 @@ interface StatsData {
   expired: number;
   dokumen: number;
   lastUpdated: string;
+  monthlyData?: DetailedMonthlyData;
 }
 
 interface UseSocketReturn {
@@ -33,6 +48,7 @@ export const useSocket = (): UseSocketReturn => {
     if (socketRef.current && connected) {
       setLoading(true);
       socketRef.current.emit("refresh_stats");
+      socketRef.current.emit("request_monthly_stats");
     }
   }, [connected]);
 
@@ -41,6 +57,7 @@ export const useSocket = (): UseSocketReturn => {
       if (socketRef.current && connected) {
         setLoading(true);
         socketRef.current.emit("request_stats_with_filters", filters);
+        socketRef.current.emit("request_monthly_stats_with_filters", filters);
       }
     },
     [connected]
@@ -85,6 +102,7 @@ export const useSocket = (): UseSocketReturn => {
           setError(null);
           setTimeout(() => {
             socket.emit("request_stats");
+            socket.emit("request_monthly_stats");
           }, 100);
         });
 
@@ -102,10 +120,23 @@ export const useSocket = (): UseSocketReturn => {
         });
 
         socket.on("stats_update", (newStats: StatsData) => {
-          setStats(newStats);
+          setStats((prevStats) => ({
+            ...newStats,
+            monthlyData: prevStats?.monthlyData || ({} as DetailedMonthlyData),
+          }));
           setLoading(false);
           setError(null);
         });
+
+        socket.on(
+          "monthly_stats_update",
+          (monthlyData: DetailedMonthlyData) => {
+            setStats((prevStats) => ({
+              ...prevStats!,
+              monthlyData,
+            }));
+          }
+        );
 
         socket.on("stats_error", (error: { message: string }) => {
           setError(error.message);

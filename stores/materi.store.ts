@@ -62,6 +62,7 @@ export const useMateri = create<MateriStore>()(
 
         const result = await response.json();
 
+        console.log(result);
         set({
           data: result.data,
           total: result.total,

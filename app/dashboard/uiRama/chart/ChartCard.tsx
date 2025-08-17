@@ -15,7 +15,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 interface ChartCardProps {
   title: string;
   value: number;
-  data: Array<{ name: string; value: number }>;
+  data:
+    | Array<{ month: string; value: number }>
+    | Array<{ name: string; value: number }>;
   color: string;
   subtitle?: string | null;
 }
@@ -27,6 +29,11 @@ export function ChartCard({
   color,
   subtitle = null,
 }: ChartCardProps) {
+  const normalizedData = data.map((item) => ({
+    name: "month" in item ? item.month : item.name,
+    value: item.value,
+  }));
+
   return (
     <Card className="w-full h-full shadow-sm">
       <CardHeader className="pb-2">
@@ -49,7 +56,7 @@ export function ChartCard({
         <div className="h-32">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart
-              data={data}
+              data={normalizedData}
               margin={{ top: 16, right: 16, left: 16, bottom: 16 }}
             >
               <defs>
@@ -92,7 +99,12 @@ export function ChartCard({
                 dot={(dotProps) => {
                   const { key, ...rest } = dotProps;
                   return (
-                    <SquareDot key={key} {...rest} data={data} fill={color} />
+                    <SquareDot
+                      key={key}
+                      {...rest}
+                      data={normalizedData}
+                      fill={color}
+                    />
                   );
                 }}
                 activeDot={(dotProps) => {
@@ -101,7 +113,7 @@ export function ChartCard({
                     <ActiveSquareDot
                       key={key}
                       {...rest}
-                      data={data}
+                      data={normalizedData}
                       fill={color}
                     />
                   );
