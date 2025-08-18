@@ -22,8 +22,6 @@ export default function StatsChartCard() {
     };
   };
 
-  console.log("Stats data:", stats);
-
   return (
     <div className="flex flex-wrap gap-4 px-4 py-4">
       {statsConfig.map((item, index) => {

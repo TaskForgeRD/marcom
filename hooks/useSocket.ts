@@ -160,6 +160,8 @@ export const useSocket = (): UseSocketReturn => {
     };
   }, []);
 
+  console.log(stats);
+
   return {
     socket: socketRef.current,
     connected,
