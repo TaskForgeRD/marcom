@@ -68,11 +68,13 @@ export const useStatsData = () => {
         (m) => dayjs().isAfter(m.end_date),
         dateRange
       ),
-      dokumen: getFilteredStats(
-        filteredMateri,
-        (m) => m.dokumenMateri?.length > 0,
-        dateRange
-      ),
+      dokumen: {
+        now: filteredMateri.reduce((total, m) => {
+          return total + (m.dokumenMateri ? m.dokumenMateri.length : 0);
+        }, 0),
+        change: 0,
+        chartData: [],
+      },
     };
 
     // Add chart data
