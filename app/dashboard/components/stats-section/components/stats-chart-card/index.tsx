@@ -1,14 +1,50 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useRef, useMemo } from "react";
 import { useSocket } from "@/hooks/useSocket";
 import { ChartCard } from "@/app/dashboard/uiRama/chart/ChartCard";
 import { statsConfig } from "@/app/dashboard/components/stats-section/StatsConfig";
 import { useFilterStore } from "@/stores/filter-materi.store";
 
 export default function StatsChartCard() {
-  const { stats } = useSocket();
-  const { onlyVisualDocs } = useFilterStore();
+  const { socket, connected, stats, requestStatsWithFilters } = useSocket();
+
+  const { filters, searchQuery, onlyVisualDocs } = useFilterStore();
+
+  const lastFiltersRef = useRef<string>("");
+
+  // Buat filter object yang sama dengan RealTimeStats
+  const apiFilters = useMemo(
+    () => ({
+      search: searchQuery || "",
+      status: filters.status || "",
+      brand: filters.brand || "",
+      cluster: filters.cluster || "",
+      fitur: filters.fitur || "",
+      jenis: filters.jenis || "",
+      start_date: filters.start_date || "",
+      end_date: filters.end_date || "",
+      only_visual_docs: onlyVisualDocs,
+    }),
+    [filters, searchQuery, onlyVisualDocs]
+  );
+
+  // Effect untuk menerapkan filter yang sama dengan RealTimeStats
+  useEffect(() => {
+    if (!connected || !socket) return;
+
+    const filtersString = JSON.stringify(apiFilters);
+
+    if (filtersString !== lastFiltersRef.current) {
+      lastFiltersRef.current = filtersString;
+
+      const timeoutId = setTimeout(() => {
+        requestStatsWithFilters(apiFilters);
+      }, 300);
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [apiFilters, connected, socket, requestStatsWithFilters]);
 
   const getStatsData = (key: string) => {
     const currentValue = (stats?.[key as keyof typeof stats] as number) || 0;
