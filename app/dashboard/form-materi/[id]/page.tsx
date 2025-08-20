@@ -20,7 +20,6 @@ export default function DetailMateriPage() {
 
       console.log(materi);
 
-      // Jika tidak ada (karena refresh), ambil dari API
       if (!materi && id) {
         try {
           const raw = localStorage.getItem("marcom-auth-store");

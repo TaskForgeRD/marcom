@@ -1,9 +1,8 @@
-// hooks/useStatsData.ts - Simplified to use Socket API directly
+// hooks/useStatsData.ts - Updated to handle chart data from Socket
 import { useMemo, useEffect } from "react";
 import { useFilterStore } from "@/stores/filter-materi.store";
 import { useSocket } from "@/hooks/useSocket";
 import { formatPresetLabel } from "@/lib/utils/dateUtils";
-import { formatChange } from "@/lib/utils/statsUtils";
 
 export const useStatsData = () => {
   const {
@@ -76,7 +75,7 @@ export const useStatsData = () => {
 
   const waktuLabel = formatPresetLabel(selectedPreset, dateRange);
 
-  // Process stats data from Socket
+  // Process stats data from Socket (now includes chart data)
   const stats = useMemo(() => {
     if (!socketStats) {
       // Default stats when no data
@@ -97,43 +96,43 @@ export const useStatsData = () => {
       };
     }
 
-    // Use stats directly from Socket (already filtered if filters were applied)
+    // Process stats with chart data from Socket
     const processedStats = {
       total: {
         now: socketStats.total || 0,
         change: 0, // Socket doesn't provide change data yet
         changeLabel: "0",
-        chartData: [], // Could be populated later if needed
+        chartData: socketStats.chartData?.total || [],
       },
       fitur: {
         now: socketStats.fitur || 0,
         change: 0,
         changeLabel: "0",
-        chartData: [],
+        chartData: socketStats.chartData?.fitur || [],
       },
       komunikasi: {
         now: socketStats.komunikasi || 0,
         change: 0,
         changeLabel: "0",
-        chartData: [],
+        chartData: socketStats.chartData?.komunikasi || [],
       },
       aktif: {
         now: socketStats.aktif || 0,
         change: 0,
         changeLabel: "0",
-        chartData: [],
+        chartData: socketStats.chartData?.aktif || [],
       },
       expired: {
         now: socketStats.expired || 0,
         change: 0,
         changeLabel: "0",
-        chartData: [],
+        chartData: socketStats.chartData?.expired || [],
       },
       dokumen: {
         now: socketStats.dokumen || 0,
         change: 0,
         changeLabel: "0",
-        chartData: [],
+        chartData: socketStats.chartData?.dokumen || [],
       },
     };
 
@@ -158,10 +157,10 @@ export const useStatsData = () => {
     setTempFilter,
     filters,
     lastUpdated: socketStats?.lastUpdated,
-    refreshStats: handleRefreshStats, // Use custom refresh function
-    hasFilters, // Expose this for debugging
-    appliedFilters: socketStats?.appliedFilters, // For debugging
-    currentFilters, // Expose current filters
+    refreshStats: handleRefreshStats,
+    hasFilters,
+    appliedFilters: socketStats?.appliedFilters,
+    currentFilters,
     stats,
   };
 };

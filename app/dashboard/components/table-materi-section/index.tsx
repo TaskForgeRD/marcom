@@ -13,7 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, PlusCircle, RefreshCw } from "lucide-react";
+import { ChevronLeft, ChevronRight, PlusCircle } from "lucide-react";
 import { materiTableColumns } from "@/app/dashboard/components/table-materi-section/TableColumnConfig";
 import LoadingSpinner from "@/app/dashboard/components/table-materi-section/components/LoadingSpinner";
 import MateriRow from "@/app/dashboard/components/table-materi-section/components/MateriRow";
@@ -27,7 +27,6 @@ export default function TableMateriSection() {
     fetchData,
     setCurrentPage,
     setSelectedMateri,
-    refreshData,
   } = useMateri();
 
   const { filters, getCurrentFilters } = useFilterStore();
@@ -109,10 +108,6 @@ export default function TableMateriSection() {
     router.push("/dashboard/form-materi");
   };
 
-  const handleRefresh = () => {
-    refreshData();
-  };
-
   // Generate page numbers for pagination
   const getPageNumbers = () => {
     const { currentPage, totalPages } = pagination;
@@ -144,20 +139,9 @@ export default function TableMateriSection() {
 
   return (
     <section className="p-4 overflow-x-auto" ref={tableRef}>
-      {/* Header with Add Button and Refresh */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-4">
           <h2 className="text-2xl font-bold">Daftar Materi Komunikasi</h2>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleRefresh}
-            disabled={loading}
-            className="flex items-center gap-2"
-          >
-            <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
-            Refresh
-          </Button>
         </div>
         {canAddMateri && (
           <Button
@@ -291,11 +275,6 @@ export default function TableMateriSection() {
               </Button>
             </div>
           )}
-
-          {/* Items per page info */}
-          <div className="text-xs text-gray-500">
-            {pagination.itemsPerPage} items per page
-          </div>
         </div>
       )}
     </section>

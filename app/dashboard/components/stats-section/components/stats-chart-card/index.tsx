@@ -1,3 +1,4 @@
+// app/dashboard/components/stats-section/components/stats-chart-card/index.tsx
 "use client";
 
 import React from "react";
@@ -7,8 +8,34 @@ import { statsConfig } from "@/app/dashboard/components/stats-section/StatsConfi
 import { useFilterStore } from "@/stores/filter-materi.store";
 
 export default function Page() {
-  const { stats } = useStatsData();
+  const { stats, loading, error } = useStatsData();
   const { onlyVisualDocs } = useFilterStore();
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="flex flex-wrap gap-4 px-4 py-4">
+        {statsConfig.map((item) => (
+          <div key={item.key} className="w-full lg:w-[calc(33.333%-1rem)]">
+            <div className="h-64 bg-gray-100 rounded-lg animate-pulse flex items-center justify-center">
+              <p className="text-gray-500">Loading chart...</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="flex flex-wrap gap-4 px-4 py-4">
+        <div className="w-full p-4 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-red-600">Error loading chart data: {error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-wrap gap-4 px-4 py-4">
@@ -27,14 +54,51 @@ export default function Page() {
           cardClass += " lg:w-[calc(33.333%-1rem)]";
         }
 
+        const ID_MONTH = [
+          "Jan",
+          "Feb",
+          "Mar",
+          "Apr",
+          "Mei",
+          "Jun",
+          "Jul",
+          "Agust",
+          "Sept",
+          "Okt",
+          "Nov",
+          "Des",
+        ];
+
+        const chartData = (data.chartData ?? []).map(
+          (p: {
+            fullMonth?: string;
+            month?: string;
+            monthName?: string;
+            value: number | string;
+          }) => {
+            // Ambil kode bulan 2 digit kalau ada, fallback ke monthName
+            const code = (p.fullMonth ?? p.month ?? "")
+              .toString()
+              .padStart(2, "0");
+            const idx = Number(code) - 1;
+
+            return {
+              name: ID_MONTH[idx] ?? p.monthName ?? code, // ← label “Januari”, dst.
+              value: Number(p.value),
+            };
+          }
+        );
+
+        console.log(chartData);
+
         return (
           <div key={item.key} className={cardClass}>
             <ChartCard
               title={item.title}
               value={data.now}
-              data={data.chartData}
+              data={chartData}
               color={item.color}
-              // Hanya tampilkan subtitle jika onlyVisualDocs aktif dan item memiliki subtitle
+              // Show subtitle only if onlyVisualDocs is active and item has subtitle
               subtitle={onlyVisualDocs && item.subtitle ? item.subtitle : null}
             />
           </div>

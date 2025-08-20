@@ -1,4 +1,4 @@
-import { RefreshCw, Wifi, WifiOff, Clock, Filter } from "lucide-react";
+import { Wifi, WifiOff, Clock, Filter } from "lucide-react";
 import { useStatsData } from "@/hooks/useStatsData";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -13,7 +13,6 @@ export default function RealTimeStats() {
     loading,
     error,
     lastUpdated,
-    refreshStats,
     filters,
     setTempFilter,
     applyFilters,
@@ -116,19 +115,6 @@ export default function RealTimeStats() {
             </Badge>
           </div>
 
-          {/* Show if filters are applied */}
-          {hasFilters && (
-            <div className="flex items-center space-x-1">
-              <Filter className="h-3 w-3 text-blue-500" />
-              <Badge
-                variant="outline"
-                className="text-xs bg-blue-50 text-blue-700 border-blue-300"
-              >
-                Filtered ({Object.keys(currentFilters).length})
-              </Badge>
-            </div>
-          )}
-
           {lastUpdated && (
             <div className="flex items-center space-x-1 text-xs text-muted-foreground">
               <Clock className="h-3 w-3" />
@@ -136,19 +122,6 @@ export default function RealTimeStats() {
             </div>
           )}
         </div>
-
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={refreshStats}
-          disabled={loading}
-          className="h-8"
-        >
-          <RefreshCw
-            className={`h-3 w-3 mr-1 ${loading ? "animate-spin" : ""}`}
-          />
-          Refresh
-        </Button>
       </div>
 
       {/* Error Message */}
@@ -156,16 +129,6 @@ export default function RealTimeStats() {
         <div className="mx-4 p-3 bg-red-50 border border-red-200 rounded-md">
           <p className="text-sm text-red-600">
             Real-time connection error: {error}
-          </p>
-        </div>
-      )}
-
-      {/* Debug Info (can be removed in production) */}
-      {process.env.NODE_ENV === "development" && hasFilters && (
-        <div className="mx-4 p-2 bg-blue-50 border border-blue-200 rounded-md">
-          <p className="text-xs text-blue-600">
-            Debug - Applied filters:{" "}
-            {JSON.stringify(appliedFilters || currentFilters)}
           </p>
         </div>
       )}
@@ -196,15 +159,6 @@ export default function RealTimeStats() {
                   handleCardClick(key);
                 }}
               />
-              {/* Live indicator for filtered data */}
-              {!error && hasFilters && (
-                <div className="absolute top-2 right-2">
-                  <div
-                    className="h-2 w-2 bg-blue-500 rounded-full animate-pulse"
-                    title={`Real-time filtered data (${Object.keys(currentFilters).length} filters)`}
-                  />
-                </div>
-              )}
             </div>
           );
         })}

@@ -1,6 +1,12 @@
-// hooks/useSocket.ts - Updated to support filtered stats
+// hooks/useSocket.ts - Updated to handle chart data from backend
 import { useEffect, useRef, useState, useCallback } from "react";
 import { io, Socket } from "socket.io-client";
+
+interface ChartDataPoint {
+  month: string;
+  monthName: string;
+  value: number;
+}
 
 interface StatsData {
   total: number;
@@ -11,6 +17,14 @@ interface StatsData {
   dokumen: number;
   lastUpdated: string;
   appliedFilters?: any; // For debugging filtered stats
+  chartData?: {
+    total: ChartDataPoint[];
+    fitur: ChartDataPoint[];
+    komunikasi: ChartDataPoint[];
+    aktif: ChartDataPoint[];
+    expired: ChartDataPoint[];
+    dokumen: ChartDataPoint[];
+  };
 }
 
 interface FilterParams {
@@ -86,7 +100,7 @@ export const useSocket = (): UseSocketReturn => {
 
     // Stats events
     socket.on("stats_update", (newStats: StatsData) => {
-      console.log("Received stats update:", newStats);
+      console.log("Received stats update with chart data:", newStats);
       setStats(newStats);
       setLoading(false);
       setError(null);
