@@ -3,24 +3,65 @@ import { logger } from "../middleware/logger";
 import { FilterStore } from "../types/filterMateri";
 
 export const useFilterStore = create<FilterStore>()(
-  logger((set) => ({
+  logger((set, get) => ({
     filters: {},
     tempFilters: {},
     searchQuery: "",
     selectedPreset: "All time",
-    onlyVisualDocs: false, // Tambahkan state untuk filter Key Visual
+    onlyVisualDocs: false,
+
     setTempFilter: (key, value) =>
       set((state) => ({ tempFilters: { ...state.tempFilters, [key]: value } })),
-    applyFilters: () => set((state) => ({ filters: state.tempFilters })),
-    resetFilters: () =>
+
+    applyFilters: () => {
+      const { tempFilters } = get();
+      set({ filters: tempFilters });
+
+      // Trigger data fetch with new filters
+      // This will be called from components that use this store
+      return tempFilters;
+    },
+
+    resetFilters: () => {
       set({
         filters: {},
         tempFilters: {},
         searchQuery: "",
-        onlyVisualDocs: false, // Reset filter Key Visual
-      }),
-    setSearchQuery: (query) => set({ searchQuery: query }),
+        onlyVisualDocs: false,
+      });
+
+      // Return empty filters for immediate use
+      return {};
+    },
+
+    setSearchQuery: (query) => {
+      set({ searchQuery: query });
+      // Auto-apply search without waiting for "Apply" button
+      const currentFilters = get().filters;
+      const newFilters = { ...currentFilters, search: query };
+      set({ filters: newFilters });
+      return newFilters;
+    },
+
     setSelectedPreset: (preset) => set({ selectedPreset: preset }),
-    setOnlyVisualDocs: (value: any) => set({ onlyVisualDocs: value }), // Tambahkan setter untuk filter Key Visual
+
+    setOnlyVisualDocs: (value) => {
+      set({ onlyVisualDocs: value });
+      // Auto-apply visual docs filter
+      const currentFilters = get().filters;
+      const newFilters = { ...currentFilters, onlyVisualDocs: value };
+      set({ filters: newFilters });
+      return newFilters;
+    },
+
+    // New helper to get current filters for API calls
+    getCurrentFilters: () => {
+      const { filters, searchQuery, onlyVisualDocs } = get();
+      return {
+        ...filters,
+        search: searchQuery,
+        onlyVisualDocs,
+      };
+    },
   }))
 );

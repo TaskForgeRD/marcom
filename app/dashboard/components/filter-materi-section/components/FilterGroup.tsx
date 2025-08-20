@@ -1,24 +1,26 @@
-// FilterGroup.tsx
+// FilterGroup.tsx - Updated to work with server-side pagination
 import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import SelectField from "../../../uiRama/selectField";
 import { useMultiApiStore } from "@/stores/api.store";
+import { useMateri } from "@/stores/materi.store";
+import { useFilterStore } from "@/stores/filter-materi.store";
 import { FilterKey } from "../../../../../constants/filter-options";
 
 type FilterGroupProps = {
   selectedFilters: Partial<Record<FilterKey, string>>;
   handleFilterChange: (key: FilterKey, value: string) => void;
   handleResetFilters: () => void;
-  applyFilters: () => void;
 };
 
 const FilterGroup = ({
   selectedFilters,
   handleFilterChange,
   handleResetFilters,
-  applyFilters,
 }: FilterGroupProps) => {
   const { clusters, fitur, jenis } = useMultiApiStore();
+  const { fetchData } = useMateri();
+  const { getCurrentFilters, applyFilters, resetFilters } = useFilterStore();
 
   // Memoized filter options berdasarkan data dari API
   const filterOptions: Partial<Record<FilterKey, string[]>> = useMemo(() => {
@@ -32,6 +34,19 @@ const FilterGroup = ({
 
   // Filter keys untuk ditampilkan
   const filterKeys: FilterKey[] = ["cluster", "fitur", "status", "jenis"];
+
+  const handleApplyFilters = async () => {
+    const newFilters = applyFilters();
+    // Fetch data with new filters, reset to page 1
+    await fetchData(1, newFilters);
+  };
+
+  const handleResetFiltersClick = async () => {
+    handleResetFilters(); // Update UI state
+    const emptyFilters = resetFilters(); // Update store
+    // Fetch data with empty filters, reset to page 1
+    await fetchData(1, emptyFilters);
+  };
 
   return (
     <div className="flex items-center space-x-3">
@@ -63,14 +78,14 @@ const FilterGroup = ({
       <div className="flex space-x-2 ml-auto">
         <Button
           className="text-black hover:text-black border border-black bg-transparent hover:bg-gray-200"
-          onClick={applyFilters}
+          onClick={handleApplyFilters}
         >
           Terapkan
         </Button>
         <Button
           className="text-red-800 hover:text-red-600"
           variant="ghost"
-          onClick={handleResetFilters}
+          onClick={handleResetFiltersClick}
         >
           Reset Filter
         </Button>

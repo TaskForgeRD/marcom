@@ -1,3 +1,4 @@
+// FilterDateSection.tsx - Updated to work with server-side pagination
 "use client";
 
 import * as React from "react";
@@ -5,40 +6,54 @@ import useDateRange from "@/hooks/useDateRange";
 import CustomDateDropdown from "@/app/dashboard/uiRama/custom-date-dropdown";
 import CustomDatePopover from "@/app/dashboard/uiRama/custom-date-range";
 import { useMultiApiStore } from "@/stores/api.store";
+import { useMateri } from "@/stores/materi.store";
+import { useFilterStore } from "@/stores/filter-materi.store";
 import { FilterKey } from "@/constants/filter-options";
 import SelectField from "../../uiRama/selectField";
 import useSelectedFilters from "@/hooks/useSelectedFilters";
-import { useFilterStore } from "@/stores/filter-materi.store"; // Import store filter
 
 const FilterDateSection: React.FC = () => {
   const { brands } = useMultiApiStore();
+  const { fetchData } = useMateri();
+  const { setTempFilter, applyFilters, getCurrentFilters } = useFilterStore();
   const { selectedFilters, handleFilterChange } = useSelectedFilters();
-  const { setTempFilter, applyFilters } = useFilterStore(); // Ambil fungsi dari store
 
   const { dateRange, isCustomRange, handleDateChange, handlePresetSelection } =
     useDateRange();
+
   const filterOptions: Partial<Record<FilterKey, string[]>> = {
     brand: ["Semua Brand", ...brands.map((brand) => brand.name)],
   };
   const filterKeys: FilterKey[] = ["brand"];
 
-  const handleBrandChange = (value: string) => {
-    // Update selected filters
+  const handleBrandChange = async (value: string) => {
+    // Update selected filters for UI
     handleFilterChange("brand", value);
 
-    // Update temp filter - jika "Semua Brand" dipilih, set sebagai empty string atau null
-    // supaya filter logic menganggap tidak ada filter brand
+    // Update temp filter - jika "Semua Brand" dipilih, set sebagai empty string
     if (value === "Semua Brand") {
-      setTempFilter("brand", ""); // atau null
+      setTempFilter("brand", "");
     } else {
       setTempFilter("brand", value);
     }
 
-    // Langsung apply filter tanpa menunggu tombol "Terapkan Filter"
-    setTimeout(() => {
-      applyFilters();
-    }, 0);
+    // Apply filters and fetch data
+    const newFilters = applyFilters();
+    await fetchData(1, newFilters);
   };
+
+  // Handle date range changes
+  React.useEffect(() => {
+    const applyDateFilters = async () => {
+      const currentFilters = getCurrentFilters();
+      await fetchData(1, currentFilters);
+    };
+
+    // Only apply if dateRange is set or was cleared
+    if (dateRange || dateRange === undefined) {
+      applyDateFilters();
+    }
+  }, [dateRange, fetchData, getCurrentFilters]);
 
   return (
     <section className="flex items-center space-x-2 py-4 pl-4">
@@ -63,7 +78,7 @@ const FilterDateSection: React.FC = () => {
           highlight={true}
           label={key}
           value={selectedFilters[key] || ""}
-          onChange={handleBrandChange} // Gunakan handler yang baru
+          onChange={handleBrandChange}
           options={
             filterOptions[key]?.map((opt) => ({
               value: opt,
