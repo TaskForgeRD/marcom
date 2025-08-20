@@ -70,7 +70,13 @@ export default function DokumenMateri({ readOnly = true }: DokumenMateriProps) {
     return true;
   };
 
+  // NEW: Determine if admin should not be able to edit link dokumen
+  const shouldBlurLinkForAdmin = () => {
+    return currentUserRole === "admin" && !readOnly; // Only blur for admin in edit mode
+  };
+
   const hideLinkDokumen = shouldHideLinkDokumen();
+  const blurLinkForAdmin = shouldBlurLinkForAdmin();
 
   return (
     <div className="space-y-6">
@@ -81,24 +87,36 @@ export default function DokumenMateri({ readOnly = true }: DokumenMateriProps) {
               Dokumen Materi {index + 1}
             </h3>
 
-            {/* Input Link Dokumen with conditional blur/hide based on role and status */}
+            {/* Input Link Dokumen with conditional blur for different scenarios */}
             <div
               className={
-                readOnly && hideLinkDokumen ? "blur-sm pointer-events-none" : ""
+                (readOnly && hideLinkDokumen) || blurLinkForAdmin
+                  ? "blur-sm pointer-events-none"
+                  : ""
               }
             >
               <InputField
                 name={`dokumenMateri.${index}.linkDokumen`}
                 label="Input Link Dokumen Materi"
                 placeholder={
-                  hideLinkDokumen && readOnly
+                  readOnly && hideLinkDokumen
                     ? "Link tersembunyi - materi sudah expired"
-                    : "Masukkan link dokumen"
+                    : blurLinkForAdmin
+                      ? "Link tidak dapat diubah oleh admin"
+                      : "Masukkan link dokumen"
                 }
                 type="url"
-                readOnly={readOnly}
+                readOnly={readOnly || blurLinkForAdmin} // Make readonly for admin in edit mode
               />
             </div>
+
+            {/* Show info message for admin in edit mode */}
+            {blurLinkForAdmin && (
+              <p className="text-sm text-amber-600 bg-amber-50 p-2 rounded border border-amber-200">
+                ℹ️ Link dokumen tidak dapat diubah oleh admin. Nilai asli akan
+                tetap digunakan.
+              </p>
+            )}
 
             <SelectField
               name={`dokumenMateri.${index}.tipeMateri`}
