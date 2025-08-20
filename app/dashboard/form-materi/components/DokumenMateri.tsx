@@ -7,13 +7,25 @@ import { KeywordsInput } from "./KeywordsInput";
 import ButtonWithIcon from "../../uiRama/buttonWithIcon";
 import { Plus, Trash2 } from "lucide-react";
 import { useAuthStore } from "@/stores/auth.store";
+import { useMateri } from "@/stores/materi.store";
 
 interface DokumenMateriProps {
   readOnly?: boolean;
 }
 
+// Helper function to check if materi is active
+function isMateriActive(endDate?: string): boolean {
+  if (!endDate) return false;
+  const now = new Date();
+  const todayUTC = new Date(
+    Date.UTC(now.getFullYear(), now.getMonth(), now.getDate())
+  );
+  const end = new Date(endDate);
+  return end > todayUTC;
+}
+
 export default function DokumenMateri({ readOnly = true }: DokumenMateriProps) {
-  const { control } = useFormContext();
+  const { control, watch } = useFormContext();
   const { fields, append, remove } = useFieldArray({
     control,
     name: "dokumenMateri",
@@ -22,6 +34,16 @@ export default function DokumenMateri({ readOnly = true }: DokumenMateriProps) {
   // Get current user role
   const { user } = useAuthStore();
   const currentUserRole = user?.role;
+
+  // Get selected materi to check status
+  const { selectedMateri } = useMateri();
+
+  // Watch for end_date from form (for new/edit form) or use selectedMateri end_date (for view mode)
+  const formEndDate = watch("end_date");
+  const materiEndDate = formEndDate || selectedMateri?.end_date;
+
+  // Check if materi is active
+  const isActive = isMateriActive(materiEndDate);
 
   const addDokumen = () => {
     append({
@@ -32,7 +54,23 @@ export default function DokumenMateri({ readOnly = true }: DokumenMateriProps) {
     });
   };
 
-  console.log("Fields", fields);
+  // Determine if link should be hidden based on role and status
+  const shouldHideLinkDokumen = () => {
+    if (currentUserRole === "superadmin") {
+      // Superadmin can always see links
+      return false;
+    }
+
+    if (currentUserRole === "admin" || currentUserRole === "guest") {
+      // Admin and guest can only see links if materi is active
+      return !isActive;
+    }
+
+    // Default: hide for unknown roles
+    return true;
+  };
+
+  const hideLinkDokumen = shouldHideLinkDokumen();
 
   return (
     <div className="space-y-6">
@@ -43,18 +81,20 @@ export default function DokumenMateri({ readOnly = true }: DokumenMateriProps) {
               Dokumen Materi {index + 1}
             </h3>
 
-            {/* Input Link Dokumen dengan blur condition */}
+            {/* Input Link Dokumen with conditional blur/hide based on role and status */}
             <div
               className={
-                readOnly && currentUserRole === "guest"
-                  ? "blur-sm pointer-events-none"
-                  : ""
+                readOnly && hideLinkDokumen ? "blur-sm pointer-events-none" : ""
               }
             >
               <InputField
                 name={`dokumenMateri.${index}.linkDokumen`}
                 label="Input Link Dokumen Materi"
-                placeholder="Masukkan link dokumen"
+                placeholder={
+                  hideLinkDokumen && readOnly
+                    ? "Link tersembunyi - materi sudah expired"
+                    : "Masukkan link dokumen"
+                }
                 type="url"
                 readOnly={readOnly}
               />
