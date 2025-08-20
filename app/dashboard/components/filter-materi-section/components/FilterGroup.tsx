@@ -1,4 +1,4 @@
-// FilterGroup.tsx - Updated to work with server-side pagination
+// FilterGroup.tsx - Updated to work with server-side pagination and Socket stats
 import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import SelectField from "../../../uiRama/selectField";
@@ -38,6 +38,7 @@ const FilterGroup = ({
   const handleApplyFilters = async () => {
     const newFilters = applyFilters();
     // Fetch data with new filters, reset to page 1
+    // Note: Stats will be automatically updated via useStatsData hook when filters change
     await fetchData(1, newFilters);
   };
 
@@ -45,6 +46,7 @@ const FilterGroup = ({
     handleResetFilters(); // Update UI state
     const emptyFilters = resetFilters(); // Update store
     // Fetch data with empty filters, reset to page 1
+    // Note: Stats will be automatically updated via useStatsData hook when filters are reset
     await fetchData(1, emptyFilters);
   };
 

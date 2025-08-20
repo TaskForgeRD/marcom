@@ -1,4 +1,4 @@
-// components/stats-section/index.tsx - Updated to use RealTimeStats
+// components/stats-section/index.tsx - Updated to use RealTimeStats with Socket API
 
 "use client";
 import React from "react";
@@ -7,15 +7,16 @@ import RealTimeStats from "./RealTimeStats";
 import StatsChartCard from "./components/stats-chart-card";
 import ToggleControls from "@/app/dashboard/uiRama/toggle-controls";
 import { useFilterStore } from "@/stores/filter-materi.store";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 
 export default function StatsSection() {
   const [showStatsSection, setShowStatsSection] = useState(true);
   const { onlyVisualDocs, setOnlyVisualDocs } = useFilterStore();
+
+  // Handle visual docs toggle - this will trigger stats update via useStatsData
+  const handleVisualDocsToggle = (value: boolean) => {
+    setOnlyVisualDocs(value);
+    // Note: Stats will be automatically updated via useStatsData hook when onlyVisualDocs changes
+  };
 
   return (
     <section>
@@ -42,7 +43,7 @@ export default function StatsSection() {
       <ToggleControls
         label="Lihat data yang ada dokumen visual saja"
         switchState={onlyVisualDocs}
-        onToggleSwitch={setOnlyVisualDocs}
+        onToggleSwitch={handleVisualDocsToggle}
         togglePanelState={showStatsSection}
         onTogglePanel={() => setShowStatsSection((prev) => !prev)}
         togglePanelLabel={{

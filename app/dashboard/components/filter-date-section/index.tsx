@@ -1,4 +1,4 @@
-// FilterDateSection.tsx - Updated to work with server-side pagination
+// FilterDateSection.tsx - Updated to work with server-side pagination and trigger stats update
 "use client";
 
 import * as React from "react";

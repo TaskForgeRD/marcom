@@ -1,4 +1,4 @@
-import { RefreshCw, Wifi, WifiOff, Clock } from "lucide-react";
+import { RefreshCw, Wifi, WifiOff, Clock, Filter } from "lucide-react";
 import { useStatsData } from "@/hooks/useStatsData";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +17,9 @@ export default function RealTimeStats() {
     filters,
     setTempFilter,
     applyFilters,
+    hasFilters,
+    appliedFilters,
+    currentFilters,
   } = useStatsData();
 
   const statsMap = {
@@ -113,6 +116,19 @@ export default function RealTimeStats() {
             </Badge>
           </div>
 
+          {/* Show if filters are applied */}
+          {hasFilters && (
+            <div className="flex items-center space-x-1">
+              <Filter className="h-3 w-3 text-blue-500" />
+              <Badge
+                variant="outline"
+                className="text-xs bg-blue-50 text-blue-700 border-blue-300"
+              >
+                Filtered ({Object.keys(currentFilters).length})
+              </Badge>
+            </div>
+          )}
+
           {lastUpdated && (
             <div className="flex items-center space-x-1 text-xs text-muted-foreground">
               <Clock className="h-3 w-3" />
@@ -144,6 +160,16 @@ export default function RealTimeStats() {
         </div>
       )}
 
+      {/* Debug Info (can be removed in production) */}
+      {process.env.NODE_ENV === "development" && hasFilters && (
+        <div className="mx-4 p-2 bg-blue-50 border border-blue-200 rounded-md">
+          <p className="text-xs text-blue-600">
+            Debug - Applied filters:{" "}
+            {JSON.stringify(appliedFilters || currentFilters)}
+          </p>
+        </div>
+      )}
+
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 px-4">
         {statsConfig.map(({ key, title, icon }) => {
@@ -170,15 +196,15 @@ export default function RealTimeStats() {
                   handleCardClick(key);
                 }}
               />
-              {/* Live indicator */}
-              {/* {!error && ( */}
-              {/*   <div className="absolute top-2 right-2"> */}
-              {/*     <div */}
-              {/*       className="h-2 w-2 bg-green-500 rounded-full animate-pulse" */}
-              {/*       title="Real-time data" */}
-              {/*     /> */}
-              {/*   </div> */}
-              {/* )} */}
+              {/* Live indicator for filtered data */}
+              {!error && hasFilters && (
+                <div className="absolute top-2 right-2">
+                  <div
+                    className="h-2 w-2 bg-blue-500 rounded-full animate-pulse"
+                    title={`Real-time filtered data (${Object.keys(currentFilters).length} filters)`}
+                  />
+                </div>
+              )}
             </div>
           );
         })}

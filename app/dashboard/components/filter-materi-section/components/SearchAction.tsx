@@ -1,4 +1,4 @@
-// SearchAction.tsx - Updated to work with server-side pagination
+// SearchAction.tsx - Updated to work with server-side pagination and Socket stats
 import React, { useState, useCallback, useEffect } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useMateri } from "@/stores/materi.store";
@@ -18,6 +18,7 @@ const SearchAndActions = () => {
     async (searchTerm: string) => {
       const newFilters = setSearchQuery(searchTerm);
       // Fetch data with new search, reset to page 1
+      // Note: Stats will be automatically updated via useStatsData hook when search query changes
       await fetchData(1, newFilters);
     },
     [setSearchQuery, fetchData]
