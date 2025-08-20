@@ -25,15 +25,15 @@ const useDateRange = () => {
     [PresetDate.CUSTOM]: null,
     [PresetDate.THIS_MONTH]: {
       from: new Date(today.getFullYear(), today.getMonth(), 1),
-      to: today,
+      to: new Date(today.getFullYear(), today.getMonth() + 1, 0), // Last day of current month
     },
     [PresetDate.LAST_MONTH]: {
       from: new Date(today.getFullYear(), today.getMonth() - 1, 1),
       to: new Date(today.getFullYear(), today.getMonth(), 0),
     },
     [PresetDate.THIS_YEAR]: {
-      from: new Date(today.getFullYear(), 0, 1),
-      to: today,
+      from: new Date(today.getFullYear(), 0, 1), // 1 Januari tahun ini
+      to: new Date(today.getFullYear(), 11, 31), // 31 Desember tahun ini
     },
   };
 
@@ -44,9 +44,10 @@ const useDateRange = () => {
         setTempFilter("start_date", "");
         setTempFilter("end_date", "");
       } else {
-        setDateRange({ from: range.from, to: range.to ?? range.from });
+        const endDate = range.to ?? range.from;
+        setDateRange({ from: range.from, to: endDate });
         setTempFilter("start_date", range.from.toISOString());
-        setTempFilter("end_date", (range.to ?? range.from).toISOString());
+        setTempFilter("end_date", endDate.toISOString());
       }
       applyFilters();
     },

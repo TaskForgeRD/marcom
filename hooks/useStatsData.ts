@@ -1,11 +1,24 @@
-// hooks/useStatsData.ts - Fixed filter functionality
+// hooks/useStatsData.ts - Fixed to use consistent filtering
 import { useMemo } from "react";
 import { useFilterStore } from "@/stores/filter-materi.store";
 import useFilteredMateri from "@/hooks/useFilteredMateri";
 import { useSocket } from "@/hooks/useSocket";
 import dayjs from "dayjs";
 import { formatPresetLabel } from "@/lib/utils/dateUtils";
-import { getFilteredStats, formatChange } from "@/lib/utils/statsUtils";
+import { formatChange } from "@/lib/utils/statsUtils";
+
+// Helper function untuk cek status aktif (sama dengan useFilteredMateri)
+function isMateriAktif(itemEndDate: string | null): boolean {
+  if (!itemEndDate) return false;
+
+  const now = new Date();
+  const todayUTC = new Date(
+    Date.UTC(now.getFullYear(), now.getMonth(), now.getDate())
+  );
+
+  const endDate = new Date(itemEndDate);
+  return endDate > todayUTC;
+}
 
 export const useStatsData = () => {
   const { selectedPreset, filters, applyFilters, setTempFilter } =
@@ -45,63 +58,79 @@ export const useStatsData = () => {
   };
 
   const stats = useMemo(() => {
+    // Gunakan filteredMateri yang sudah difilter secara konsisten
+    // Hitung stats berdasarkan data yang sudah difilter
+
+    const totalCount = filteredMateri.length;
+
+    // Untuk fitur, hitung unique fitur
+    const uniqueFitur = new Set(
+      filteredMateri.map((m) => m.fitur?.trim().toLowerCase()).filter(Boolean)
+    ).size;
+
+    // Komunikasi = total materi
+    const komunikasiCount = totalCount;
+
+    // Aktif: materi dengan end_date > hari ini
+    const aktifCount = filteredMateri.filter(
+      (m) => m.end_date && isMateriAktif(m.end_date)
+    ).length;
+
+    // Expired: materi dengan end_date <= hari ini
+    const expiredCount = filteredMateri.filter(
+      (m) => m.end_date && !isMateriAktif(m.end_date)
+    ).length;
+
+    // Dokumen: total dokumen dari semua materi
+    const dokumenCount = filteredMateri.reduce((total, m) => {
+      return total + (m.dokumenMateri ? m.dokumenMateri.length : 0);
+    }, 0);
+
+    // Untuk change calculation, kita perlu membandingkan dengan periode sebelumnya
+    // Untuk saat ini, set change ke 0 karena kita tidak memiliki data historis
     const baseStats = {
-      total: getFilteredStats(filteredMateri, () => true, dateRange),
-      fitur: getFilteredStats(
-        filteredMateri,
-        (m) => m.fitur,
-        dateRange,
-        (m) => m.fitur?.trim().toLowerCase()
-      ),
-      komunikasi: getFilteredStats(
-        filteredMateri,
-        (m) => m.nama_materi,
-        dateRange
-      ),
-      aktif: getFilteredStats(
-        filteredMateri,
-        (m) => dayjs().isBefore(m.end_date),
-        dateRange
-      ),
-      expired: getFilteredStats(
-        filteredMateri,
-        (m) => dayjs().isAfter(m.end_date),
-        dateRange
-      ),
-      dokumen: {
-        now: filteredMateri.reduce((total, m) => {
-          return total + (m.dokumenMateri ? m.dokumenMateri.length : 0);
-        }, 0),
-        change: 0,
-        chartData: [],
-      },
+      total: { now: totalCount, change: 0 },
+      fitur: { now: uniqueFitur, change: 0 },
+      komunikasi: { now: komunikasiCount, change: 0 },
+      aktif: { now: aktifCount, change: 0 },
+      expired: { now: expiredCount, change: 0 },
+      dokumen: { now: dokumenCount, change: 0 },
     };
 
     // Add chart data
     return {
-      total: { ...baseStats.total, chartData: [] },
+      total: {
+        ...baseStats.total,
+        chartData: getMonthlyChartData(() => true),
+      },
       fitur: {
         ...baseStats.fitur,
-        chartData: getMonthlyChartData((m) => m.fitur),
+        chartData: getMonthlyChartData((m) => Boolean(m.fitur)),
       },
       komunikasi: {
         ...baseStats.komunikasi,
-        chartData: getMonthlyChartData((m) => m.nama_materi),
+        chartData: getMonthlyChartData((m) => Boolean(m.nama_materi)),
       },
       aktif: {
         ...baseStats.aktif,
-        chartData: getMonthlyChartData((m) => dayjs().isBefore(m.end_date)),
+        chartData: getMonthlyChartData(
+          (m) => m.end_date && isMateriAktif(m.end_date)
+        ),
       },
       expired: {
         ...baseStats.expired,
-        chartData: getMonthlyChartData((m) => dayjs().isAfter(m.end_date)),
+        chartData: getMonthlyChartData(
+          (m) => m.end_date && !isMateriAktif(m.end_date)
+        ),
       },
       dokumen: {
         ...baseStats.dokumen,
-        chartData: getMonthlyChartData((m) => m.dokumenMateri?.length > 0),
+        chartData: getMonthlyChartData(
+          (m) => m.dokumenMateri && m.dokumenMateri.length > 0
+        ),
       },
     };
-  }, [filteredMateri, dateRange]);
+  }, [filteredMateri]);
 
   return {
     selectedPreset,
