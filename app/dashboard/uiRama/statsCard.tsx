@@ -11,7 +11,7 @@ interface StatsCardProps {
   color?: string;
   active?: boolean;
   onClick?: () => void;
-  subtitle?: string; // Tambahkan prop subtitle
+  subtitle?: string;
 }
 
 const StatsCard = ({
@@ -24,7 +24,7 @@ const StatsCard = ({
   color,
   active = false,
   onClick,
-  subtitle, // Tambahkan prop subtitle
+  subtitle,
 }: StatsCardProps) => {
   const getTextColor = () => {
     switch (color) {
@@ -56,7 +56,6 @@ const StatsCard = ({
             >
               {title}
             </span>
-            {/* Tampilkan subtitle jika ada */}
             {subtitle && (
               <span className="text-xs text-gray-500 mt-1">({subtitle})</span>
             )}

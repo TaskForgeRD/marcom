@@ -3,7 +3,7 @@ import { useStatsData } from "@/hooks/useStatsData";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { statsConfig } from "./StatsConfig";
-import StatsCard from "@/app/dashboard/uiRama/card";
+import StatsCard from "@/app/dashboard/uiRama/statsCard";
 
 export default function RealTimeStats() {
   const {

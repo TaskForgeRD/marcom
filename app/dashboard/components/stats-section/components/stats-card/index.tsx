@@ -1,7 +1,7 @@
 import React from "react";
 import { useStatsData } from "@/hooks/useStatsData";
 import { statsConfig } from "../../StatsConfig";
-import Card from "@/app/dashboard/uiRama/card";
+import Card from "@/app/dashboard/uiRama/statsCard";
 
 export default function Page() {
   const {

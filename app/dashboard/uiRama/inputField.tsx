@@ -19,7 +19,7 @@ export default function InputField({
   placeholder,
   type = "text",
   disabled,
-  readOnly, // Properti readOnly
+  readOnly,
   className,
 }: InputFieldProps) {
   const {
