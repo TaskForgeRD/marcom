@@ -70,6 +70,8 @@ export const useSocket = (): UseSocketReturn => {
     // Initialize socket connection
     const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL!, {
       path: "/socket.io",
+      transports: ["websocket"],
+      withCredentials: true,
       auth: {
         token: token,
       },
