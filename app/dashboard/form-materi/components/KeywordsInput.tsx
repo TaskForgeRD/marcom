@@ -3,7 +3,7 @@
 import { useFormContext } from "react-hook-form";
 import InputField from "../../uiRama/inputField";
 import { PlusCircle } from "lucide-react";
-import ButtonWithIcon from "../../uiRama/buttonWithIcon";
+import { Button } from "@/components/ui/button";
 
 interface KeywordsInputProps {
   baseName: string;
@@ -34,12 +34,15 @@ export function KeywordsInput({
       ))}
 
       {!readOnly && (
-        <ButtonWithIcon
-          icon={PlusCircle}
-          label="Tambah Keyword"
+        <Button
+          type="button"
           onClick={addKeyword}
-          className="border border-gray-300 text-gray-700 hover:bg-gray-100"
-        />
+          variant="outline"
+          className="flex items-center gap-2 text-slate-700"
+        >
+          <PlusCircle className="h-4 w-4" />
+          Tambah Keyword
+        </Button>
       )}
     </div>
   );
