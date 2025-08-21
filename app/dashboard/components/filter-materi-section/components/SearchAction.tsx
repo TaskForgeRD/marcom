@@ -1,3 +1,5 @@
+"use client";
+
 // SearchAction.tsx - Updated to work with server-side pagination and Socket stats
 import React, { useState, useCallback, useEffect } from "react";
 import { useDebounce } from "@/hooks/useDebounce";

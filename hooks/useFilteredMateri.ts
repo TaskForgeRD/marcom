@@ -71,8 +71,8 @@ export default function useFilteredMateri() {
       const namaMatch = item.nama_materi.toLowerCase().includes(searchLower);
 
       const keywordMatch = Array.isArray(item.dokumenMateri)
-        ? item.dokumenMateri.some((dokumen) =>
-            (dokumen.keywords || []).some((keyword) =>
+        ? item.dokumenMateri.some((dokumen: { keywords: any }) =>
+            (dokumen.keywords || []).some((keyword: string) =>
               keyword.toLowerCase().includes(searchLower)
             )
           )
@@ -90,7 +90,8 @@ export default function useFilteredMateri() {
       const hasKeyVisualDoc = onlyVisualDocs
         ? Array.isArray(item.dokumenMateri) &&
           item.dokumenMateri.some(
-            (dokumen) => dokumen.tipeMateri === "Key Visual"
+            (dokumen: { tipeMateri: string }) =>
+              dokumen.tipeMateri === "Key Visual"
           )
         : true;
 

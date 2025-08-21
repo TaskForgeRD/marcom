@@ -11,6 +11,7 @@ type FilterGroupProps = {
   selectedFilters: Partial<Record<FilterKey, string>>;
   handleFilterChange: (key: FilterKey, value: string) => void;
   handleResetFilters: () => void;
+  applyFilters?: () => Record<string, any>;
 };
 
 const FilterGroup = ({

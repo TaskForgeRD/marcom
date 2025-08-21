@@ -32,8 +32,8 @@ export default function FilterOption() {
       />
       <HorizontalLine />
       <SearchAndActions
-        // handleTambahMateri={() => router.push("/dashboard/form-materi")}
-        setSearchQuery={setSearchQuery}
+      // handleTambahMateri={() => router.push("/dashboard/form-materi")}
+      // setSearchQuery={setSearchQuery}
       />
     </div>
   );
