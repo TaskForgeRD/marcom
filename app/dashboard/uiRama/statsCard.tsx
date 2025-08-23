@@ -80,7 +80,7 @@ const StatsCard = ({
           </span>
           {showChange && change && subtext && (
             <span className="text-sm text-gray-400">
-              {change} {subtext}
+              {/* {change} {subtext} */}
             </span>
           )}
         </div>
