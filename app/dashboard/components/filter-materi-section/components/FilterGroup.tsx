@@ -21,7 +21,7 @@ const FilterGroup = ({
 }: FilterGroupProps) => {
   const { clusters, fitur, jenis } = useMultiApiStore();
   const { fetchData } = useMateri();
-  const { getCurrentFilters, applyFilters, resetFilters } = useFilterStore();
+  const { applyFilters, resetFilters } = useFilterStore();
 
   // Memoized filter options berdasarkan data dari API
   const filterOptions: Partial<Record<FilterKey, string[]>> = useMemo(() => {
