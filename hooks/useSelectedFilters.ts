@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useFilterStore } from "@/stores/filter-materi.store";
 import { FilterKey } from "@/constants/filter-options";
 
@@ -27,6 +27,10 @@ export default function useSelectedFilters() {
     Object.keys(getTempFilters()).length < 1
       ? selectedFilters
       : getTempFilters();
+
+  useEffect(() => {
+    setSelectedFilters((prev) => ({ ...prev, ...getTempFilters() }));
+  }, [JSON.stringify(getTempFilters())]);
 
   return {
     selectedFilters: currentTempFilters,

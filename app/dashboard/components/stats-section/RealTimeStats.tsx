@@ -7,7 +7,8 @@ import { useFilterStore } from "@/stores/filter-materi.store";
 import { useMateri } from "@/stores/materi.store";
 
 export default function RealTimeStats() {
-  const { setStatusQuery, setTempFilter, getCurrentFilters } = useFilterStore();
+  const { setStatusQuery, setTempFilter, getCurrentFilters, getOnlyFilters } =
+    useFilterStore();
   const { fetchData } = useMateri();
 
   const {
@@ -113,6 +114,10 @@ export default function RealTimeStats() {
 
           // For fitur, use totalFitur as current value instead of data.now
           const currentValue = key === "fitur" ? totalFitur : now;
+          const currentStatus = getCurrentFilters().status;
+          const isActiveFilter =
+            (key === "expired" && currentStatus === "Expired") ||
+            (key === "aktif" && currentStatus === "Aktif");
 
           return (
             <div key={key} className="relative">
@@ -122,7 +127,7 @@ export default function RealTimeStats() {
                 change={changeLabel}
                 subtext={waktuLabel}
                 icon={icon}
-                active={false} // No active cards - read-only
+                active={isActiveFilter}
                 showChange={!hideChangeAndSubtext}
                 color={colorsMap[key]}
                 onClick={clickHandler}
