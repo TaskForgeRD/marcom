@@ -1,11 +1,15 @@
-import { Wifi, WifiOff, Clock, RefreshCw } from "lucide-react";
+import { Wifi, WifiOff, Clock } from "lucide-react";
 import { useStatsData } from "@/hooks/useStatsData";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { statsConfig } from "./StatsConfig";
 import StatsCard from "@/app/dashboard/uiRama/statsCard";
+import { useFilterStore } from "@/stores/filter-materi.store";
+import { useMateri } from "@/stores/materi.store";
 
 export default function RealTimeStats() {
+  const { setSearchQuery } = useFilterStore();
+  const { fetchData } = useMateri();
+
   const {
     selectedPreset,
     waktuLabel,
@@ -13,7 +17,6 @@ export default function RealTimeStats() {
     loading,
     error,
     lastUpdated,
-    refreshStats,
     totalFitur,
   } = useStatsData();
 
@@ -37,6 +40,16 @@ export default function RealTimeStats() {
       minute: "2-digit",
       second: "2-digit",
     });
+  };
+
+  const handleCardClick = (key: string) => {
+    if (key === "expired") {
+      setSearchQuery("expired");
+      fetchData(1, { search: "expired" });
+    } else if (key === "aktif") {
+      setSearchQuery("aktif");
+      fetchData(1, { search: "aktif" });
+    }
   };
 
   const colorsMap = {
@@ -89,6 +102,10 @@ export default function RealTimeStats() {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 px-4">
         {statsConfig.map(({ key, title, icon }) => {
           const { now, changeLabel } = statsMap[key];
+          const clickHandler =
+            key === "expired" || key === "aktif"
+              ? () => handleCardClick(key)
+              : undefined;
 
           // For fitur, use totalFitur as current value instead of data.now
           const currentValue = key === "fitur" ? totalFitur : now;
@@ -104,7 +121,7 @@ export default function RealTimeStats() {
                 active={false} // No active cards - read-only
                 showChange={!hideChangeAndSubtext}
                 color={colorsMap[key]}
-                // No onClick handler - cards are read-only
+                onClick={clickHandler}
               />
             </div>
           );
