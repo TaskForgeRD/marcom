@@ -1,5 +1,6 @@
-import { Wifi, WifiOff, Clock } from "lucide-react";
+import { Wifi, WifiOff, Clock, Filter, Database } from "lucide-react";
 import { useStatsData } from "@/hooks/useStatsData";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { statsConfig } from "./StatsConfig";
 import StatsCard from "@/app/dashboard/uiRama/statsCard";
@@ -12,7 +13,13 @@ export default function RealTimeStats() {
     loading,
     error,
     lastUpdated,
-    // Remove filter-related variables since stats are now unfiltered
+    filters,
+    setTempFilter,
+    applyFilters,
+    hasFilters,
+    appliedFilters,
+    currentFilters,
+    totalFitur,
   } = useStatsData();
 
   const statsMap = {
@@ -46,8 +53,49 @@ export default function RealTimeStats() {
     total: "default",
   };
 
-  // REMOVED: Filter-based card click handling
-  // Stats cards are now display-only and don't trigger filters
+  // Mapping dari key stats card ke nilai filter yang sesuai
+  const getFilterValue = (key: string) => {
+    switch (key.toLowerCase()) {
+      case "aktif":
+        return "Aktif";
+      case "expired":
+        return "Expired";
+      case "total":
+        return ""; // Semua status
+      case "komunikasi":
+        return ""; // Mungkin tidak ada filter status khusus untuk ini
+      case "fitur":
+        return ""; // Mungkin tidak ada filter status khusus untuk ini
+      case "dokumen":
+        return ""; // Mungkin tidak ada filter status khusus untuk ini
+      default:
+        return "";
+    }
+  };
+
+  const handleCardClick = (key: string) => {
+    const currentStatus = filters?.status;
+    const targetFilterValue = getFilterValue(key);
+
+    // Debug log untuk melihat nilai yang dikirim
+    console.log("Card clicked:", key);
+    console.log("Current filter status:", currentStatus);
+    console.log("Target filter value:", targetFilterValue);
+
+    // Jika card yang diklik sudah aktif (filter sama), reset filter
+    if (currentStatus === targetFilterValue && targetFilterValue !== "") {
+      console.log("Resetting filter");
+      setTempFilter("status", "");
+    } else {
+      console.log("Setting filter to:", targetFilterValue);
+      setTempFilter("status", targetFilterValue);
+    }
+
+    // Apply filter dengan delay singkat
+    setTimeout(() => {
+      applyFilters();
+    }, 100);
+  };
 
   return (
     <div className="space-y-4">
@@ -86,10 +134,19 @@ export default function RealTimeStats() {
         </div>
       )}
 
-      {/* Stats Grid - Display Only (No Click Interactions) */}
+      {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 px-4">
         {statsConfig.map(({ key, title, icon }) => {
           const { now, changeLabel } = statsMap[key];
+          const currentStatus = filters?.status;
+          const targetFilterValue = getFilterValue(key);
+
+          // Card aktif jika filter status cocok dengan target value dari card
+          const isActive =
+            currentStatus === targetFilterValue && targetFilterValue !== "";
+
+          // Special handling for fitur card
+          const isApiSource = key === "fitur";
 
           return (
             <div key={key} className="relative">
@@ -99,10 +156,13 @@ export default function RealTimeStats() {
                 change={changeLabel}
                 subtext={waktuLabel}
                 icon={icon}
-                active={false} // Never active since no filter interaction
+                active={isActive}
                 showChange={!hideChangeAndSubtext}
                 color={colorsMap[key]}
-                // REMOVED: onClick handler - cards are now display-only
+                onClick={() => {
+                  handleCardClick(key);
+                }}
+                // subtitle={isApiSource ? "dari API" : undefined}
               />
             </div>
           );

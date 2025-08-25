@@ -1,23 +1,28 @@
-// components/stats-section/index.tsx - Updated to keep stats unfiltered
+// components/stats-section/index.tsx - Updated with API fitur integration
 
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import RealTimeStats from "./RealTimeStats";
 import StatsChartCard from "./components/stats-chart-card";
 import ToggleControls from "@/app/dashboard/uiRama/toggle-controls";
 import { useFilterStore } from "@/stores/filter-materi.store";
+import { useMultiApiStore } from "@/stores/api.store";
 
 export default function StatsSection() {
   const [showStatsSection, setShowStatsSection] = useState(true);
   const { onlyVisualDocs, setOnlyVisualDocs } = useFilterStore();
+  const { fetchFitur } = useMultiApiStore();
 
-  // CHANGED: Visual docs toggle now affects data display but NOT stats calculation
+  // Fetch fitur data on component mount
+  useEffect(() => {
+    fetchFitur();
+  }, [fetchFitur]);
+
+  // Handle visual docs toggle - this will trigger stats update via useStatsData
   const handleVisualDocsToggle = (value: boolean) => {
-    console.log("Visual docs toggle changed:", value);
     setOnlyVisualDocs(value);
-    // Note: This will affect the data table/list display, but NOT the stats
-    // Stats will always show complete data regardless of this toggle
+    // Note: Stats will be automatically updated via useStatsData hook when onlyVisualDocs changes
   };
 
   return (

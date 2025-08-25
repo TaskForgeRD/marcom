@@ -1,6 +1,7 @@
-// hooks/useStatsData.ts - Updated to keep stats UNFILTERED
+// hooks/useStatsData.ts - Updated to include API fitur data
 import { useMemo, useEffect } from "react";
 import { useFilterStore } from "@/stores/filter-materi.store";
+import { useMultiApiStore } from "@/stores/api.store";
 import { useSocket } from "@/hooks/useSocket";
 import { formatPresetLabel } from "@/lib/utils/dateUtils";
 
@@ -14,15 +15,26 @@ export const useStatsData = () => {
     setTempFilter,
   } = useFilterStore();
 
+  // Get fitur data from API store
+  const { fitur, fetchFitur } = useMultiApiStore();
+
   const {
     stats: socketStats,
     loading: socketLoading,
     error: socketError,
     refreshStats,
-    // Remove filtered stats functions - we don't need them anymore
+    requestFilteredStats,
+    refreshFilteredStats,
   } = useSocket();
 
-  // Build current filters for display/debugging purposes only
+  // Fetch fitur data when component mounts
+  useEffect(() => {
+    if (fitur.length === 0) {
+      fetchFitur();
+    }
+  }, [fitur.length, fetchFitur]);
+
+  // Build current filters for Socket
   const currentFilters = useMemo(() => {
     const filterParams = {
       brand: filters.brand || undefined,
@@ -36,30 +48,30 @@ export const useStatsData = () => {
       onlyVisualDocs: onlyVisualDocs || undefined,
     };
 
+    // Remove undefined values
     return Object.fromEntries(
       Object.entries(filterParams).filter(([_, value]) => value !== undefined)
     );
   }, [filters, searchQuery, onlyVisualDocs]);
 
-  // Check if any filters are applied (for display purposes)
+  // Check if any filters are applied
   const hasFilters = useMemo(() => {
     return Object.keys(currentFilters).length > 0;
   }, [currentFilters]);
 
-  // CHANGED: Always request unfiltered stats, regardless of filters
+  // Request filtered stats when filters change
   useEffect(() => {
-    console.log("Stats hook effect - always requesting unfiltered stats");
-    refreshStats(); // Always get unfiltered stats
-  }, []); // Empty dependency array - only run once on mount
-
-  // Optional: Refresh stats when onlyVisualDocs changes (if you want this specific filter to affect stats)
-  // Remove this useEffect if you want stats to be completely unaffected by any filters
-  useEffect(() => {
-    if (onlyVisualDocs !== undefined) {
-      console.log("OnlyVisualDocs changed, refreshing stats");
+    if (hasFilters) {
+      console.log(
+        "Filters changed, requesting filtered stats:",
+        currentFilters
+      );
+      requestFilteredStats(currentFilters);
+    } else {
+      console.log("No filters applied, requesting normal stats");
       refreshStats();
     }
-  }, [onlyVisualDocs, refreshStats]);
+  }, [currentFilters, hasFilters, requestFilteredStats, refreshStats]);
 
   // Format date range for display
   const dateRange = useMemo(() => {
@@ -74,7 +86,7 @@ export const useStatsData = () => {
 
   const waktuLabel = formatPresetLabel(selectedPreset, dateRange);
 
-  // Process stats data from Socket (always unfiltered data)
+  // Process stats data from Socket with API fitur override
   const stats = useMemo(() => {
     if (!socketStats) {
       // Default stats when no data
@@ -82,12 +94,15 @@ export const useStatsData = () => {
         now: 0,
         change: 0,
         changeLabel: "0",
-        chartData: [],
+        chartData: [], // Empty chart data
       };
 
       return {
         total: defaultStat,
-        fitur: defaultStat,
+        fitur: {
+          ...defaultStat,
+          now: fitur.length, // Use API fitur count as default
+        },
         komunikasi: defaultStat,
         aktif: defaultStat,
         expired: defaultStat,
@@ -95,16 +110,16 @@ export const useStatsData = () => {
       };
     }
 
-    // Process stats with chart data from Socket (unfiltered)
+    // Process stats with chart data from Socket
     const processedStats = {
       total: {
         now: socketStats.total || 0,
-        change: 0,
+        change: 0, // Socket doesn't provide change data yet
         changeLabel: "0",
         chartData: socketStats.chartData?.total || [],
       },
       fitur: {
-        now: socketStats.fitur || 0,
+        now: fitur.length, // Always use API fitur count
         change: 0,
         changeLabel: "0",
         chartData: socketStats.chartData?.fitur || [],
@@ -136,12 +151,18 @@ export const useStatsData = () => {
     };
 
     return processedStats;
-  }, [socketStats]);
+  }, [socketStats, fitur.length]);
 
-  // Custom refresh function that always gets unfiltered stats
+  // Custom refresh function that respects current filters
   const handleRefreshStats = () => {
-    console.log("Manually refreshing unfiltered stats");
-    refreshStats(); // Always unfiltered
+    // Always refresh fitur data from API
+    fetchFitur();
+
+    if (hasFilters) {
+      refreshFilteredStats(currentFilters);
+    } else {
+      refreshStats();
+    }
   };
 
   return {
@@ -154,9 +175,12 @@ export const useStatsData = () => {
     filters,
     lastUpdated: socketStats?.lastUpdated,
     refreshStats: handleRefreshStats,
-    hasFilters, // For display purposes
-    // appliedFilters: socketStats?.appliedFilters || {}, // Will be empty since we don't use filtered stats
-    currentFilters, // For display/debugging
-    stats, // Always unfiltered
+    hasFilters,
+    appliedFilters: socketStats?.appliedFilters,
+    currentFilters,
+    stats,
+    // Expose fitur data for debugging
+    fiturData: fitur,
+    totalFitur: fitur.length,
   };
 };
