@@ -41,9 +41,11 @@ const StatsCard = ({
     }
   };
 
+  const hoverEffect = onClick ? "cursor-pointer hover:border-blue-500" : "";
+
   return (
     <Card
-      className={`p-0 pt-3 shadow-sm border rounded-lg overflow-hidden relative transition-all hover:border-blue-500 ${active ? "border-blue-500" : "border-gray-200"}`}
+      className={`p-0 pt-3 shadow-sm border rounded-lg overflow-hidden relative transition-all ${hoverEffect} ${active ? "border-blue-500" : "border-gray-200"}`}
       onClick={() => {
         onClick?.();
       }}
