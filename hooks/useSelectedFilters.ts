@@ -7,7 +7,7 @@ export default function useSelectedFilters() {
     useFilterStore();
 
   const [selectedFilters, setSelectedFilters] =
-    useState<Partial<Record<FilterKey, string>>>(getTempFilters());
+    useState<Partial<Record<FilterKey, string>>>(getOnlyFilters());
 
   const handleFilterChange = (key: FilterKey, value: string) => {
     // Untuk store filter, tetap kirim empty string jika "Semua"
@@ -24,13 +24,13 @@ export default function useSelectedFilters() {
     setSelectedFilters({});
   };
 
-  // const currentTempFilters =
-  //   Object.keys(getTempFilters()).length < 1
-  //     ? selectedFilters
-  //     : getTempFilters();
+  const currentTempFilters =
+    Object.keys(getTempFilters()).length < 1
+      ? selectedFilters
+      : getTempFilters();
 
   return {
-    selectedFilters,
+    selectedFilters: currentTempFilters,
     getOnlyFilters,
     handleFilterChange,
     handleResetFilters,
