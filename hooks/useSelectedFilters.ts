@@ -3,11 +3,10 @@ import { useFilterStore } from "@/stores/filter-materi.store";
 import { FilterKey } from "@/constants/filter-options";
 
 export default function useSelectedFilters() {
-  const { setTempFilter, resetFilters, getOnlyFilters, getTempFilters } =
-    useFilterStore();
+  const { setTempFilter, resetFilters, getTempFilters } = useFilterStore();
 
   const [selectedFilters, setSelectedFilters] =
-    useState<Partial<Record<FilterKey, string>>>(getOnlyFilters());
+    useState<Partial<Record<FilterKey, string>>>(getTempFilters());
 
   const handleFilterChange = (key: FilterKey, value: string) => {
     // Untuk store filter, tetap kirim empty string jika "Semua"
@@ -31,7 +30,6 @@ export default function useSelectedFilters() {
 
   return {
     selectedFilters: currentTempFilters,
-    getOnlyFilters,
     handleFilterChange,
     handleResetFilters,
   };
