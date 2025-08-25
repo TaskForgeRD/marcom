@@ -114,7 +114,7 @@ export default function RealTimeStats() {
 
           // For fitur, use totalFitur as current value instead of data.now
           const currentValue = key === "fitur" ? totalFitur : now;
-          const currentStatus = getCurrentFilters().status;
+          const currentStatus = getOnlyFilters().status;
           const isActiveFilter =
             (key === "expired" && currentStatus === "Expired") ||
             (key === "aktif" && currentStatus === "Aktif");
