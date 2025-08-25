@@ -38,14 +38,6 @@ export default function Page() {
 
   return (
     <div className="space-y-4">
-      {/* Information Banner for Charts */}
-      <div className="mx-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
-        <p className="text-sm text-blue-800">
-          📈 <strong>Chart Data:</strong> Menampilkan trend keseluruhan data
-          sepanjang tahun (tidak terpengaruh filter)
-        </p>
-      </div>
-
       <div className="flex flex-wrap gap-4 px-4 py-4">
         {statsConfig.map((item, index) => {
           const data = stats[item.key];
@@ -103,11 +95,10 @@ export default function Page() {
           return (
             <div key={item.key} className={cardClass}>
               <ChartCard
-                title={`${item.title} (Keseluruhan)`} // Add indicator
+                title={`${item.title}`}
                 value={currentValue}
                 data={chartData}
                 color={item.color}
-                subtitle="Data tidak terpengaruh filter" // Always show this subtitle
               />
             </div>
           );

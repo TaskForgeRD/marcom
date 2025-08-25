@@ -50,17 +50,6 @@ export default function RealTimeStats() {
 
   return (
     <div className="space-y-4">
-      {/* Information Banner */}
-      <div className="mx-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
-        <p className="text-sm text-blue-800">
-          📊 <strong>Statistik & Chart:</strong> Menampilkan gambaran
-          keseluruhan data (tidak terpengaruh filter)
-        </p>
-        <p className="text-xs text-blue-600 mt-1">
-          Filter hanya mempengaruhi tampilan data di tabel/list di bawah
-        </p>
-      </div>
-
       {/* Real-time Status Header */}
       <div className="flex items-center justify-between px-4">
         <div className="flex items-center space-x-2">
@@ -85,18 +74,6 @@ export default function RealTimeStats() {
             </div>
           )}
         </div>
-
-        {/* Manual Refresh Button */}
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={refreshStats}
-          disabled={loading}
-          className="flex items-center space-x-1"
-        >
-          <RefreshCw className={`h-3 w-3 ${loading ? "animate-spin" : ""}`} />
-          <span>{loading ? "Refreshing..." : "Refresh Stats"}</span>
-        </Button>
       </div>
 
       {/* Error Message */}

@@ -54,7 +54,7 @@ export default function StatsSection() {
 
       {/* Toggle Controls - Make it clear this only affects table */}
       <ToggleControls
-        label="Filter untuk tabel: Tampilkan hanya data dengan dokumen visual"
+        label="Lihat data yang ada dokumen visual saja"
         switchState={onlyVisualDocs}
         onToggleSwitch={handleVisualDocsToggle}
         togglePanelState={showStatsSection}
