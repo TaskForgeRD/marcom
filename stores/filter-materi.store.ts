@@ -34,6 +34,13 @@ export const useFilterStore = create<FilterStore>()(
       return {};
     },
 
+    setStatusQuery: (status: "Aktif" | "Expired") => {
+      const currentFilters = get().filters;
+      const newFilters = { ...currentFilters, status };
+      set({ filters: newFilters });
+      return newFilters;
+    },
+
     setSearchQuery: (query) => {
       set({ searchQuery: query });
       // Auto-apply search without waiting for "Apply" button

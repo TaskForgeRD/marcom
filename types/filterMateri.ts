@@ -21,6 +21,7 @@ export interface FilterStore {
   applyFilters: () => Record<string, any>;
   resetFilters: () => Record<string, any>;
   setSearchQuery: (query: string) => Record<string, any>;
+  setStatusQuery: (status: "Aktif" | "Expired") => Record<string, any>;
   setSelectedPreset: (preset: string) => void;
   setOnlyVisualDocs: (value: boolean) => Record<string, any>;
   getCurrentFilters: () => Record<string, any>;
