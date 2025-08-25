@@ -7,7 +7,7 @@ import { useFilterStore } from "@/stores/filter-materi.store";
 import { useMateri } from "@/stores/materi.store";
 
 export default function RealTimeStats() {
-  const { setStatusQuery } = useFilterStore();
+  const { setStatusQuery, setTempFilter, getCurrentFilters } = useFilterStore();
   const { fetchData } = useMateri();
 
   const {
@@ -45,10 +45,14 @@ export default function RealTimeStats() {
   const handleCardClick = (key: string) => {
     if (key === "expired") {
       setStatusQuery("Expired");
-      fetchData(1, { search: "expired" });
+      setTempFilter("status", "Expired");
+      const currentFilters = getCurrentFilters();
+      fetchData(1, currentFilters);
     } else if (key === "aktif") {
       setStatusQuery("Aktif");
-      fetchData(1, { search: "aktif" });
+      setTempFilter("status", "Aktif");
+      const currentFilters = getCurrentFilters();
+      fetchData(1, currentFilters);
     }
   };
 
