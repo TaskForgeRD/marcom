@@ -15,7 +15,7 @@ export const useFilterStore = create<FilterStore>()(
 
     applyFilters: () => {
       const { tempFilters } = get();
-      set({ filters: tempFilters });
+      set({ filters: tempFilters, tempFilters: {} });
 
       // Trigger data fetch with new filters
       // This will be called from components that use this store
@@ -69,6 +69,14 @@ export const useFilterStore = create<FilterStore>()(
         search: searchQuery,
         onlyVisualDocs,
       };
+    },
+
+    getTempFilters: () => {
+      return get().tempFilters;
+    },
+
+    getOnlyFilters: () => {
+      return get().filters;
     },
   }))
 );

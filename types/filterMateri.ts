@@ -25,4 +25,6 @@ export interface FilterStore {
   setSelectedPreset: (preset: string) => void;
   setOnlyVisualDocs: (value: boolean) => Record<string, any>;
   getCurrentFilters: () => Record<string, any>;
+  getOnlyFilters: () => Record<string, any>;
+  getTempFilters: () => Record<string, any>;
 }
