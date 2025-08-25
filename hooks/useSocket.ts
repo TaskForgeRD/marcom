@@ -1,4 +1,4 @@
-// hooks/useSocket.ts - Updated to handle chart data from backend
+// hooks/useSocket.ts - Updated to remove filtered stats functionality
 import { useEffect, useRef, useState, useCallback } from "react";
 import { io, Socket } from "socket.io-client";
 
@@ -16,7 +16,6 @@ interface StatsData {
   expired: number;
   dokumen: number;
   lastUpdated: string;
-  appliedFilters?: any; // For debugging filtered stats
   chartData?: {
     total: ChartDataPoint[];
     fitur: ChartDataPoint[];
@@ -27,18 +26,6 @@ interface StatsData {
   };
 }
 
-interface FilterParams {
-  brand?: string;
-  cluster?: string;
-  fitur?: string;
-  jenis?: string;
-  status?: string;
-  start_date?: string;
-  end_date?: string;
-  search?: string;
-  onlyVisualDocs?: boolean;
-}
-
 interface UseSocketReturn {
   socket: Socket | null;
   connected: boolean;
@@ -46,8 +33,6 @@ interface UseSocketReturn {
   loading: boolean;
   error: string | null;
   refreshStats: () => void;
-  requestFilteredStats: (filters: FilterParams) => void;
-  refreshFilteredStats: (filters: FilterParams) => void;
 }
 
 export const useSocket = (): UseSocketReturn => {
@@ -84,7 +69,7 @@ export const useSocket = (): UseSocketReturn => {
       console.log("Connected to Socket.IO server");
       setConnected(true);
       setError(null);
-      // Request initial stats (unfiltered)
+      // Request initial unfiltered stats only
       socket.emit("request_stats");
     });
 
@@ -100,9 +85,12 @@ export const useSocket = (): UseSocketReturn => {
       setLoading(false);
     });
 
-    // Stats events
+    // Stats events - only handle unfiltered stats
     socket.on("stats_update", (newStats: StatsData) => {
-      console.log("Received stats update with chart data:", newStats);
+      console.log(
+        "Received unfiltered stats update with chart data:",
+        newStats
+      );
       setStats(newStats);
       setLoading(false);
       setError(null);
@@ -120,37 +108,14 @@ export const useSocket = (): UseSocketReturn => {
     };
   }, []);
 
-  // Refresh unfiltered stats
+  // Refresh unfiltered stats only
   const refreshStats = useCallback(() => {
     if (socketRef.current && connected) {
+      console.log("Refreshing unfiltered stats via socket");
       setLoading(true);
       socketRef.current.emit("request_stats");
     }
   }, [connected]);
-
-  // Request filtered stats
-  const requestFilteredStats = useCallback(
-    (filters: FilterParams) => {
-      if (socketRef.current && connected) {
-        console.log("Requesting filtered stats with:", filters);
-        setLoading(true);
-        socketRef.current.emit("request_filtered_stats", filters);
-      }
-    },
-    [connected]
-  );
-
-  // Refresh filtered stats
-  const refreshFilteredStats = useCallback(
-    (filters: FilterParams) => {
-      if (socketRef.current && connected) {
-        console.log("Refreshing filtered stats with:", filters);
-        setLoading(true);
-        socketRef.current.emit("refresh_filtered_stats", filters);
-      }
-    },
-    [connected]
-  );
 
   return {
     socket: socketRef.current,
@@ -158,8 +123,6 @@ export const useSocket = (): UseSocketReturn => {
     stats,
     loading,
     error,
-    refreshStats,
-    requestFilteredStats,
-    refreshFilteredStats,
+    refreshStats, // Only unfiltered stats refresh
   };
 };
