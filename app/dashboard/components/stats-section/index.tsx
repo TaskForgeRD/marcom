@@ -1,4 +1,4 @@
-// components/stats-section/index.tsx - Updated with API fitur integration
+// app/dashboard/components/stats-section/index.tsx - Updated with clear separation
 
 "use client";
 import React, { useEffect } from "react";
@@ -19,14 +19,16 @@ export default function StatsSection() {
     fetchFitur();
   }, [fetchFitur]);
 
-  // Handle visual docs toggle - this will trigger stats update via useStatsData
+  // Visual docs toggle ONLY affects table data, NOT stats
   const handleVisualDocsToggle = (value: boolean) => {
     setOnlyVisualDocs(value);
-    // Note: Stats will be automatically updated via useStatsData hook when onlyVisualDocs changes
+    // Stats will continue to show unfiltered data
+    console.log("Visual docs filter changed - affects table only, not stats");
   };
 
   return (
     <section>
+      {/* Stats Cards Section - Always shows unfiltered data */}
       <div
         className={`transition-all duration-300 ease-in-out ${
           showStatsSection ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"
@@ -37,6 +39,8 @@ export default function StatsSection() {
       >
         <RealTimeStats />
       </div>
+
+      {/* Charts Section - Always shows unfiltered data */}
       <div
         className={`transition-all duration-300 ease-in-out ${
           showStatsSection ? "max-h-0 opacity-0" : "max-h-[1000px] opacity-100"
@@ -47,8 +51,10 @@ export default function StatsSection() {
       >
         <StatsChartCard />
       </div>
+
+      {/* Toggle Controls - Make it clear this only affects table */}
       <ToggleControls
-        label="Lihat data yang ada dokumen visual saja"
+        label="Filter untuk tabel: Tampilkan hanya data dengan dokumen visual"
         switchState={onlyVisualDocs}
         onToggleSwitch={handleVisualDocsToggle}
         togglePanelState={showStatsSection}

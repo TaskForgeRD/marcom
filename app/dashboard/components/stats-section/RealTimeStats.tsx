@@ -1,4 +1,4 @@
-import { Wifi, WifiOff, Clock, Filter, Database } from "lucide-react";
+import { Wifi, WifiOff, Clock, RefreshCw } from "lucide-react";
 import { useStatsData } from "@/hooks/useStatsData";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -13,12 +13,7 @@ export default function RealTimeStats() {
     loading,
     error,
     lastUpdated,
-    filters,
-    setTempFilter,
-    applyFilters,
-    hasFilters,
-    appliedFilters,
-    currentFilters,
+    refreshStats,
     totalFitur,
   } = useStatsData();
 
@@ -53,52 +48,19 @@ export default function RealTimeStats() {
     total: "default",
   };
 
-  // Mapping dari key stats card ke nilai filter yang sesuai
-  const getFilterValue = (key: string) => {
-    switch (key.toLowerCase()) {
-      case "aktif":
-        return "Aktif";
-      case "expired":
-        return "Expired";
-      case "total":
-        return ""; // Semua status
-      case "komunikasi":
-        return ""; // Mungkin tidak ada filter status khusus untuk ini
-      case "fitur":
-        return ""; // Mungkin tidak ada filter status khusus untuk ini
-      case "dokumen":
-        return ""; // Mungkin tidak ada filter status khusus untuk ini
-      default:
-        return "";
-    }
-  };
-
-  const handleCardClick = (key: string) => {
-    const currentStatus = filters?.status;
-    const targetFilterValue = getFilterValue(key);
-
-    // Debug log untuk melihat nilai yang dikirim
-    console.log("Card clicked:", key);
-    console.log("Current filter status:", currentStatus);
-    console.log("Target filter value:", targetFilterValue);
-
-    // Jika card yang diklik sudah aktif (filter sama), reset filter
-    if (currentStatus === targetFilterValue && targetFilterValue !== "") {
-      console.log("Resetting filter");
-      setTempFilter("status", "");
-    } else {
-      console.log("Setting filter to:", targetFilterValue);
-      setTempFilter("status", targetFilterValue);
-    }
-
-    // Apply filter dengan delay singkat
-    setTimeout(() => {
-      applyFilters();
-    }, 100);
-  };
-
   return (
     <div className="space-y-4">
+      {/* Information Banner */}
+      <div className="mx-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+        <p className="text-sm text-blue-800">
+          📊 <strong>Statistik & Chart:</strong> Menampilkan gambaran
+          keseluruhan data (tidak terpengaruh filter)
+        </p>
+        <p className="text-xs text-blue-600 mt-1">
+          Filter hanya mempengaruhi tampilan data di tabel/list di bawah
+        </p>
+      </div>
+
       {/* Real-time Status Header */}
       <div className="flex items-center justify-between px-4">
         <div className="flex items-center space-x-2">
@@ -123,6 +85,18 @@ export default function RealTimeStats() {
             </div>
           )}
         </div>
+
+        {/* Manual Refresh Button */}
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={refreshStats}
+          disabled={loading}
+          className="flex items-center space-x-1"
+        >
+          <RefreshCw className={`h-3 w-3 ${loading ? "animate-spin" : ""}`} />
+          <span>{loading ? "Refreshing..." : "Refresh Stats"}</span>
+        </Button>
       </div>
 
       {/* Error Message */}
@@ -134,35 +108,26 @@ export default function RealTimeStats() {
         </div>
       )}
 
-      {/* Stats Grid */}
+      {/* Stats Grid - READ ONLY */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 px-4">
         {statsConfig.map(({ key, title, icon }) => {
           const { now, changeLabel } = statsMap[key];
-          const currentStatus = filters?.status;
-          const targetFilterValue = getFilterValue(key);
 
-          // Card aktif jika filter status cocok dengan target value dari card
-          const isActive =
-            currentStatus === targetFilterValue && targetFilterValue !== "";
-
-          // Special handling for fitur card
-          const isApiSource = key === "fitur";
+          // For fitur, use totalFitur as current value instead of data.now
+          const currentValue = key === "fitur" ? totalFitur : now;
 
           return (
             <div key={key} className="relative">
               <StatsCard
                 title={title}
-                value={loading ? "..." : now.toString()}
+                value={loading ? "..." : currentValue.toString()}
                 change={changeLabel}
                 subtext={waktuLabel}
                 icon={icon}
-                active={isActive}
+                active={false} // No active cards - read-only
                 showChange={!hideChangeAndSubtext}
                 color={colorsMap[key]}
-                onClick={() => {
-                  handleCardClick(key);
-                }}
-                // subtitle={isApiSource ? "dari API" : undefined}
+                // No onClick handler - cards are read-only
               />
             </div>
           );

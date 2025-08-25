@@ -1,4 +1,4 @@
-// hooks/useStatsData.ts - Updated to include API fitur data
+// hooks/useStatsData.ts - Updated to show unfiltered stats only
 import { useMemo, useEffect } from "react";
 import { useFilterStore } from "@/stores/filter-materi.store";
 import { useMultiApiStore } from "@/stores/api.store";
@@ -6,14 +6,7 @@ import { useSocket } from "@/hooks/useSocket";
 import { formatPresetLabel } from "@/lib/utils/dateUtils";
 
 export const useStatsData = () => {
-  const {
-    selectedPreset,
-    filters,
-    searchQuery,
-    onlyVisualDocs,
-    applyFilters,
-    setTempFilter,
-  } = useFilterStore();
+  const { selectedPreset, filters } = useFilterStore();
 
   // Get fitur data from API store
   const { fitur, fetchFitur } = useMultiApiStore();
@@ -22,9 +15,7 @@ export const useStatsData = () => {
     stats: socketStats,
     loading: socketLoading,
     error: socketError,
-    refreshStats,
-    requestFilteredStats,
-    refreshFilteredStats,
+    refreshStats, // Only use unfiltered stats
   } = useSocket();
 
   // Fetch fitur data when component mounts
@@ -34,46 +25,13 @@ export const useStatsData = () => {
     }
   }, [fitur.length, fetchFitur]);
 
-  // Build current filters for Socket
-  const currentFilters = useMemo(() => {
-    const filterParams = {
-      brand: filters.brand || undefined,
-      cluster: filters.cluster || undefined,
-      fitur: filters.fitur || undefined,
-      jenis: filters.jenis || undefined,
-      status: filters.status || undefined,
-      start_date: filters.start_date || undefined,
-      end_date: filters.end_date || undefined,
-      search: searchQuery || undefined,
-      onlyVisualDocs: onlyVisualDocs || undefined,
-    };
-
-    // Remove undefined values
-    return Object.fromEntries(
-      Object.entries(filterParams).filter(([_, value]) => value !== undefined)
-    );
-  }, [filters, searchQuery, onlyVisualDocs]);
-
-  // Check if any filters are applied
-  const hasFilters = useMemo(() => {
-    return Object.keys(currentFilters).length > 0;
-  }, [currentFilters]);
-
-  // Request filtered stats when filters change
+  // Request unfiltered stats on component mount
   useEffect(() => {
-    if (hasFilters) {
-      console.log(
-        "Filters changed, requesting filtered stats:",
-        currentFilters
-      );
-      requestFilteredStats(currentFilters);
-    } else {
-      console.log("No filters applied, requesting normal stats");
-      refreshStats();
-    }
-  }, [currentFilters, hasFilters, requestFilteredStats, refreshStats]);
+    console.log("Requesting unfiltered stats for overall view");
+    refreshStats();
+  }, []); // Only once on mount
 
-  // Format date range for display
+  // Format date range for display (for preset label only)
   const dateRange = useMemo(() => {
     if (filters?.start_date && filters?.end_date) {
       return {
@@ -110,11 +68,11 @@ export const useStatsData = () => {
       };
     }
 
-    // Process stats with chart data from Socket
+    // Process stats with chart data from Socket (always unfiltered)
     const processedStats = {
       total: {
         now: socketStats.total || 0,
-        change: 0, // Socket doesn't provide change data yet
+        change: 0,
         changeLabel: "0",
         chartData: socketStats.chartData?.total || [],
       },
@@ -153,31 +111,22 @@ export const useStatsData = () => {
     return processedStats;
   }, [socketStats, fitur.length]);
 
-  // Custom refresh function that respects current filters
+  // Custom refresh function that always gets unfiltered data
   const handleRefreshStats = () => {
     // Always refresh fitur data from API
     fetchFitur();
 
-    if (hasFilters) {
-      refreshFilteredStats(currentFilters);
-    } else {
-      refreshStats();
-    }
+    // Always request unfiltered stats
+    refreshStats();
   };
 
   return {
     selectedPreset,
-    waktuLabel,
+    waktuLabel: `${waktuLabel} (Keseluruhan Data)`, // Add indicator
     loading: socketLoading,
     error: socketError,
-    applyFilters,
-    setTempFilter,
-    filters,
     lastUpdated: socketStats?.lastUpdated,
     refreshStats: handleRefreshStats,
-    hasFilters,
-    appliedFilters: socketStats?.appliedFilters,
-    currentFilters,
     stats,
     // Expose fitur data for debugging
     fiturData: fitur,
