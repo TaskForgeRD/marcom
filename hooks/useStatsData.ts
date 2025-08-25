@@ -1,6 +1,7 @@
-// hooks/useStatsData.ts - Updated to handle chart data from Socket
+// hooks/useStatsData.ts - Updated to include API fitur data
 import { useMemo, useEffect } from "react";
 import { useFilterStore } from "@/stores/filter-materi.store";
+import { useMultiApiStore } from "@/stores/api.store";
 import { useSocket } from "@/hooks/useSocket";
 import { formatPresetLabel } from "@/lib/utils/dateUtils";
 
@@ -14,6 +15,9 @@ export const useStatsData = () => {
     setTempFilter,
   } = useFilterStore();
 
+  // Get fitur data from API store
+  const { fitur, fetchFitur } = useMultiApiStore();
+
   const {
     stats: socketStats,
     loading: socketLoading,
@@ -22,6 +26,13 @@ export const useStatsData = () => {
     requestFilteredStats,
     refreshFilteredStats,
   } = useSocket();
+
+  // Fetch fitur data when component mounts
+  useEffect(() => {
+    if (fitur.length === 0) {
+      fetchFitur();
+    }
+  }, [fitur.length, fetchFitur]);
 
   // Build current filters for Socket
   const currentFilters = useMemo(() => {
@@ -75,7 +86,7 @@ export const useStatsData = () => {
 
   const waktuLabel = formatPresetLabel(selectedPreset, dateRange);
 
-  // Process stats data from Socket (now includes chart data)
+  // Process stats data from Socket with API fitur override
   const stats = useMemo(() => {
     if (!socketStats) {
       // Default stats when no data
@@ -88,7 +99,10 @@ export const useStatsData = () => {
 
       return {
         total: defaultStat,
-        fitur: defaultStat,
+        fitur: {
+          ...defaultStat,
+          now: fitur.length, // Use API fitur count as default
+        },
         komunikasi: defaultStat,
         aktif: defaultStat,
         expired: defaultStat,
@@ -105,7 +119,7 @@ export const useStatsData = () => {
         chartData: socketStats.chartData?.total || [],
       },
       fitur: {
-        now: socketStats.fitur || 0,
+        now: fitur.length, // Always use API fitur count
         change: 0,
         changeLabel: "0",
         chartData: socketStats.chartData?.fitur || [],
@@ -137,10 +151,13 @@ export const useStatsData = () => {
     };
 
     return processedStats;
-  }, [socketStats]);
+  }, [socketStats, fitur.length]);
 
   // Custom refresh function that respects current filters
   const handleRefreshStats = () => {
+    // Always refresh fitur data from API
+    fetchFitur();
+
     if (hasFilters) {
       refreshFilteredStats(currentFilters);
     } else {
@@ -162,5 +179,8 @@ export const useStatsData = () => {
     appliedFilters: socketStats?.appliedFilters,
     currentFilters,
     stats,
+    // Expose fitur data for debugging
+    fiturData: fitur,
+    totalFitur: fitur.length,
   };
 };

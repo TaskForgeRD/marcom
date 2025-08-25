@@ -8,7 +8,7 @@ import { statsConfig } from "@/app/dashboard/components/stats-section/StatsConfi
 import { useFilterStore } from "@/stores/filter-materi.store";
 
 export default function Page() {
-  const { stats, loading, error } = useStatsData();
+  const { stats, loading, error, totalFitur } = useStatsData();
   const { onlyVisualDocs } = useFilterStore();
 
   // Show loading state
@@ -83,7 +83,7 @@ export default function Page() {
             const idx = Number(code) - 1;
 
             return {
-              name: ID_MONTH[idx] ?? p.monthName ?? code, // ← label “Januari”, dst.
+              name: ID_MONTH[idx] ?? p.monthName ?? code, // ← label "Januari", dst.
               value: Number(p.value),
             };
           }
@@ -91,11 +91,18 @@ export default function Page() {
 
         console.log(chartData);
 
+        // Override title for fitur to indicate API source
+        const chartTitle =
+          item.key === "fitur" ? `${item.title} (dari API)` : item.title;
+
+        // For fitur, use totalFitur as current value instead of data.now
+        const currentValue = item.key === "fitur" ? totalFitur : data.now;
+
         return (
           <div key={item.key} className={cardClass}>
             <ChartCard
               title={item.title}
-              value={data.now}
+              value={currentValue}
               data={chartData}
               color={item.color}
               // Show subtitle only if onlyVisualDocs is active and item has subtitle

@@ -190,7 +190,7 @@ export default function UploadThumbnail({
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent
-          className="w-screen h-screen max-w-none max-h-none p-0 
+          className="w-[75vw] h-[75vh] max-w-none max-h-none p-0 
     [&>button]:bg-red-500 
     [&>button]:hover:bg-red-600 
     [&>button]:text-white 
@@ -203,17 +203,16 @@ export default function UploadThumbnail({
     [&>button_svg]:w-6 
     [&>button_svg]:h-6"
         >
-          {" "}
           <DialogHeader className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10"></DialogHeader>
           {preview && (
-            <div className="flex items-center justify-center w-full h-full bg-black">
+            <div className="flex items-center justify-center w-full h-full bg-white rounded-lg">
               <div className="relative w-full h-full">
                 <Image
                   src={preview}
                   alt="Thumbnail Preview"
                   fill
                   unoptimized
-                  className="object-contain"
+                  className="object-contain rounded-lg"
                 />
               </div>
             </div>

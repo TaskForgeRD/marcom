@@ -1,16 +1,23 @@
-// components/stats-section/index.tsx - Updated to use RealTimeStats with Socket API
+// components/stats-section/index.tsx - Updated with API fitur integration
 
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import RealTimeStats from "./RealTimeStats";
 import StatsChartCard from "./components/stats-chart-card";
 import ToggleControls from "@/app/dashboard/uiRama/toggle-controls";
 import { useFilterStore } from "@/stores/filter-materi.store";
+import { useMultiApiStore } from "@/stores/api.store";
 
 export default function StatsSection() {
   const [showStatsSection, setShowStatsSection] = useState(true);
   const { onlyVisualDocs, setOnlyVisualDocs } = useFilterStore();
+  const { fetchFitur } = useMultiApiStore();
+
+  // Fetch fitur data on component mount
+  useEffect(() => {
+    fetchFitur();
+  }, [fetchFitur]);
 
   // Handle visual docs toggle - this will trigger stats update via useStatsData
   const handleVisualDocsToggle = (value: boolean) => {

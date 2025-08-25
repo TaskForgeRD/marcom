@@ -1,4 +1,4 @@
-import { Wifi, WifiOff, Clock, Filter } from "lucide-react";
+import { Wifi, WifiOff, Clock, Filter, Database } from "lucide-react";
 import { useStatsData } from "@/hooks/useStatsData";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -19,6 +19,7 @@ export default function RealTimeStats() {
     hasFilters,
     appliedFilters,
     currentFilters,
+    totalFitur,
   } = useStatsData();
 
   const statsMap = {
@@ -144,6 +145,9 @@ export default function RealTimeStats() {
           const isActive =
             currentStatus === targetFilterValue && targetFilterValue !== "";
 
+          // Special handling for fitur card
+          const isApiSource = key === "fitur";
+
           return (
             <div key={key} className="relative">
               <StatsCard
@@ -158,6 +162,7 @@ export default function RealTimeStats() {
                 onClick={() => {
                   handleCardClick(key);
                 }}
+                // subtitle={isApiSource ? "dari API" : undefined}
               />
             </div>
           );
