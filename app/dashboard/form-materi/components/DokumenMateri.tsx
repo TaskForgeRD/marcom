@@ -58,8 +58,10 @@ export default function DokumenMateri({ readOnly = true }: DokumenMateriProps) {
   };
 
   const shouldBlurLinkForAdmin = () => {
-    // Hanya blur jika admin sedang edit materi yang sudah ada (bukan tambah baru)
-    return currentUserRole === "admin" && !readOnly && !!selectedMateri;
+    // Hanya blur jika admin sedang edit materi yang sudah ada (bukan tambah baru) DAN materi tidak aktif
+    return (
+      currentUserRole === "admin" && !readOnly && !!selectedMateri && !isActive
+    );
   };
 
   const hideLinkDokumen = shouldHideLinkDokumen();
