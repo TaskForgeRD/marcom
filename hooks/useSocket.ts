@@ -1,4 +1,5 @@
 // hooks/useSocket.ts - Simplified to handle only unfiltered stats
+import { useFilterStore } from "@/stores/filter-materi.store";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { io, Socket } from "socket.io-client";
 
@@ -36,6 +37,9 @@ interface UseSocketReturn {
 }
 
 export const useSocket = (): UseSocketReturn => {
+  const { getCurrentFilters } = useFilterStore();
+  const { brand, start_date, end_date } = getCurrentFilters();
+
   const [connected, setConnected] = useState(false);
   const [stats, setStats] = useState<StatsData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -70,7 +74,7 @@ export const useSocket = (): UseSocketReturn => {
       setConnected(true);
       setError(null);
       // Always request unfiltered stats
-      socket.emit("request_stats");
+      socket.emit("request_stats", { brand, start_date, end_date });
     });
 
     socket.on("disconnect", () => {
@@ -85,6 +89,17 @@ export const useSocket = (): UseSocketReturn => {
       setLoading(false);
     });
 
+    socket.on("stats_loading", () => {
+      setLoading(true);
+      setError(null);
+    });
+
+    socket.on("has_update", () => {
+      setLoading(true);
+      setError(null);
+      console.log("Server indicates stats have been updated, refreshing...");
+      socket.emit("request_stats", { brand, start_date, end_date });
+    });
     // Stats events
     socket.on("stats_update", (newStats: StatsData) => {
       console.log(
@@ -113,7 +128,7 @@ export const useSocket = (): UseSocketReturn => {
     if (socketRef.current && connected) {
       setLoading(true);
       console.log("Refreshing unfiltered stats");
-      socketRef.current.emit("request_stats");
+      socketRef.current.emit("request_stats", { brand, start_date, end_date });
     }
   }, [connected]);
 
