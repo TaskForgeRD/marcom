@@ -3,7 +3,11 @@ import { PresetDate } from "../constants/preset-date";
 import { useFilterStore } from "@/stores/filter-materi.store";
 import { DateRange } from "react-day-picker";
 
-const useDateRange = () => {
+type UseDateProps = {
+  onApply?: () => void;
+};
+
+const useDateRange = (props?: UseDateProps) => {
   const { tempFilters, setTempFilter, applyFilters } = useFilterStore();
   const today = React.useMemo(() => new Date(), []);
 
@@ -50,6 +54,7 @@ const useDateRange = () => {
         setTempFilter("end_date", endDate.toISOString());
       }
       applyFilters();
+      props?.onApply?.();
     },
     [setTempFilter, applyFilters]
   );
@@ -76,6 +81,7 @@ const useDateRange = () => {
     }
 
     applyFilters();
+    props?.onApply?.();
   };
 
   return {

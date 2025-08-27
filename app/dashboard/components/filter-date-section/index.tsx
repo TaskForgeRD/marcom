@@ -11,15 +11,20 @@ import { useFilterStore } from "@/stores/filter-materi.store";
 import { FilterKey } from "@/constants/filter-options";
 import SelectField from "../../uiRama/selectField";
 import useSelectedFilters from "@/hooks/useSelectedFilters";
+import { useSocket } from "@/hooks/useSocket";
 
 const FilterDateSection: React.FC = () => {
   const { brands } = useMultiApiStore();
   const { fetchData } = useMateri();
   const { setTempFilter, applyFilters, getCurrentFilters } = useFilterStore();
+  const { refreshStats } = useSocket();
+
   const { selectedFilters, handleFilterChange } = useSelectedFilters();
 
   const { dateRange, isCustomRange, handleDateChange, handlePresetSelection } =
-    useDateRange();
+    useDateRange({
+      onApply: refreshStats,
+    });
 
   const filterOptions: Partial<Record<FilterKey, string[]>> = {
     brand: ["Semua Brand", ...brands.map((brand) => brand.name)],
@@ -39,6 +44,7 @@ const FilterDateSection: React.FC = () => {
 
     // Apply filters and fetch data
     const newFilters = applyFilters();
+    refreshStats(); // Trigger stats refresh
     await fetchData(1, newFilters);
   };
 
