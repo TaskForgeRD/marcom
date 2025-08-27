@@ -1,4 +1,3 @@
-// FilterGroup.tsx - Updated to work with server-side pagination and Socket stats
 import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import SelectField from "../../../uiRama/selectField";
@@ -23,7 +22,6 @@ const FilterGroup = ({
   const { fetchData } = useMateri();
   const { applyFilters, resetFilters } = useFilterStore();
 
-  // Memoized filter options berdasarkan data dari API
   const filterOptions: Partial<Record<FilterKey, string[]>> = useMemo(() => {
     return {
       cluster: ["Semua Cluster", ...clusters.map((cluster) => cluster.name)],
@@ -33,21 +31,16 @@ const FilterGroup = ({
     };
   }, [clusters, fitur, jenis]);
 
-  // Filter keys untuk ditampilkan
   const filterKeys: FilterKey[] = ["cluster", "fitur", "status", "jenis"];
 
   const handleApplyFilters = async () => {
     const newFilters = applyFilters();
-    // Fetch data with new filters, reset to page 1
-    // Note: Stats will be automatically updated via useStatsData hook when filters change
     await fetchData(1, newFilters);
   };
 
   const handleResetFiltersClick = async () => {
-    handleResetFilters(); // Update UI state
-    const emptyFilters = resetFilters(); // Update store
-    // Fetch data with empty filters, reset to page 1
-    // Note: Stats will be automatically updated via useStatsData hook when filters are reset
+    handleResetFilters();
+    const emptyFilters = resetFilters();
     await fetchData(1, emptyFilters);
   };
 
@@ -61,9 +54,8 @@ const FilterGroup = ({
             label={key}
             value={selectedFilters[key] || ""}
             onChange={(value) => {
-              // Jika pilih "Semua", simpan sebagai "Semua [Key]" bukan empty string
               if (value.startsWith("Semua") || value === "Semua Status") {
-                handleFilterChange(key, value); // Simpan value asli "Semua Brand", dll
+                handleFilterChange(key, value);
               } else {
                 handleFilterChange(key, value);
               }
