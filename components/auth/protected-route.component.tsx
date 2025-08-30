@@ -20,15 +20,12 @@ export const ProtectedRoute = ({
   const router = useRouter();
 
   useEffect(() => {
-    // Only redirect if we're certain the user is not authenticated
-    // and we're not still loading
     if (!isLoading && !isAuthenticated) {
       console.log("User not authenticated, redirecting to:", redirectTo);
       router.replace(redirectTo);
     }
   }, [isAuthenticated, isLoading, router, redirectTo]);
 
-  // Show loading while checking authentication
   if (isLoading) {
     return (
       fallback || (
@@ -44,11 +41,9 @@ export const ProtectedRoute = ({
     );
   }
 
-  // Don't render anything while redirecting
   if (!isAuthenticated) {
     return null;
   }
 
-  // User is authenticated, render children
   return <>{children}</>;
 };

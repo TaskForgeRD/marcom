@@ -49,7 +49,6 @@ export const UserDropdown = ({
       .slice(0, 2);
   };
 
-  // Fungsi untuk mendapatkan warna dan label role
   const getRoleInfo = (role: string | undefined) => {
     switch (role?.toLowerCase()) {
       case "superadmin":
@@ -107,7 +106,6 @@ export const UserDropdown = ({
               <p className="text-xs leading-none text-muted-foreground">
                 {user.email}
               </p>
-              {/* Badge Role */}
               <div className="flex items-center gap-1">
                 <Shield className="h-3 w-3 text-muted-foreground" />
                 <Badge variant={roleInfo.variant} className="text-xs">
