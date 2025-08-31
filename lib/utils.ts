@@ -13,9 +13,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export const getImageUrl = (path?: string) => {
   if (!path) return "";
-
-  const uploadFolder = process.env.NEXT_PUBLIC_UPLOAD_FOLDER;
-  return `${process.env.NEXT_PUBLIC_API_BASE_URL}/${uploadFolder}/${path}`;
+  return `${process.env.NEXT_PUBLIC_API_BASE_URL}/uploads/${path}`;
 };
 
 export function convertToFormData(data: any): FormData {
