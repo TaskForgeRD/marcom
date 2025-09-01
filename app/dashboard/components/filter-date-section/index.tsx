@@ -1,4 +1,3 @@
-// FilterDateSection.tsx - Updated to work with server-side pagination and trigger stats update
 "use client";
 
 import * as React from "react";
@@ -32,30 +31,25 @@ const FilterDateSection: React.FC = () => {
   const filterKeys: FilterKey[] = ["brand"];
 
   const handleBrandChange = async (value: string) => {
-    // Update selected filters for UI
     handleFilterChange("brand", value);
 
-    // Update temp filter - jika "Semua Brand" dipilih, set sebagai empty string
     if (value === "Semua Brand") {
       setTempFilter("brand", "");
     } else {
       setTempFilter("brand", value);
     }
 
-    // Apply filters and fetch data
     const newFilters = applyFilters();
-    refreshStats(); // Trigger stats refresh
+    refreshStats();
     await fetchData(1, newFilters);
   };
 
-  // Handle date range changes
   React.useEffect(() => {
     const applyDateFilters = async () => {
       const currentFilters = getCurrentFilters();
       await fetchData(1, currentFilters);
     };
 
-    // Only apply if dateRange is set or was cleared
     if (dateRange || dateRange === undefined) {
       applyDateFilters();
     }

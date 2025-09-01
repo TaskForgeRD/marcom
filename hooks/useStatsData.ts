@@ -27,7 +27,6 @@ export const useStatsData = () => {
 
   // Request unfiltered stats on component mount
   useEffect(() => {
-    console.log("Requesting unfiltered stats for overall view");
     refreshStats();
   }, []); // Only once on mount
 
