@@ -31,8 +31,6 @@ export default function DeleteConfirmDialog({
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  console.log(entityName);
-
   const handleConfirm = async () => {
     setIsLoading(true);
     try {
@@ -44,11 +42,19 @@ export default function DeleteConfirmDialog({
       });
       onClose();
     } catch (error: any) {
+      console.error("Error deleting data:", error);
+
+      // Show specific error message from backend
+      const errorMessage = error.message || `Gagal menghapus ${entityName}`;
+
       toast({
         title: "Error",
-        description: error.message || `Gagal menghapus ${entityName}`,
+        description: errorMessage,
         variant: "destructive",
+        duration: 5000, // Show error longer for foreign key constraint messages
       });
+
+      // Don't close dialog on error so user can see the error and try again or cancel
     } finally {
       setIsLoading(false);
     }
@@ -69,7 +75,7 @@ export default function DeleteConfirmDialog({
             Konfirmasi Hapus
           </DialogTitle>
           <DialogDescription>
-            Apakah Anda yakin ingin menghapus {entityName}{" "}
+            Apakah Anda yakin ingin menghapus {entityName.toLowerCase()}{" "}
             <strong>"{itemName}"</strong>?
             <br />
             <span className="text-red-600 text-sm mt-2 block">

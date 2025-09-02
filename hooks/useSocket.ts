@@ -70,7 +70,6 @@ export const useSocket = (): UseSocketReturn => {
 
     // Connection events
     socket.on("connect", () => {
-      console.log("Connected to Socket.IO server");
       setConnected(true);
       setError(null);
       // Always request unfiltered stats
@@ -78,7 +77,6 @@ export const useSocket = (): UseSocketReturn => {
     });
 
     socket.on("disconnect", () => {
-      console.log("Disconnected from Socket.IO server");
       setConnected(false);
     });
 
@@ -97,15 +95,10 @@ export const useSocket = (): UseSocketReturn => {
     socket.on("has_update", () => {
       setLoading(true);
       setError(null);
-      console.log("Server indicates stats have been updated, refreshing...");
       socket.emit("request_stats", { brand, start_date, end_date });
     });
     // Stats events
     socket.on("stats_update", (newStats: StatsData) => {
-      console.log(
-        "Received unfiltered stats update with chart data:",
-        newStats
-      );
       setStats(newStats);
       setLoading(false);
       setError(null);
@@ -127,7 +120,6 @@ export const useSocket = (): UseSocketReturn => {
   const refreshStats = useCallback(() => {
     if (socketRef.current && connected) {
       setLoading(true);
-      console.log("Refreshing unfiltered stats");
       socketRef.current.emit("request_stats", { brand, start_date, end_date });
     }
   }, [connected]);

@@ -22,8 +22,6 @@ export default function StatsSection() {
   // Visual docs toggle ONLY affects table data, NOT stats
   const handleVisualDocsToggle = (value: boolean) => {
     setOnlyVisualDocs(value);
-    // Stats will continue to show unfiltered data
-    console.log("Visual docs filter changed - affects table only, not stats");
   };
 
   return (

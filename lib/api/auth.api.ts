@@ -28,28 +28,16 @@ class AuthApi {
     response: Response,
     context?: string
   ): Promise<T> {
-    console.log(`API Response [${context || "unknown"}]:`, {
-      status: response.status,
-      statusText: response.statusText,
-      ok: response.ok,
-      url: response.url,
-    });
-
     if (!response.ok) {
       let errorData: any = {};
 
       try {
         const text = await response.text();
-        console.log(`Raw error response [${context}]:`, text);
 
         if (text) {
           errorData = JSON.parse(text);
         }
       } catch (parseError) {
-        console.error(
-          `Failed to parse error response [${context}]:`,
-          parseError
-        );
         errorData = {};
       }
 
@@ -68,7 +56,6 @@ class AuthApi {
 
     try {
       const text = await response.text();
-      console.log(`Raw success response [${context}]:`, text);
 
       if (!text) {
         return {} as T;
@@ -76,10 +63,6 @@ class AuthApi {
 
       return JSON.parse(text);
     } catch (parseError) {
-      console.error(
-        `Failed to parse success response [${context}]:`,
-        parseError
-      );
       throw new AuthApiError(
         "Invalid JSON response from server",
         500,
@@ -124,8 +107,6 @@ class AuthApi {
       try {
         return UserSchema.parse(data.user);
       } catch (zodError) {
-        console.error("User schema validation failed:", zodError);
-        console.error("Received user data:", data.user);
         throw new AuthApiError(
           "Invalid user data format received from server",
           500,
@@ -183,11 +164,6 @@ class AuthApi {
           "CODE_MISSING"
         );
       }
-
-      console.log(
-        "Sending Google callback with code:",
-        code.substring(0, 20) + "..."
-      );
 
       const requestBody = { code };
 
@@ -248,7 +224,6 @@ class AuthApi {
       // Parse and validate response with better error handling
       try {
         const validatedData = GoogleCallbackResponseSchema.parse(data);
-        console.log("Successfully validated Google callback response");
         return validatedData;
       } catch (zodError) {
         console.error("Google callback schema validation failed:", zodError);

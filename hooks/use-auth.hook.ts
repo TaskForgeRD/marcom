@@ -14,19 +14,15 @@ export const useAuth = () => {
       return initPromise.current;
     }
 
-    console.log("Starting auth initialization...");
     hasInitialized.current = true;
 
     initPromise.current = (async () => {
       try {
         if (store.token && !store.user && !store.isAuthenticated) {
-          console.log("Token found but no user, verifying token...");
           await store.verifyToken();
         } else if (!store.token) {
-          console.log("No token found, setting as unauthenticated");
           store.setLoading(false);
         } else if (store.token && store.user && store.isAuthenticated) {
-          console.log("Already authenticated, setting loading to false");
           store.setLoading(false);
         }
       } catch (error) {

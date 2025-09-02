@@ -54,7 +54,7 @@ const getAuthToken = (): string | null => {
   return raw ? JSON.parse(raw)?.state?.token : null;
 };
 
-// Helper function for API requests
+// Helper function for API requests with better error handling
 const makeApiRequest = async (
   endpoint: string,
   method: string = "GET",
@@ -80,14 +80,16 @@ const makeApiRequest = async (
     config
   );
 
+  const responseData = await response.json().catch(() => ({}));
+
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
+    // Throw error with the message from backend
     throw new Error(
-      errorData.message || `HTTP ${response.status}: ${response.statusText}`
+      responseData.message || `HTTP ${response.status}: ${response.statusText}`
     );
   }
 
-  return response.json();
+  return responseData;
 };
 
 export const useMasterDataStore = create<MasterDataStore>()(
@@ -121,6 +123,8 @@ export const useMasterDataStore = create<MasterDataStore>()(
         const result = await makeApiRequest("/brands", "POST", { name });
         if (result.success) {
           await get().fetchBrands(); // Refresh data
+        } else {
+          throw new Error(result.message || "Gagal membuat brand");
         }
       } catch (error) {
         console.error("Error creating brand:", error);
@@ -133,6 +137,8 @@ export const useMasterDataStore = create<MasterDataStore>()(
         const result = await makeApiRequest(`/brands/${id}`, "PUT", { name });
         if (result.success) {
           await get().fetchBrands(); // Refresh data
+        } else {
+          throw new Error(result.message || "Gagal memperbarui brand");
         }
       } catch (error) {
         console.error("Error updating brand:", error);
@@ -145,6 +151,8 @@ export const useMasterDataStore = create<MasterDataStore>()(
         const result = await makeApiRequest(`/brands/${id}`, "DELETE");
         if (result.success) {
           await get().fetchBrands(); // Refresh data
+        } else {
+          throw new Error(result.message || "Gagal menghapus brand");
         }
       } catch (error) {
         console.error("Error deleting brand:", error);
@@ -170,6 +178,8 @@ export const useMasterDataStore = create<MasterDataStore>()(
         const result = await makeApiRequest("/clusters", "POST", { name });
         if (result.success) {
           await get().fetchClusters(); // Refresh data
+        } else {
+          throw new Error(result.message || "Gagal membuat cluster");
         }
       } catch (error) {
         console.error("Error creating cluster:", error);
@@ -182,6 +192,8 @@ export const useMasterDataStore = create<MasterDataStore>()(
         const result = await makeApiRequest(`/clusters/${id}`, "PUT", { name });
         if (result.success) {
           await get().fetchClusters(); // Refresh data
+        } else {
+          throw new Error(result.message || "Gagal memperbarui cluster");
         }
       } catch (error) {
         console.error("Error updating cluster:", error);
@@ -194,6 +206,8 @@ export const useMasterDataStore = create<MasterDataStore>()(
         const result = await makeApiRequest(`/clusters/${id}`, "DELETE");
         if (result.success) {
           await get().fetchClusters(); // Refresh data
+        } else {
+          throw new Error(result.message || "Gagal menghapus cluster");
         }
       } catch (error) {
         console.error("Error deleting cluster:", error);
@@ -219,6 +233,8 @@ export const useMasterDataStore = create<MasterDataStore>()(
         const result = await makeApiRequest("/fitur", "POST", { name });
         if (result.success) {
           await get().fetchFitur(); // Refresh data
+        } else {
+          throw new Error(result.message || "Gagal membuat fitur");
         }
       } catch (error) {
         console.error("Error creating fitur:", error);
@@ -231,6 +247,8 @@ export const useMasterDataStore = create<MasterDataStore>()(
         const result = await makeApiRequest(`/fitur/${id}`, "PUT", { name });
         if (result.success) {
           await get().fetchFitur(); // Refresh data
+        } else {
+          throw new Error(result.message || "Gagal memperbarui fitur");
         }
       } catch (error) {
         console.error("Error updating fitur:", error);
@@ -243,6 +261,8 @@ export const useMasterDataStore = create<MasterDataStore>()(
         const result = await makeApiRequest(`/fitur/${id}`, "DELETE");
         if (result.success) {
           await get().fetchFitur(); // Refresh data
+        } else {
+          throw new Error(result.message || "Gagal menghapus fitur");
         }
       } catch (error) {
         console.error("Error deleting fitur:", error);
@@ -268,6 +288,8 @@ export const useMasterDataStore = create<MasterDataStore>()(
         const result = await makeApiRequest("/jenis", "POST", { name });
         if (result.success) {
           await get().fetchJenis(); // Refresh data
+        } else {
+          throw new Error(result.message || "Gagal membuat jenis");
         }
       } catch (error) {
         console.error("Error creating jenis:", error);
@@ -280,6 +302,8 @@ export const useMasterDataStore = create<MasterDataStore>()(
         const result = await makeApiRequest(`/jenis/${id}`, "PUT", { name });
         if (result.success) {
           await get().fetchJenis(); // Refresh data
+        } else {
+          throw new Error(result.message || "Gagal memperbarui jenis");
         }
       } catch (error) {
         console.error("Error updating jenis:", error);
@@ -292,6 +316,8 @@ export const useMasterDataStore = create<MasterDataStore>()(
         const result = await makeApiRequest(`/jenis/${id}`, "DELETE");
         if (result.success) {
           await get().fetchJenis(); // Refresh data
+        } else {
+          throw new Error(result.message || "Gagal menghapus jenis");
         }
       } catch (error) {
         console.error("Error deleting jenis:", error);

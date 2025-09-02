@@ -18,8 +18,6 @@ export default function DetailMateriPage() {
       // Cek dulu apakah ada di store
       let materi = data.find((item) => item.id === Number(id));
 
-      console.log(materi);
-
       if (!materi && id) {
         try {
           const raw = localStorage.getItem("marcom-auth-store");
@@ -47,7 +45,6 @@ export default function DetailMateriPage() {
       }
 
       setIsLoading(false);
-      console.log(materi);
     };
 
     fetchMateriDetail();

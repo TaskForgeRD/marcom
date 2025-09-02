@@ -32,8 +32,6 @@ const MateriRow: React.FC<MateriRowProps> = ({ materi }) => {
     window.open(linkDokumen, "_blank", "noopener,noreferrer");
   };
 
-  console.log(materi);
-
   return (
     <TableRow
       key={materi.id}

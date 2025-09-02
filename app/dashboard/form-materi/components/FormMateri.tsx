@@ -52,7 +52,6 @@ export default function FormMateri({ mode }: FormMateriProps) {
     currentUserRole !== undefined && currentUserRole !== "guest";
 
   const brandValue = methods.watch("cluster");
-  console.log("Current brand value:", brandValue);
 
   return (
     <FormProvider {...methods}>

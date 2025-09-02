@@ -78,8 +78,6 @@ export const useMateri = create<MateriStore>()(
 
         const result = await response.json();
 
-        console.log("🔍 Paginated API Response:", result);
-
         set({
           data: result.data || [],
           pagination: result.pagination || get().pagination,
@@ -101,7 +99,6 @@ export const useMateri = create<MateriStore>()(
     viewMateri: (id) => set({ highlightedId: id }),
 
     setSelectedMateri: (materi) => {
-      console.log("🔄 Setting selectedMateri:", materi);
       set({ selectedMateri: materi });
     },
 

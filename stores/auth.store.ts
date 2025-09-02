@@ -59,7 +59,6 @@ export const useAuthStore = create<AuthStore>()(
         const { token } = get();
 
         if (!token) {
-          console.log("No token found, setting as unauthenticated");
           set((state) => {
             state.isLoading = false;
             state.isAuthenticated = false;
@@ -68,7 +67,6 @@ export const useAuthStore = create<AuthStore>()(
         }
 
         try {
-          console.log("Verifying token...");
           const user = await authApi.verifyToken(token);
 
           set((state) => {
@@ -77,11 +75,8 @@ export const useAuthStore = create<AuthStore>()(
             state.isLoading = false;
           });
 
-          console.log("Token verification successful");
           return true;
         } catch (error) {
-          console.error("Token verification failed:", error);
-
           // Clear invalid token from storage
           set((state) => {
             state.user = null;
@@ -113,13 +108,9 @@ export const useAuthStore = create<AuthStore>()(
             state.isLoading = true;
           });
 
-          console.log("Initiating Google login...");
           const { url } = await authApi.initiateGoogleLogin();
-          console.log("Redirecting to Google OAuth URL");
           window.location.href = url;
         } catch (error) {
-          console.error("Google login initiation failed:", error);
-
           set((state) => {
             state.isLoading = false;
           });
@@ -140,11 +131,9 @@ export const useAuthStore = create<AuthStore>()(
             state.isLoading = true;
           });
 
-          console.log("Processing Google OAuth callback...");
           const response = await authApi.handleGoogleCallback(code);
 
           if (response.success && response.token && response.user) {
-            console.log("Google callback successful, logging in user");
             get().login({
               token: response.token,
               user: response.user,
@@ -154,7 +143,6 @@ export const useAuthStore = create<AuthStore>()(
             const errorMessage =
               response.message ||
               "Login callback failed - no token or user data received";
-            console.error("Google callback failed:", errorMessage, response);
 
             // Check if it's a "user not registered" error
             if (
@@ -171,8 +159,6 @@ export const useAuthStore = create<AuthStore>()(
             throw new Error(errorMessage);
           }
         } catch (error: any) {
-          console.error("Google callback failed:", error);
-
           set((state) => {
             state.isLoading = false;
           });
@@ -180,9 +166,6 @@ export const useAuthStore = create<AuthStore>()(
           // Handle specific error types
           if (error.code === "USER_NOT_REGISTERED") {
             // Don't show toast for this error - let the UI handle it
-            console.log(
-              "User not registered, UI will show specific error screen"
-            );
             throw error; // Re-throw to let UI handle it
           } else if (error instanceof AuthApiError) {
             if (error.code === "INVALID_CALLBACK_DATA") {
@@ -219,16 +202,13 @@ export const useAuthStore = create<AuthStore>()(
         isAuthenticated: state.isAuthenticated,
       }),
       onRehydrateStorage: () => (state) => {
-        console.log("Rehydrating auth store...");
         if (state) {
           // Set initial loading state based on whether we have a token
           // If we have a token, we'll need to verify it, so keep loading true
           // If no token, we can set loading to false immediately
           if (state.token) {
-            console.log("Token found in storage, will verify on next tick");
             state.isLoading = true;
           } else {
-            console.log("No token found in storage");
             state.isLoading = false;
             state.isAuthenticated = false;
           }

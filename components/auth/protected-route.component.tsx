@@ -21,7 +21,6 @@ export const ProtectedRoute = ({
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      console.log("User not authenticated, redirecting to:", redirectTo);
       router.replace(redirectTo);
     }
   }, [isAuthenticated, isLoading, router, redirectTo]);
