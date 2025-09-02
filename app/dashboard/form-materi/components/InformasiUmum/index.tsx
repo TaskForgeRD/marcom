@@ -13,7 +13,7 @@ export default function InformasiUmum({ readOnly = true }: InformasiUmumProps) {
   return (
     <Card className="mb-2">
       <CardContent className="p-6 space-y-6">
-        <h3 className="text-lg font-semibold">Informasi Umum</h3>
+        <h3 className="text-lg font-semibold">CICD Sukses</h3>
         <InformasiUmumFields
           brandOptions={brandOptions}
           clusterOptions={clusterOptions}
