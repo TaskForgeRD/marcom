@@ -1,0 +1,29 @@
+name: CI/CD Deploy
+
+on:
+  push:
+    branches:
+      - main    # trigger kalau push ke main → deploy production
+      - dev     # trigger kalau push ke dev → deploy development
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy to Server
+        run: |
+          if [[ "${GITHUB_REF_NAME}" == "main" ]]; then
+            ssh -o StrictHostKeyChecking=no root@${{ secrets.SERVER_IP }} "cd /root/bri-app/scripts && bash deploy-prod.sh"
+          elif [[ "${GITHUB_REF_NAME}" == "dev" ]]; then
+            ssh -o StrictHostKeyChecking=no root@${{ secrets.SERVER_IP }} "cd /root/bri-app-dev/scripts && bash deploy-dev.sh"
+          fi
+
