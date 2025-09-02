@@ -22,11 +22,13 @@ import { useMasterDataStore } from "@/stores/master-data.store";
 import { DashboardShell } from "@/components/ui/dashboardShell";
 import { useAuth } from "@/hooks/use-auth.hook";
 import { Role } from "@/stores/user.store";
+import { useToast } from "@/hooks/use-toast";
 
 export default function MasterDataPage() {
   const { user: currentUser } = useAuth();
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { toast } = useToast();
 
   // Get current user role
   const currentUserRole: Role = currentUser?.role as Role;
@@ -146,14 +148,19 @@ export default function MasterDataPage() {
   const handleSave = async (name: string) => {
     if (!activeConfig) return;
 
-    if (selectedItem) {
-      await activeConfig.updateFn(selectedItem.id, name);
-    } else {
-      await activeConfig.createFn(name);
+    try {
+      if (selectedItem) {
+        await activeConfig.updateFn(selectedItem.id, name);
+      } else {
+        await activeConfig.createFn(name);
+      }
+      setIsCreateDialogOpen(false);
+      setIsEditDialogOpen(false);
+      setSelectedItem(null);
+    } catch (error: any) {
+      // Error will be handled by the dialog components
+      throw error;
     }
-    setIsCreateDialogOpen(false);
-    setIsEditDialogOpen(false);
-    setSelectedItem(null);
   };
 
   const handleConfirmDelete = async () => {
@@ -161,10 +168,12 @@ export default function MasterDataPage() {
 
     try {
       await activeConfig.deleteFn(selectedItem.id);
+      // Success message will be shown by DeleteConfirmDialog
       setIsDeleteDialogOpen(false);
       setSelectedItem(null);
-    } catch (error) {
-      console.error("Error deleting data:", error);
+    } catch (error: any) {
+      // Error will be handled by DeleteConfirmDialog
+      throw error;
     }
   };
 

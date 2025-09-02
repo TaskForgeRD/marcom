@@ -86,6 +86,7 @@ export const useUserStore = create<UserStore>()(
       set({ loading: true });
       try {
         const result = await makeApiRequest("/users");
+        console.log("Fetched users:", result.users);
         if (result.success && result.users) {
           set({ users: result.users, loading: false });
         } else {
