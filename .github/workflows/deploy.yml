@@ -3,8 +3,8 @@ name: 🚀 Deploy Frontend
 on:
   push:
     branches:
-      - main    # trigger kalau push ke main → deploy production
-      - dev     # trigger kalau push ke dev → deploy development
+      - main
+      - dev
 
 jobs:
   deploy:
