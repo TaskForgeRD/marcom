@@ -42,14 +42,7 @@ const FilterDateSection: React.FC = () => {
     refreshStats();
   };
 
-  // Saat dateRange berubah oleh aksi user, cukup applyFilters dan refresh stats.
-  React.useEffect(() => {
-    // Hindari fetch pada mount ketika dateRange undefined; perubahan akan memicu dari useDateRange.onApply
-    if (dateRange !== undefined) {
-      applyFilters();
-      refreshStats();
-    }
-  }, [dateRange]);
+  // Hapus efek otomatis: apply dilakukan oleh useDateRange.onApply
 
   return (
     <section className="flex items-center space-x-2 py-4 pl-4">
