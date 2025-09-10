@@ -23,7 +23,7 @@ export const useStatsData = () => {
     if (fitur.length === 0) {
       fetchFitur();
     }
-  }, [fitur.length, fetchFitur]);
+  }, [fitur.length]); // Remove fetchFitur from dependency array
 
   // Request unfiltered stats on component mount
   useEffect(() => {

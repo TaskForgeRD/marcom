@@ -53,7 +53,7 @@ const FilterDateSection: React.FC = () => {
     if (dateRange || dateRange === undefined) {
       applyDateFilters();
     }
-  }, [dateRange, fetchData, getCurrentFilters]);
+  }, [dateRange]); // Remove function dependencies
 
   return (
     <section className="flex items-center space-x-2 py-4 pl-4">

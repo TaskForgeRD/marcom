@@ -20,7 +20,7 @@ export default function FilterOption() {
   // Fetch data saat komponen mount
   useEffect(() => {
     fetchAllData();
-  }, [fetchAllData]);
+  }, []); // Remove fetchAllData from dependency array
 
   return (
     <div className="pt-4 pr-8 pb-4 pl-8 bg-slate-100 space-y-4">

@@ -6,7 +6,7 @@ export function useInformasiUmumOptions() {
 
   useEffect(() => {
     fetchAllData();
-  }, [fetchAllData]);
+  }, []); // Remove fetchAllData from dependency array
 
   const toOptions = (data: any[]) =>
     data.map((item) => ({

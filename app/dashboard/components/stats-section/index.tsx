@@ -17,7 +17,7 @@ export default function StatsSection() {
   // Fetch fitur data on component mount
   useEffect(() => {
     fetchFitur();
-  }, [fetchFitur]);
+  }, []); // Remove fetchFitur from dependency array
 
   // Visual docs toggle ONLY affects table data, NOT stats
   const handleVisualDocsToggle = (value: boolean) => {
