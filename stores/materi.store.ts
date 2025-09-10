@@ -31,6 +31,9 @@ export const useMateri = create<MateriStore>()(
   logger((set, get) => ({
     data: [],
     loading: true,
+    // Track last requested query to avoid duplicate requests
+    _lastQueryKey: "",
+    _inFlight: false,
     pagination: {
       currentPage: 1,
       totalPages: 1,
@@ -45,7 +48,21 @@ export const useMateri = create<MateriStore>()(
     selectedMateri: null,
 
     fetchData: async (page = 1, filters = {}) => {
-      set({ loading: true });
+      const sanitizedFilters = Object.fromEntries(
+        Object.entries(filters).filter(([, value]) =>
+          value !== undefined && value !== null && value !== ""
+        )
+      );
+      const queryKey = JSON.stringify({ page, limit: 10, ...sanitizedFilters });
+
+      // Prevent duplicate in-flight requests with identical parameters
+      const { _inFlight, _lastQueryKey } = get() as any;
+      if (_inFlight && _lastQueryKey === queryKey) {
+        return;
+      }
+
+      set({ loading: true } as any);
+      (set as any)({ _inFlight: true, _lastQueryKey: queryKey });
       try {
         const raw = localStorage.getItem("marcom-auth-store");
         const token = raw ? JSON.parse(raw)?.state?.token : null;
@@ -56,12 +73,7 @@ export const useMateri = create<MateriStore>()(
         const queryParams = new URLSearchParams({
           page: page.toString(),
           limit: "10",
-          ...Object.fromEntries(
-            Object.entries(filters).filter(
-              ([_, value]) =>
-                value !== undefined && value !== null && value !== ""
-            )
-          ),
+          ...sanitizedFilters,
         });
 
         const response = await fetch(
@@ -82,11 +94,12 @@ export const useMateri = create<MateriStore>()(
           data: result.data || [],
           pagination: result.pagination || get().pagination,
           loading: false,
-        });
+        } as any);
       } catch (error) {
         console.error(error);
-        set({ loading: false });
+        set({ loading: false } as any);
       }
+      (set as any)({ _inFlight: false });
     },
 
     setCurrentPage: (page) => {

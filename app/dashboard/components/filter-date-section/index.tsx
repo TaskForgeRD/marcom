@@ -5,7 +5,6 @@ import useDateRange from "@/hooks/useDateRange";
 import CustomDateDropdown from "@/app/dashboard/uiRama/custom-date-dropdown";
 import CustomDatePopover from "@/app/dashboard/uiRama/custom-date-range";
 import { useMultiApiStore } from "@/stores/api.store";
-import { useMateri } from "@/stores/materi.store";
 import { useFilterStore } from "@/stores/filter-materi.store";
 import { FilterKey } from "@/constants/filter-options";
 import SelectField from "../../uiRama/selectField";
@@ -14,8 +13,7 @@ import { useSocket } from "@/hooks/useSocket";
 
 const FilterDateSection: React.FC = () => {
   const { brands } = useMultiApiStore();
-  const { fetchData } = useMateri();
-  const { setTempFilter, applyFilters, getCurrentFilters } = useFilterStore();
+  const { setTempFilter, applyFilters } = useFilterStore();
   const { refreshStats } = useSocket();
 
   const { selectedFilters, handleFilterChange } = useSelectedFilters();
@@ -39,21 +37,19 @@ const FilterDateSection: React.FC = () => {
       setTempFilter("brand", value);
     }
 
-    const newFilters = applyFilters();
+    // Terapkan filter; biarkan TableMateriSection yang memicu fetch berdasarkan perubahan filters
+    applyFilters();
     refreshStats();
-    await fetchData(1, newFilters);
   };
 
+  // Saat dateRange berubah oleh aksi user, cukup applyFilters dan refresh stats.
   React.useEffect(() => {
-    const applyDateFilters = async () => {
-      const currentFilters = getCurrentFilters();
-      await fetchData(1, currentFilters);
-    };
-
-    if (dateRange || dateRange === undefined) {
-      applyDateFilters();
+    // Hindari fetch pada mount ketika dateRange undefined; perubahan akan memicu dari useDateRange.onApply
+    if (dateRange !== undefined) {
+      applyFilters();
+      refreshStats();
     }
-  }, [dateRange]); // Remove function dependencies
+  }, [dateRange]);
 
   return (
     <section className="flex items-center space-x-2 py-4 pl-4">

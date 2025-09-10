@@ -2,23 +2,21 @@
 
 import React, { useState, useCallback, useEffect } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
-import { useMateri } from "@/stores/materi.store";
 import { useFilterStore } from "@/stores/filter-materi.store";
 import SearchInput from "@/app/dashboard/uiRama/searchInput";
 
 const SearchAndActions = () => {
   const [searchValue, setSearchValue] = useState("");
-  const { fetchData } = useMateri();
   const { setSearchQuery } = useFilterStore();
 
   const debouncedSearch = useDebounce(searchValue, 500);
 
   const handleSearch = useCallback(
-    async (searchTerm: string) => {
-      const newFilters = setSearchQuery(searchTerm);
-      await fetchData(1, newFilters);
+    (searchTerm: string) => {
+      // Hanya update filter; biarkan TableMateriSection yang melakukan fetch
+      setSearchQuery(searchTerm);
     },
-    [setSearchQuery, fetchData]
+    [setSearchQuery]
   );
 
   useEffect(() => {
