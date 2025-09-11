@@ -10,15 +10,16 @@ import { FilterKey } from "@/constants/filter-options";
 import SelectField from "../../uiRama/selectField";
 import useSelectedFilters from "@/hooks/useSelectedFilters";
 import { useSocket } from "@/hooks/useSocket";
+import { PresetDate } from "@/constants/preset-date";
 
 const FilterDateSection: React.FC = () => {
   const { brands } = useMultiApiStore();
-  const { setTempFilter, applyFilters } = useFilterStore();
+  const { setTempFilter, applyFilters, setSelectedPreset } = useFilterStore();
   const { refreshStats } = useSocket();
 
   const { selectedFilters, handleFilterChange } = useSelectedFilters();
 
-  const { dateRange, isCustomRange, handleDateChange, handlePresetSelection } =
+  const { dateRange, isCustomRange, handleDateChange, handlePresetSelection, setIsCustomRange } =
     useDateRange({
       onApply: refreshStats,
     });
@@ -29,17 +30,41 @@ const FilterDateSection: React.FC = () => {
   const filterKeys: FilterKey[] = ["brand"];
 
   const handleBrandChange = async (value: string) => {
+    // 1) Update UI state
     handleFilterChange("brand", value);
 
+    // 2) Persist brand to temp filters first
     if (value === "Semua Brand") {
       setTempFilter("brand", "");
     } else {
       setTempFilter("brand", value);
     }
 
-    // Terapkan filter; biarkan TableMateriSection yang memicu fetch berdasarkan perubahan filters
-    applyFilters();
-    refreshStats();
+    // 3) Reset DATE to default (All time) via preset handler to update date UI state
+    setSelectedPreset(PresetDate.ALL_TIME);
+    setIsCustomRange(false);
+    handlePresetSelection(PresetDate.ALL_TIME); // this applies filters and triggers onApply → refreshStats
+
+    // Note: do not call applyFilters()/refreshStats() here to avoid double apply
+  };
+
+  // Wrap date handlers to reset BRAND to default when date changes
+  const onPresetSelectWithBrandReset = (preset: PresetDate) => {
+    // Reset brand to default in UI and store
+    handleFilterChange("brand", "Semua Brand");
+    setTempFilter("brand", "");
+
+    // Proceed with original handler
+    handlePresetSelection(preset);
+  };
+
+  const onDateChangeWithBrandReset = (range: any) => {
+    // Reset brand to default in UI and store
+    handleFilterChange("brand", "Semua Brand");
+    setTempFilter("brand", "");
+
+    // Proceed with original handler
+    handleDateChange(range);
   };
 
   // Hapus efek otomatis: apply dilakukan oleh useDateRange.onApply
@@ -51,12 +76,12 @@ const FilterDateSection: React.FC = () => {
         dateRange={dateRange}
         highlightDropdown={true}
         isCustomRange={isCustomRange}
-        handlePresetSelection={handlePresetSelection}
+        handlePresetSelection={onPresetSelectWithBrandReset}
       />
       {isCustomRange && (
         <CustomDatePopover
           dateRange={dateRange}
-          handleDateChange={handleDateChange}
+          handleDateChange={onDateChangeWithBrandReset}
         />
       )}
       <span className="text-sm font-medium">Dari Brand</span>

@@ -1,4 +1,4 @@
-// hooks/useStatsData.ts - Updated to show unfiltered stats only
+// hooks/useStatsData.ts - Updated to reflect current brand/date filters
 import { useMemo, useEffect } from "react";
 import { useFilterStore } from "@/stores/filter-materi.store";
 import { useMultiApiStore } from "@/stores/api.store";
@@ -11,12 +11,7 @@ export const useStatsData = () => {
   // Get fitur data from API store
   const { fitur, fetchFitur } = useMultiApiStore();
 
-  const {
-    stats: socketStats,
-    loading: socketLoading,
-    error: socketError,
-    refreshStats, // Only use unfiltered stats
-  } = useSocket();
+  const { stats: socketStats, loading: socketLoading, error: socketError, refreshStats } = useSocket();
 
   // Fetch fitur data when component mounts
   useEffect(() => {
@@ -25,7 +20,7 @@ export const useStatsData = () => {
     }
   }, [fitur.length]); // Remove fetchFitur from dependency array
 
-  // Request unfiltered stats on component mount
+  // Request stats on component mount (will include current filters via socket hook)
   useEffect(() => {
     refreshStats();
   }, []); // Only once on mount
@@ -58,7 +53,7 @@ export const useStatsData = () => {
         total: defaultStat,
         fitur: {
           ...defaultStat,
-          now: fitur.length, // Use API fitur count as default
+          now: 0,
         },
         komunikasi: defaultStat,
         aktif: defaultStat,
@@ -67,7 +62,7 @@ export const useStatsData = () => {
       };
     }
 
-    // Process stats with chart data from Socket (always unfiltered)
+    // Process stats with chart data from Socket (already filtered server-side if filters provided)
     const processedStats = {
       total: {
         now: socketStats.total || 0,
@@ -76,7 +71,7 @@ export const useStatsData = () => {
         chartData: socketStats.chartData?.total || [],
       },
       fitur: {
-        now: fitur.length, // Always use API fitur count
+        now: socketStats.fitur || 0,
         change: 0,
         changeLabel: "0",
         chartData: socketStats.chartData?.fitur || [],
@@ -108,7 +103,7 @@ export const useStatsData = () => {
     };
 
     return processedStats;
-  }, [socketStats, fitur.length]);
+  }, [socketStats]);
 
   // Custom refresh function that always gets unfiltered data
   const handleRefreshStats = () => {
@@ -121,14 +116,14 @@ export const useStatsData = () => {
 
   return {
     selectedPreset,
-    waktuLabel: `${waktuLabel} (Keseluruhan Data)`, // Add indicator
+    waktuLabel,
     loading: socketLoading,
     error: socketError,
     lastUpdated: socketStats?.lastUpdated,
     refreshStats: handleRefreshStats,
     stats,
-    // Expose fitur data for debugging
+    // Expose fitur data length if needed elsewhere
     fiturData: fitur,
-    totalFitur: fitur.length,
+    totalFitur: socketStats?.fitur ?? 0,
   };
 };
