@@ -45,6 +45,7 @@ interface MultiApiStore {
   fetchBrands: () => Promise<void>;
   fetchClusters: () => Promise<void>;
   fetchAllData: () => Promise<void>;
+  refreshAllData: () => Promise<void>;
 }
 
 export const useMultiApiStore = create<MultiApiStore>()(
@@ -62,6 +63,9 @@ export const useMultiApiStore = create<MultiApiStore>()(
 
     // Fetch Jenis
     fetchJenis: async () => {
+      const { jenisLoading, jenis } = get();
+      if (jenisLoading || jenis.length > 0) return; // Prevent duplicate calls or if data exists
+      
       set({ jenisLoading: true });
       try {
         const raw = localStorage.getItem("marcom-auth-store");
@@ -88,6 +92,9 @@ export const useMultiApiStore = create<MultiApiStore>()(
 
     // Fetch Fitur
     fetchFitur: async () => {
+      const { fiturLoading, fitur } = get();
+      if (fiturLoading || fitur.length > 0) return; // Prevent duplicate calls or if data exists
+      
       set({ fiturLoading: true });
       try {
         const raw = localStorage.getItem("marcom-auth-store");
@@ -114,6 +121,9 @@ export const useMultiApiStore = create<MultiApiStore>()(
 
     // Fetch Brands
     fetchBrands: async () => {
+      const { brandsLoading, brands } = get();
+      if (brandsLoading || brands.length > 0) return; // Prevent duplicate calls or if data exists
+      
       set({ brandsLoading: true });
       try {
         const raw = localStorage.getItem("marcom-auth-store");
@@ -140,6 +150,9 @@ export const useMultiApiStore = create<MultiApiStore>()(
 
     // Fetch Clusters
     fetchClusters: async () => {
+      const { clustersLoading, clusters } = get();
+      if (clustersLoading || clusters.length > 0) return; // Prevent duplicate calls or if data exists
+      
       set({ clustersLoading: true });
       try {
         const raw = localStorage.getItem("marcom-auth-store");
@@ -166,6 +179,22 @@ export const useMultiApiStore = create<MultiApiStore>()(
 
     // Fetch semua data sekaligus
     fetchAllData: async () => {
+      const { fetchJenis, fetchFitur, fetchBrands, fetchClusters } = get();
+
+      // Only fetch data that doesn't exist yet
+      const promises = [];
+      const { jenis, fitur, brands, clusters } = get();
+      
+      if (jenis.length === 0) promises.push(fetchJenis());
+      if (fitur.length === 0) promises.push(fetchFitur());
+      if (brands.length === 0) promises.push(fetchBrands());
+      if (clusters.length === 0) promises.push(fetchClusters());
+
+      await Promise.all(promises);
+    },
+
+    // Force refresh all data (ignore existing data)
+    refreshAllData: async () => {
       const { fetchJenis, fetchFitur, fetchBrands, fetchClusters } = get();
 
       await Promise.all([

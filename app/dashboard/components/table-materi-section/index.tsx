@@ -36,17 +36,11 @@ export default function TableMateriSection() {
   const tableRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
-  // Initial data fetch
+  // Initial data fetch and when filters change
   useEffect(() => {
     const currentFilters = getCurrentFilters();
     fetchData(1, currentFilters);
-  }, [fetchData, getCurrentFilters]);
-
-  // Fetch data when filters change
-  useEffect(() => {
-    const currentFilters = getCurrentFilters();
-    fetchData(1, currentFilters); // Reset to page 1 when filters change
-  }, [filters, fetchData, getCurrentFilters]);
+  }, [filters]); // Only depend on filters, remove function dependencies
 
   // Pagination handlers
   const handlePreviousPage = async () => {

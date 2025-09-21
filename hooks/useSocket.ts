@@ -37,8 +37,10 @@ interface UseSocketReturn {
 }
 
 export const useSocket = (): UseSocketReturn => {
-  const { getCurrentFilters } = useFilterStore();
-  const { brand, start_date, end_date } = getCurrentFilters();
+  // Subscribe to primitive fields separately to avoid new object refs
+  const brand = useFilterStore((s) => s.filters?.brand);
+  const start_date = useFilterStore((s) => s.filters?.start_date);
+  const end_date = useFilterStore((s) => s.filters?.end_date);
 
   const [connected, setConnected] = useState(false);
   const [stats, setStats] = useState<StatsData | null>(null);
@@ -72,7 +74,7 @@ export const useSocket = (): UseSocketReturn => {
     socket.on("connect", () => {
       setConnected(true);
       setError(null);
-      // Always request unfiltered stats
+      // Request stats with current filters upon connect
       socket.emit("request_stats", { brand, start_date, end_date });
     });
 
@@ -116,13 +118,22 @@ export const useSocket = (): UseSocketReturn => {
     };
   }, []);
 
-  // Refresh unfiltered stats only
+  // Re-request stats whenever relevant filters change
+  useEffect(() => {
+    if (socketRef.current && connected) {
+      setLoading(true);
+      socketRef.current.emit("request_stats", { brand, start_date, end_date });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [connected, brand, start_date, end_date]);
+
+  // Refresh stats using latest filters
   const refreshStats = useCallback(() => {
     if (socketRef.current && connected) {
       setLoading(true);
       socketRef.current.emit("request_stats", { brand, start_date, end_date });
     }
-  }, [connected]);
+  }, [connected, brand, start_date, end_date]);
 
   return {
     socket: socketRef.current,

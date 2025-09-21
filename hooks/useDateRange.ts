@@ -8,7 +8,7 @@ type UseDateProps = {
 };
 
 const useDateRange = (props?: UseDateProps) => {
-  const { tempFilters, setTempFilter, applyFilters } = useFilterStore();
+  const { tempFilters, setTempFilter, applyFilters, selectedPreset, filters } = useFilterStore();
   const today = React.useMemo(() => new Date(), []);
 
   const [dateRange, setDateRange] = React.useState<
@@ -23,6 +23,28 @@ const useDateRange = (props?: UseDateProps) => {
   );
 
   const [isCustomRange, setIsCustomRange] = React.useState(false);
+
+  // Sync UI when global filters or preset change (e.g., external resets)
+  React.useEffect(() => {
+    // If All time or no dates in filters, clear local date state
+    if (
+      selectedPreset === PresetDate.ALL_TIME ||
+      (!filters.start_date && !filters.end_date)
+    ) {
+      setDateRange(undefined);
+      setIsCustomRange(false);
+      return;
+    }
+
+    // If dates exist in filters, reflect them in local state
+    if (filters.start_date) {
+      const from = new Date(filters.start_date);
+      const to = new Date(filters.end_date || filters.start_date);
+      setDateRange({ from, to });
+      // Only set custom range mode if preset explicitly set to CUSTOM
+      setIsCustomRange(selectedPreset === PresetDate.CUSTOM);
+    }
+  }, [selectedPreset, filters.start_date, filters.end_date]);
 
   const presetRanges: Record<PresetDate, { from: Date; to: Date } | null> = {
     [PresetDate.ALL_TIME]: null,

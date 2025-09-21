@@ -82,7 +82,7 @@ export default function MasterDataPage() {
   // Update URL when tab changes
   const handleTabChange = (newTab: string) => {
     setActiveTab(newTab);
-    router.push(`/master-data?tab=${newTab}`, { scroll: false });
+    router.push(`/master-data?tab=${encodeURIComponent(newTab)}`, { scroll: false });
   };
 
   const tabsConfig = [

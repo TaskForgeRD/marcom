@@ -1,10 +1,18 @@
 import { z } from "zod";
 
+const alphaNumSpace = z
+  .string()
+  .regex(/^[\p{L}\p{N} ]+$/u, "Hanya boleh huruf, angka, dan spasi");
+
 export const formSchema = z.object({
   brand: z.string().min(1, "Brand harus diisi"),
   cluster: z.string().min(1, "Cluster harus diisi"),
   fitur: z.string().min(1, "Fitur harus diisi"),
-  nama_materi: z.string().min(1, "Nama materi harus diisi"),
+  nama_materi: z
+    .string()
+    .trim()
+    .min(1, "Nama materi harus diisi")
+    .and(alphaNumSpace),
   jenis: z.string().min(1, "Jenis harus diisi"),
   start_date: z.string().min(1, "Tanggal mulai harus diisi"),
   end_date: z.string().min(1, "Tanggal selesai harus diisi"),
@@ -25,7 +33,13 @@ export const formSchema = z.object({
             { message: "Thumbnail harus diupload" }
           ),
         keywords: z
-          .array(z.string().min(1, "Keyword tidak boleh kosong"))
+          .array(
+            z
+              .string()
+              .trim()
+              .min(1, "Keyword tidak boleh kosong")
+              .regex(/^[\p{L}\p{N} ]+$/u, "Hanya boleh huruf, angka, dan spasi")
+          )
           .min(1, "Minimal 1 keyword harus diisi"),
       })
     )

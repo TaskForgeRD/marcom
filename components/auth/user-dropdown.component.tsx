@@ -1,6 +1,6 @@
 "use client";
 
-import { UserCircle, LogOut, User as UserIcon, Shield } from "lucide-react";
+import { LogOut, User as UserIcon, Shield } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth.hook";
 import { Button } from "@/components/ui/button";
 import {

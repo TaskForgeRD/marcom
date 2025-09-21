@@ -5,6 +5,8 @@ import { useMultiApiStore } from "@/stores/api.store";
 import { useMateri } from "@/stores/materi.store";
 import { useFilterStore } from "@/stores/filter-materi.store";
 import { FilterKey } from "../../../../../constants/filter-options";
+import { PresetDate } from "@/constants/preset-date";
+import { useSocket } from "@/hooks/useSocket";
 
 type FilterGroupProps = {
   selectedFilters: Partial<Record<FilterKey, string>>;
@@ -20,7 +22,8 @@ const FilterGroup = ({
 }: FilterGroupProps) => {
   const { clusters, fitur, jenis } = useMultiApiStore();
   const { fetchData } = useMateri();
-  const { applyFilters, resetFilters } = useFilterStore();
+  const { applyFilters, resetFilters, setTempFilter, setSelectedPreset } = useFilterStore();
+  const { refreshStats } = useSocket();
 
   const filterOptions: Partial<Record<FilterKey, string[]>> = useMemo(() => {
     return {
@@ -34,14 +37,30 @@ const FilterGroup = ({
   const filterKeys: FilterKey[] = ["cluster", "fitur", "status", "jenis"];
 
   const handleApplyFilters = async () => {
+    // Reset date and brand to defaults as requested
+    setSelectedPreset(PresetDate.ALL_TIME);
+    setTempFilter("start_date", "");
+    setTempFilter("end_date", "");
+    setTempFilter("brand", "");
+
     const newFilters = applyFilters();
     await fetchData(1, newFilters);
+    refreshStats();
   };
 
   const handleResetFiltersClick = async () => {
+    // Clear local UI selections for this group
     handleResetFilters();
+
+    // Also reset global brand/date to defaults
+    setSelectedPreset(PresetDate.ALL_TIME);
+    setTempFilter("start_date", "");
+    setTempFilter("end_date", "");
+    setTempFilter("brand", "");
+
     const emptyFilters = resetFilters();
     await fetchData(1, emptyFilters);
+    refreshStats();
   };
 
   return (
