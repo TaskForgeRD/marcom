@@ -5,7 +5,7 @@ export const logger =
   (set, get, api) =>
     config(
       (args) => {
-        console.log("[Zustand] State change:", args);
+        // Suppressed console logging for Zustand state changes
         set(args);
       },
       get,
