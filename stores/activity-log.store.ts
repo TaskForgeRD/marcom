@@ -107,7 +107,6 @@ export const useActivityLogStore = create<ActivityLogStore>((set, get) => ({
   setFilters: (newFilters) => {
     const filters = { ...get().filters, ...newFilters };
     set({ 
-      filters,
       currentPage: 1,
       filters: { ...filters, offset: 0 }
     });
