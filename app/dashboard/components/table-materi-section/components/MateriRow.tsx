@@ -4,7 +4,7 @@ import { TableRow, TableCell } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import Image from "next/image";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import StatusBadge from "./StatusBadge";
 import { getImageUrl } from "@/lib/utils";
@@ -23,10 +23,17 @@ const MateriRow: React.FC<MateriRowProps> = ({ materi }) => {
   const router = useRouter();
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const lastDialogCloseAtRef = useRef<number | null>(null);
   const highlightedId = useMateri((state) => state.highlightedId);
   const setSelectedMateri = useMateri((state) => state.setSelectedMateri);
 
   const handleRowClick = () => {
+    // Jangan navigasi saat dialog preview terbuka atau baru saja ditutup
+    if (isPreviewOpen) return;
+    if (lastDialogCloseAtRef.current) {
+      const elapsed = Date.now() - lastDialogCloseAtRef.current;
+      if (elapsed < 300) return;
+    }
     setSelectedMateri(materi);
     router.push(`/dashboard/form-materi/${materi.id}?mode=view`);
   };
@@ -112,7 +119,15 @@ const MateriRow: React.FC<MateriRowProps> = ({ materi }) => {
       </TableCell>
 
       {/* Preview Dialog (sama perilaku dengan UploadThumbnail di form) */}
-      <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
+      <Dialog
+        open={isPreviewOpen}
+        onOpenChange={(open) => {
+          setIsPreviewOpen(open);
+          if (!open) {
+            lastDialogCloseAtRef.current = Date.now();
+          }
+        }}
+      >
         <DialogContent
           className="w-[75vw] h-[75vh] max-w-none max-h-none p-0 
     [&>button]:bg-red-500 
