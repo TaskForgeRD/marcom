@@ -46,10 +46,18 @@ class AuthApi {
         errorData.error ||
         `HTTP ${response.status}: ${response.statusText}`;
 
+      // Handle specific error messages for better UX
+      let errorCode = errorData.code;
+      if (errorMessage.includes("Token policy has changed")) {
+        errorCode = "TOKEN_POLICY_CHANGED";
+      } else if (errorMessage.includes("Token has been revoked")) {
+        errorCode = "TOKEN_REVOKED";
+      }
+
       throw new AuthApiError(
         errorMessage,
         response.status,
-        errorData.code,
+        errorCode,
         errorData
       );
     }

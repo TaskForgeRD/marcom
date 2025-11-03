@@ -4,6 +4,7 @@ import { ReactNode, useEffect, useState } from "react";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { useAuthStore } from "@/stores/auth.store";
+import { useAutoLogout } from "@/hooks/useAutoLogout";
 
 interface AppProvidersProps {
   readonly children: ReactNode;
@@ -14,6 +15,9 @@ interface AppProvidersProps {
  */
 export function AppProviders({ children }: AppProvidersProps) {
   const [isHydrated, setIsHydrated] = useState(false);
+  
+  // Enable auto logout based on JWT expiration
+  useAutoLogout();
 
   useEffect(() => {
     // Ensure client-side hydration is complete
@@ -42,15 +46,9 @@ export function AppProviders({ children }: AppProvidersProps) {
       };
 
       const expired = isTokenExpired(token);
-      if (expired === null) {
-        console.log("[Auth] Status token tidak dapat ditentukan (token tidak ada/invalid)");
-      } else if (expired === true) {
-        console.log("[Auth] Token sudah expired");
-      } else {
-        console.log("[Auth] Token belum expired");
-      }
+      // Intentionally no logging of token status
     } catch (e) {
-      console.log("[Auth] Gagal membaca status token:", e);
+      // Suppressed console log for token read error
     }
   }, []);
 
@@ -73,7 +71,7 @@ export function AppProviders({ children }: AppProvidersProps) {
         const response = await originalFetch(input, init);
 
         if (response.status === 401) {
-          console.log("[Auth] Menerima 401 dari API: token invalid/expired");
+          // Suppressed console log for 401 token invalid/expired
           if (!anyWindow.__isLoggingOut) {
             anyWindow.__isLoggingOut = true;
             try {

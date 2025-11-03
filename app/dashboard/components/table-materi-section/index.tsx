@@ -18,6 +18,7 @@ import { materiTableColumns } from "@/app/dashboard/components/table-materi-sect
 import LoadingSpinner from "@/app/dashboard/components/table-materi-section/components/LoadingSpinner";
 import MateriRow from "@/app/dashboard/components/table-materi-section/components/MateriRow";
 import { useRouter } from "next/navigation";
+import { useSocket } from "@/hooks/useSocket";
 
 export default function TableMateriSection() {
   const {
@@ -35,6 +36,7 @@ export default function TableMateriSection() {
 
   const tableRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const { socket } = useSocket();
 
   // Initial data fetch and when filters change
   useEffect(() => {
@@ -61,6 +63,23 @@ export default function TableMateriSection() {
       }, 50);
     }
   };
+
+  // Listen to real-time updates and refetch table data
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleHasUpdate = () => {
+      const currentFilters = getCurrentFilters();
+      fetchData(pagination.currentPage, currentFilters);
+    };
+
+    socket.on("has_update", handleHasUpdate);
+    return () => {
+      socket.off("has_update", handleHasUpdate);
+    };
+    // We intentionally depend on socket and current page
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socket, pagination.currentPage]);
 
   const handleNextPage = async () => {
     if (pagination.hasNextPage) {

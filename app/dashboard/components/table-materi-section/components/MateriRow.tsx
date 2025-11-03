@@ -4,6 +4,8 @@ import { TableRow, TableCell } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import Image from "next/image";
+import { useState } from "react";
+import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import StatusBadge from "./StatusBadge";
 import { getImageUrl } from "@/lib/utils";
 
@@ -19,6 +21,8 @@ interface MateriRowProps {
 
 const MateriRow: React.FC<MateriRowProps> = ({ materi }) => {
   const router = useRouter();
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const highlightedId = useMateri((state) => state.highlightedId);
   const setSelectedMateri = useMateri((state) => state.setSelectedMateri);
 
@@ -30,6 +34,16 @@ const MateriRow: React.FC<MateriRowProps> = ({ materi }) => {
   const handleMateriClick = (event: React.MouseEvent, linkDokumen: string) => {
     event.stopPropagation(); // Mencegah event bubbling ke parent TableRow
     window.open(linkDokumen, "_blank", "noopener,noreferrer");
+  };
+
+  const handleThumbnailClick = (
+    event: React.MouseEvent,
+    thumbnailPath?: string
+  ) => {
+    event.stopPropagation();
+    if (!thumbnailPath) return;
+    setPreviewUrl(getImageUrl(thumbnailPath));
+    setIsPreviewOpen(true);
   };
 
   return (
@@ -67,7 +81,10 @@ const MateriRow: React.FC<MateriRowProps> = ({ materi }) => {
                       width={50}
                       height={50}
                       unoptimized
-                      className="w-12 h-12 object-cover rounded-md"
+                      className="w-12 h-12 object-cover rounded-md cursor-zoom-in"
+                      onClick={(event) =>
+                        handleThumbnailClick(event, dokumen.thumbnail)
+                      }
                     />
                   )}
                   <Button
@@ -93,6 +110,39 @@ const MateriRow: React.FC<MateriRowProps> = ({ materi }) => {
           end_date={materi.end_date}
         />
       </TableCell>
+
+      {/* Preview Dialog (sama perilaku dengan UploadThumbnail di form) */}
+      <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
+        <DialogContent
+          className="w-[75vw] h-[75vh] max-w-none max-h-none p-0 
+    [&>button]:bg-red-500 
+    [&>button]:hover:bg-red-600 
+    [&>button]:text-white 
+    [&>button]:rounded-md 
+    [&>button]:w-12 
+    [&>button]:h-12 
+    [&>button]:flex 
+    [&>button]:items-center 
+    [&>button]:justify-center 
+    [&>button_svg]:w-6 
+    [&>button_svg]:h-6"
+        >
+          <DialogHeader className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10" />
+          {previewUrl && (
+            <div className="flex items-center justify-center w-full h-full bg-white rounded-lg">
+              <div className="relative w-full h-full">
+                <Image
+                  src={previewUrl}
+                  alt="Thumbnail Preview"
+                  fill
+                  unoptimized
+                  className="object-contain rounded-lg"
+                />
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
       <TableCell>{materi.jenis}</TableCell>
 

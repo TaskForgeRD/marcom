@@ -87,7 +87,13 @@ export const useAuthStore = create<AuthStore>()(
 
           if (error instanceof AuthApiError) {
             if (error.status === 401) {
-              toast.error("Sesi Anda telah berakhir, silakan masuk kembali");
+              if (error.code === "TOKEN_POLICY_CHANGED") {
+                toast.error("Kebijakan keamanan telah berubah, silakan masuk kembali");
+              } else if (error.code === "TOKEN_REVOKED") {
+                toast.error("Sesi Anda telah dicabut, silakan masuk kembali");
+              } else {
+                toast.error("Sesi Anda telah berakhir, silakan masuk kembali");
+              }
             } else if (error.code === "INVALID_USER_DATA") {
               toast.error("Data pengguna tidak valid, silakan masuk kembali");
               console.error("Invalid user data details:", error.details);
