@@ -27,10 +27,10 @@ const FilterGroup = ({
 
   const filterOptions: Partial<Record<FilterKey, string[]>> = useMemo(() => {
     return {
-      cluster: ["Semua Cluster", ...clusters.map((cluster) => cluster.name)],
-      fitur: ["Semua Fitur", ...fitur.map((f) => f.name)],
+      cluster: ["Semua Cluster", ...(clusters || []).map((cluster) => cluster.name)],
+      fitur: ["Semua Fitur", ...(fitur || []).map((f) => f.name)],
       status: ["Semua Status", "Aktif", "Expired"],
-      jenis: ["Semua Jenis", ...jenis.map((j) => j.name)],
+      jenis: ["Semua Jenis", ...(jenis || []).map((j) => j.name)],
     };
   }, [clusters, fitur, jenis]);
 

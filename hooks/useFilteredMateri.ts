@@ -21,6 +21,7 @@ export default function useFilteredMateri() {
   const { filters, searchQuery, onlyVisualDocs } = useFilterStore();
 
   const filteredData = useMemo(() => {
+    if (!data || !Array.isArray(data)) return [];
     return data.filter((item) => {
       const { start_date, end_date, status, fitur, brand, cluster, jenis } =
         filters;
