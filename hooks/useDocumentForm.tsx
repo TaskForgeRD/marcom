@@ -81,7 +81,30 @@ export function useDocumentForm(defaultValues?: Partial<FormDataType>) {
         },
       });
 
-      const result = await response.json();
+      // Handle error 413 (Request Entity Too Large) from nginx
+      if (response.status === 413) {
+        throw new Error("Ukuran file terlalu besar. Maksimal ukuran file yang diizinkan adalah 15MB. Silakan pilih file yang lebih kecil.");
+      }
+
+      // Check if response is JSON before parsing
+      const contentType = response.headers.get("content-type");
+      let result;
+      
+      if (contentType && contentType.includes("application/json")) {
+        try {
+          result = await response.json();
+        } catch (parseError) {
+          // If JSON parsing fails, throw a more informative error
+          throw new Error("Terjadi kesalahan saat memproses respons dari server. Silakan coba lagi.");
+        }
+      } else {
+        // If response is not JSON (e.g., HTML error page from nginx)
+        const text = await response.text();
+        if (response.status >= 400) {
+          throw new Error(`Terjadi kesalahan (${response.status}). ${response.status === 413 ? "Ukuran file terlalu besar. Maksimal 15MB." : "Silakan coba lagi."}`);
+        }
+        throw new Error("Terjadi kesalahan saat memproses respons dari server.");
+      }
 
       if (!response.ok) {
         throw new Error(result?.message || "Gagal menyimpan data");
